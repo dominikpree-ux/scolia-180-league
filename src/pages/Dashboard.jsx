@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target, Upload, CheckCircle, AlertCircle, Image } from "lucide-react";
 import { toast } from "sonner";
 import MatchResultForm from "../components/dashboard/MatchResultForm";
 import { format } from "date-fns";
