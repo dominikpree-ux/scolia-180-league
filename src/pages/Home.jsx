@@ -13,7 +13,7 @@ import { ChevronRight } from "lucide-react";
 export default function Home() {
   const { data: teams = [] } = useQuery({
     queryKey: ["teams"],
-    queryFn: () => base44.entities.Team.list("-points", 10),
+    queryFn: () => base44.entities.Team.filter({ status: "approved" }, "-points", 10),
   });
 
   const { data: matches = [] } = useQuery({
