@@ -77,10 +77,14 @@ export default function StandingsTable({ teams, compact = false }) {
               {!compact && (
                 <>
                   <TableCell className="text-center text-gray-400 text-sm hidden sm:table-cell">
-                    {team.legs_won || 0}:{team.legs_lost || 0}
+                    <span className="text-gray-300">{team.legs_won || 0}</span>
+                    <span className="text-gray-500 mx-0.5">:</span>
+                    <span className="text-gray-300">{team.legs_lost || 0}</span>
                   </TableCell>
                   <TableCell className="text-center text-gray-400 text-sm hidden sm:table-cell">
-                    {team.sets_won || 0}:{team.sets_lost || 0}
+                    <span className="text-gray-300">{team.sets_won || 0}</span>
+                    <span className="text-gray-500 mx-0.5">:</span>
+                    <span className="text-gray-300">{team.sets_lost || 0}</span>
                   </TableCell>
                 </>
               )}
