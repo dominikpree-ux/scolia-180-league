@@ -8,9 +8,15 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allPlayers }) {
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoUrls, setPhotoUrls] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [playerStats, setPlayerStats] = useState({});
+  const [matchResult, setMatchResult] = useState({
+    home_legs: 0,
+    away_legs: 0,
+    home_sets: 0,
+    away_sets: 0,
+  });
 
   // Initialize player stats for all team players
   React.useEffect(() => {
@@ -30,19 +36,27 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
   }, [allPlayers]);
 
   const handlePhotoUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
     setUploading(true);
     try {
-      const result = await base44.integrations.Core.UploadFile({ file });
-      setPhotoUrl(result.file_url);
-      toast.success("Foto hochgeladen");
+      const uploadedUrls = [];
+      for (const file of files) {
+        const result = await base44.integrations.Core.UploadFile({ file });
+        uploadedUrls.push(result.file_url);
+      }
+      setPhotoUrls([...photoUrls, ...uploadedUrls]);
+      toast.success(`${uploadedUrls.length} Foto(s) hochgeladen`);
     } catch (error) {
       toast.error("Fehler beim Hochladen");
     } finally {
       setUploading(false);
     }
+  };
+
+  const removePhoto = (index) => {
+    setPhotoUrls(photoUrls.filter((_, i) => i !== index));
   };
 
   const updatePlayerStat = (playerId, field, value) => {
@@ -56,8 +70,13 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
   };
 
   const handleSubmit = async () => {
-    if (!photoUrl) {
-      toast.error("Bitte lade ein Foto hoch");
+    if (photoUrls.length === 0) {
+      toast.error("Bitte lade mindestens ein Foto hoch");
+      return;
+    }
+
+    if (matchResult.home_legs === 0 && matchResult.away_legs === 0) {
+      toast.error("Bitte gib das Match-Endergebnis ein");
       return;
     }
 
@@ -67,7 +86,11 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
       // Update match status
       await base44.entities.Match.update(match.id, {
         status: "result_submitted",
-        result_photo_url: photoUrl,
+        result_photo_url: photoUrls[0], // Store first photo as main
+        home_legs: isHome ? matchResult.home_legs : matchResult.home_legs,
+        away_legs: isHome ? matchResult.away_legs : matchResult.away_legs,
+        home_sets: isHome ? matchResult.home_sets : matchResult.home_sets,
+        away_sets: isHome ? matchResult.away_sets : matchResult.away_sets,
         submitted_by_team_id: isHome ? match.home_team_id : match.away_team_id,
         needs_confirmation_from: isHome ? match.away_team_id : match.home_team_id,
       });
@@ -129,30 +152,78 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
         <CardTitle className="text-lg">Match-Ergebnis einreichen</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Photo upload */}
+        {/* Photo uploads */}
         <div>
-          <Label className="text-gray-400 mb-2 block">Foto-Beweis *</Label>
-          {photoUrl ? (
-            <div className="relative">
-              <img src={photoUrl} alt="Result" className="w-full h-48 object-cover rounded-lg" />
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute top-2 right-2"
-                onClick={() => setPhotoUrl("")}
-              >
-                <X className="w-4 h-4" />
-              </Button>
+          <Label className="text-gray-400 mb-2 block">Fotos hochladen * (mehrere möglich)</Label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+            {photoUrls.map((url, idx) => (
+              <div key={idx} className="relative group">
+                <img src={url} alt={`Photo ${idx}`} className="w-full h-24 object-cover rounded-lg" />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
+                  onClick={() => removePhoto(idx)}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-[#2a2a2a] rounded-lg cursor-pointer hover:border-red-600/50 transition-colors">
+            <Camera className="w-6 h-6 text-gray-500 mb-1" />
+            <span className="text-xs text-gray-500">
+              {uploading ? "Lädt hoch..." : `${photoUrls.length} Foto(s) hochgeladen`}
+            </span>
+            <input type="file" className="hidden" accept="image/*" multiple onChange={handlePhotoUpload} disabled={uploading} />
+          </label>
+        </div>
+
+        {/* Match Result */}
+        <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg p-4">
+          <Label className="text-gray-400 text-sm mb-3 block">Match-Endergebnis *</Label>
+          <div className="grid grid-cols-4 gap-2">
+            <div>
+              <Label className="text-xs text-gray-500">Home Beine</Label>
+              <Input
+                type="number"
+                min="0"
+                value={matchResult.home_legs}
+                onChange={(e) => setMatchResult({...matchResult, home_legs: parseInt(e.target.value) || 0})}
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+              />
             </div>
-          ) : (
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#2a2a2a] rounded-lg cursor-pointer hover:border-red-600/50 transition-colors">
-              <Camera className="w-8 h-8 text-gray-500 mb-2" />
-              <span className="text-sm text-gray-500">
-                {uploading ? "Lädt hoch..." : "Klicken zum Hochladen"}
-              </span>
-              <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} disabled={uploading} />
-            </label>
-          )}
+            <div>
+              <Label className="text-xs text-gray-500">Away Beine</Label>
+              <Input
+                type="number"
+                min="0"
+                value={matchResult.away_legs}
+                onChange={(e) => setMatchResult({...matchResult, away_legs: parseInt(e.target.value) || 0})}
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Home Sets</Label>
+              <Input
+                type="number"
+                min="0"
+                value={matchResult.home_sets}
+                onChange={(e) => setMatchResult({...matchResult, home_sets: parseInt(e.target.value) || 0})}
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+              />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Away Sets</Label>
+              <Input
+                type="number"
+                min="0"
+                value={matchResult.away_sets}
+                onChange={(e) => setMatchResult({...matchResult, away_sets: parseInt(e.target.value) || 0})}
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Player stats */}
