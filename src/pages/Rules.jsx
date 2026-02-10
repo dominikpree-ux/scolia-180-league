@@ -10,11 +10,12 @@ const defaultRules = `
 ### 1. Teilnahme
 - Jedes Team besteht aus mindestens 4 und maximal 6 Spielern.
 - Ein Spieler darf nur für ein Team registriert sein.
+- Bei der Registrierung muss die Scolia ID (zu finden in den Profil-Einstellungen) angegeben werden.
 - Der Teamkapitän ist verantwortlich für die Koordination.
 
 ### 2. Spielformat
-- Gespielt wird im Best-of-Format (Legs/Sets je nach Spieltag).
-- Die genaue Anzahl der Legs und Sets wird vor der Saison festgelegt.
+- Gespielt wird **First to 3, Double Out**.
+- Das erste Team, das 3 Legs gewinnt, gewinnt das Match.
 - Alle Spiele werden über Scolia Boards ausgetragen.
 
 ### 3. Spielplan
