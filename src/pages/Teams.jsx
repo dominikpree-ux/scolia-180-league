@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Users, MapPin, Crown, Image } from "lucide-react";
+import { Users, MapPin, Crown, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Teams() {
+  const [selectedTeam, setSelectedTeam] = useState(null);
+
   const { data: teams = [], isLoading } = useQuery({
     queryKey: ["teams"],
     queryFn: () => base44.entities.Team.filter({ status: "approved" }),
@@ -44,7 +47,8 @@ export default function Teams() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="group rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-red-600/20 p-6 transition-all duration-300"
+                onClick={() => setSelectedTeam(team)}
+                className="group rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-red-600/20 p-6 transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-4">
                   {team.logo_url ? (
