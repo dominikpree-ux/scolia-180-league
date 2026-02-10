@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, CheckCircle } from "lucide-react";
+import { Save, CheckCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -25,6 +25,14 @@ export default function ResultsManager() {
       queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
       setEditingMatch(null);
       toast.success("Ergebnis gespeichert!");
+    },
+  });
+
+  const deleteMatch = useMutation({
+    mutationFn: (id) => base44.entities.Match.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
+      toast.success("Spiel gelöscht!");
     },
   });
 
@@ -132,16 +140,26 @@ export default function ResultsManager() {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => startEdit(match)}>
-                  <span className="text-sm text-white flex-1 text-right truncate">{match.home_team_name}</span>
-                  <div className="px-3 py-1 rounded-lg bg-[#0a0a0a] min-w-[60px] text-center">
-                    {match.status === "completed" ? (
-                      <span className="text-sm font-bold text-white">{match.home_legs} : {match.away_legs}</span>
-                    ) : (
-                      <span className="text-sm text-gray-600">vs</span>
-                    )}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 cursor-pointer" onClick={() => startEdit(match)}>
+                    <span className="text-sm text-white flex-1 text-right truncate">{match.home_team_name}</span>
+                    <div className="px-3 py-1 rounded-lg bg-[#0a0a0a] min-w-[60px] text-center">
+                      {match.status === "completed" ? (
+                        <span className="text-sm font-bold text-white">{match.home_legs} : {match.away_legs}</span>
+                      ) : (
+                        <span className="text-sm text-gray-600">vs</span>
+                      )}
+                    </div>
+                    <span className="text-sm text-white flex-1 truncate">{match.away_team_name}</span>
                   </div>
-                  <span className="text-sm text-white flex-1 truncate">{match.away_team_name}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteMatch.mutate(match.id)}
+                    className="text-gray-500 hover:text-red-400 hover:bg-red-600/10 border-0 shrink-0 h-8 w-8"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               )}
             </div>
