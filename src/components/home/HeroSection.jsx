@@ -45,17 +45,11 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-red-600/30 bg-red-600/5 mb-8">
-            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-xs font-medium text-red-400 tracking-wide uppercase">Saison 2026 — Jetzt registrieren</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
-            <span className="text-white">SCOLIA</span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">180</span>
-            <span className="text-white ml-3">LEAGUE</span>
-          </h1>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698ae2909b02ce9f29cfad93/8fbc0d794_180logowei.png" 
+            alt="Scolia 180 League" 
+            className="h-40 w-auto mx-auto mb-8"
+          />
 
           <p className="text-lg sm:text-xl text-gray-400 font-light tracking-wide max-w-xl mx-auto mb-10">
             Precision. Competition. <span className="text-red-500 font-medium">180.</span>
