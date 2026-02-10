@@ -80,69 +80,47 @@ export default function PlayerComparison() {
           {/* Player 1 */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Spieler 1</label>
-            <div className="relative">
-              <Input
-                placeholder="Spieler suchen..."
-                value={search1}
-                onChange={(e) => setSearch1(e.target.value)}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white mb-2"
-              />
-              {search1 && (
-                <div className="absolute top-10 left-0 right-0 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-48 overflow-y-auto z-10">
-                  {filteredPlayers1.map(p => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        setPlayer1Id(p.id);
-                        setSearch1("");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-[#222222] text-gray-300 hover:text-white text-sm"
-                    >
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {player1Id && (
-                <div className="px-3 py-2 bg-red-600/10 border border-red-600/20 rounded-lg text-sm text-white">
-                  {allPlayers.find(p => p.id === player1Id)?.name}
-                </div>
-              )}
-            </div>
+            {player1Id ? (
+              <div className="px-3 py-2 bg-red-600/10 border border-red-600/20 rounded-lg text-sm text-white mb-2 flex items-center justify-between">
+                {allPlayers.find(p => p.id === player1Id)?.name}
+                <button onClick={() => setPlayer1Id("")} className="text-xs text-red-400 hover:text-red-300">Ändern</button>
+              </div>
+            ) : (
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-64 overflow-y-auto">
+                {allPlayers.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlayer1Id(p.id)}
+                    className="w-full text-left px-4 py-2.5 hover:bg-[#222222] text-gray-300 hover:text-white text-sm border-b border-[#2a2a2a] last:border-0"
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Player 2 */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Spieler 2</label>
-            <div className="relative">
-              <Input
-                placeholder="Spieler suchen..."
-                value={search2}
-                onChange={(e) => setSearch2(e.target.value)}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white mb-2"
-              />
-              {search2 && (
-                <div className="absolute top-10 left-0 right-0 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-48 overflow-y-auto z-10">
-                  {filteredPlayers2.map(p => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        setPlayer2Id(p.id);
-                        setSearch2("");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-[#222222] text-gray-300 hover:text-white text-sm"
-                    >
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {player2Id && (
-                <div className="px-3 py-2 bg-blue-600/10 border border-blue-600/20 rounded-lg text-sm text-white">
-                  {allPlayers.find(p => p.id === player2Id)?.name}
-                </div>
-              )}
-            </div>
+            {player2Id ? (
+              <div className="px-3 py-2 bg-blue-600/10 border border-blue-600/20 rounded-lg text-sm text-white mb-2 flex items-center justify-between">
+                {allPlayers.find(p => p.id === player2Id)?.name}
+                <button onClick={() => setPlayer2Id("")} className="text-xs text-blue-400 hover:text-blue-300">Ändern</button>
+              </div>
+            ) : (
+              <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg max-h-64 overflow-y-auto">
+                {allPlayers.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlayer2Id(p.id)}
+                    className="w-full text-left px-4 py-2.5 hover:bg-[#222222] text-gray-300 hover:text-white text-sm border-b border-[#2a2a2a] last:border-0"
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
