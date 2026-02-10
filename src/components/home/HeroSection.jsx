@@ -48,7 +48,7 @@ export default function HeroSection() {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698ae2909b02ce9f29cfad93/8fbc0d794_180logowei.png" 
             alt="Scolia 180 League" 
-            className="h-40 w-auto mx-auto mb-8"
+            className="h-80 w-auto mx-auto mb-12"
           />
 
           <p className="text-lg sm:text-xl text-gray-400 font-light tracking-wide max-w-xl mx-auto mb-10">
