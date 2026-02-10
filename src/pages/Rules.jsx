@@ -9,54 +9,82 @@ const defaultRules = `
 
 ### 1. Teilnahme & Ligen
 - Jedes Team besteht aus mindestens 4 und maximal 6 Spielern.
+
 - Ein Spieler darf nur für ein Team registriert sein.
+
 - Bei der Registrierung muss die Scolia ID (zu finden in den Profil-Einstellungen) angegeben werden.
+
 - Der Teamkapitän ist verantwortlich für die Koordination.
+
 - **Wichtig**: Der Teamkapitän muss sich mit der gleichen E-Mail-Adresse anmelden, die bei der Teamregistrierung angegeben wurde, um Zugriff auf das Team-Dashboard zu erhalten.
 
 **Liga-Einteilung:**
 - Teams werden basierend auf ihrer Average-Gruppe aus Scolia automatisch in Ligen eingeteilt
+
 - **Liga A** (Average-Gruppe A): Double Out (DO)
+
 - **Liga B** (Average-Gruppe B): Master Out (MO)
+
 - **Liga C** (Average-Gruppe C): Open Out (OO)
+
 - Teams spielen nur gegen andere Teams ihrer eigenen Liga
 
 ### 2. Spielformat & Ablauf
 - Wenn zwei Teams aufeinandertreffen, spielt **jeder Spieler eines Teams gegen jeden Spieler des gegnerischen Teams**.
+
 - Alle Spiele werden im Modus **First to 3 Legs** ausgetragen.
+
 - Der Out-Modus richtet sich nach der jeweiligen Liga (A: Double Out, B: Master Out, C: Open Out).
+
 - Nach Abschluss aller Partien eines Spieltags werden die **gewonnenen und verlorenen Legs beider Teams zusammengerechnet**.
+
 - Das Gesamtergebnis entscheidet über den Ausgang des Teamduells und wird automatisch in die Tabelle übernommen.
+
 - Alle Spiele werden über Scolia Boards ausgetragen.
 
 ### 3. Spielplan
 - Der Spielplan wird automatisch erstellt.
+
 - Jedes Team spielt gegen jedes andere Team.
+
 - Die Spieltage werden im Voraus festgelegt.
 
 ### 4. Ergebnisse & Foto-Beweis
 - **Jedes Spiel benötigt einen Foto-Beweis**: Nach dem Match muss ein Team das Ergebnis mit einem Foto (z.B. vom Scolia Board Display) einreichen.
+
 - Das Ergebnis wird über das Team-Dashboard eingetragen.
+
 - Der Gegner muss das eingereichte Ergebnis bestätigen, bevor es offiziell wird.
+
 - Ergebnisse müssen innerhalb von 24 Stunden nach dem Spiel eingetragen werden.
+
 - Beide Teams sind dafür verantwortlich, das Ergebnis zeitnah zu bestätigen.
+
 - Bei Unstimmigkeiten oder fehlender Bestätigung entscheidet die Ligaleitung.
+
 - **Wichtig zur Ergebniseintragung**: Alle gewonnenen und verlorenen Legs werden zusammengezählt und als Gesamtsumme eingetragen. Beispiel: Bei 4x2 Legs (= 8 Legs insgesamt) und ein Team gewinnt alle Legs, muss das Ergebnis als 8:0 eingetragen werden.
 
 ### 5. Punktevergabe
 - Sieg: 3 Punkte
+
 - Unentschieden: 1 Punkt
+
 - Niederlage: 0 Punkte
 
 ### 6. Auf- und Abstieg
 - Am Ende der Saison wird die Tabelle ausgewertet.
+
 - Das **erstplatzierte Team** steigt automatisch in die nächsthöhere Liga auf.
+
 - Das **letztplatzierte Team** steigt in die darunterliegende Liga ab.
+
 - So bleibt die Liga spannend, fair und leistungsorientiert für alle Teams.
 
 ### 7. Fair Play
 - Respektvoller Umgang miteinander ist Pflicht.
+
 - Manipulation oder Betrug führt zum sofortigen Ausschluss.
+
 - Die Ligaleitung behält sich das Recht vor, Entscheidungen zu treffen.
 
 ### 8. Kontakt
