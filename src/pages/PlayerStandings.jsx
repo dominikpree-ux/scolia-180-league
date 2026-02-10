@@ -153,87 +153,20 @@ export default function PlayerStandings() {
             </div>
 
             <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] overflow-hidden">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-[#1a1a1a] hover:bg-transparent">
-                       <TableHead className="text-gray-400 font-semibold">Rang</TableHead>
-                       <TableHead className="text-gray-400 font-semibold">Spieler</TableHead>
-                       <TableHead className="text-gray-400 font-semibold">Team</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">Spiele</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">Siege</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">Niederlagen</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">Legs +/-</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">AVG</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">High</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">100+</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">SG</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">180's</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">Quote %</TableHead>
-                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {statsByLeague[league].map((stat, index) => {
-                      const winPercentage = stat.matches_played > 0
-                        ? ((stat.matches_won / stat.matches_played) * 100).toFixed(1)
-                        : 0;
-                      return (
-                        <TableRow key={stat.stat_id || stat.id} className="border-[#1a1a1a] hover:bg-white/5">
-                          <TableCell className="font-medium">
-                            {index === 0 && (
-                              <div className="flex items-center gap-1.5">
-                                <Trophy className="w-4 h-4 text-yellow-500" />
-                                <span className="text-white">1</span>
-                              </div>
-                            )}
-                            {index === 1 && (
-                              <div className="flex items-center gap-1.5">
-                                <Trophy className="w-4 h-4 text-gray-400" />
-                                <span className="text-white">2</span>
-                              </div>
-                            )}
-                            {index === 2 && (
-                              <div className="flex items-center gap-1.5">
-                                <Trophy className="w-4 h-4 text-amber-600" />
-                                <span className="text-white">3</span>
-                              </div>
-                            )}
-                            {index > 2 && <span className="text-gray-400">{index + 1}</span>}
-                          </TableCell>
-                          <TableCell className="font-medium text-white">{stat.player_name}</TableCell>
-                          <TableCell className="text-gray-400">{stat.team_name}</TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.matches_played}</TableCell>
-                          <TableCell className="text-center text-green-500">{stat.matches_won}</TableCell>
-                          <TableCell className="text-center text-red-500">{stat.matches_lost}</TableCell>
-                          <TableCell className="text-center">
-                            <span className={stat.leg_difference > 0 ? "text-green-500" : stat.leg_difference < 0 ? "text-red-500" : "text-gray-400"}>
-                              {stat.leg_difference > 0 ? "+" : ""}{stat.leg_difference}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.average > 0 ? stat.average.toFixed(2) : "-"}</TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.high_finish > 0 ? stat.high_finish : "-"}</TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.century_count > 0 ? stat.century_count : "-"}</TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.short_game_count > 0 ? stat.short_game_count : "-"}</TableCell>
-                          <TableCell className="text-center text-gray-300">{stat.max_scores_count > 0 ? stat.max_scores_count : "-"}</TableCell>
-                          <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-1.5">
-                              <TrendingUp className="w-3.5 h-3.5 text-gray-500" />
-                              <span className="text-gray-300">{winPercentage}%</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    {statsByLeague[league].length === 0 && (
-                       <TableRow>
-                         <TableCell colSpan={13} className="text-center py-12 text-gray-500">
-                           Noch keine Spieler in dieser Liga
-                         </TableCell>
-                       </TableRow>
-                     )}
-                  </TableBody>
-                </Table>
-              </div>
+              <PlayerStandingsTable 
+                players={statsByLeague[league].map(stat => ({
+                  id: stat.id,
+                  name: stat.player_name,
+                  team_name: stat.team_name,
+                  stats: {
+                    average: stat.average,
+                    high_finish: stat.high_finish,
+                    max_scores_count: stat.max_scores_count,
+                    legs_won: stat.matches_won,
+                    legs_lost: stat.matches_lost,
+                  }
+                }))}
+              />
             </div>
           </div>
         ))}
