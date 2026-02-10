@@ -190,7 +190,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                 min="0"
                 value={matchResult.home_legs}
                 onChange={(e) => setMatchResult({...matchResult, home_legs: parseInt(e.target.value) || 0})}
-                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a] text-white"
               />
             </div>
             <div>
@@ -200,7 +200,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                 min="0"
                 value={matchResult.away_legs}
                 onChange={(e) => setMatchResult({...matchResult, away_legs: parseInt(e.target.value) || 0})}
-                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a] text-white"
               />
             </div>
             <div>
@@ -210,7 +210,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                 min="0"
                 value={matchResult.home_sets}
                 onChange={(e) => setMatchResult({...matchResult, home_sets: parseInt(e.target.value) || 0})}
-                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a] text-white"
               />
             </div>
             <div>
@@ -220,7 +220,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                 min="0"
                 value={matchResult.away_sets}
                 onChange={(e) => setMatchResult({...matchResult, away_sets: parseInt(e.target.value) || 0})}
-                className="text-xs h-8 bg-[#111111] border-[#2a2a2a]"
+                className="text-xs h-8 bg-[#111111] border-[#2a2a2a] text-white"
               />
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       min="0"
                       value={playerStats[player.id]?.legs_won || 0}
                       onChange={(e) => updatePlayerStat(player.id, "legs_won", e.target.value)}
-                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
                   <div>
@@ -253,7 +253,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       min="0"
                       value={playerStats[player.id]?.legs_lost || 0}
                       onChange={(e) => updatePlayerStat(player.id, "legs_lost", e.target.value)}
-                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
                   <div>
@@ -263,7 +263,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       step="0.01"
                       value={playerStats[player.id]?.average || 0}
                       onChange={(e) => updatePlayerStat(player.id, "average", e.target.value)}
-                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
                   <div>
@@ -272,7 +272,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       type="number"
                       value={playerStats[player.id]?.high_finish || 0}
                       onChange={(e) => updatePlayerStat(player.id, "high_finish", e.target.value)}
-                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
                   <div>
@@ -282,7 +282,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       min="0"
                       value={playerStats[player.id]?.centuries || 0}
                       onChange={(e) => updatePlayerStat(player.id, "centuries", e.target.value)}
-                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
                   <div className="flex items-end">
