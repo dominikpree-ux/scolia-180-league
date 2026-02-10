@@ -30,6 +30,7 @@ const defaultRules = `
 - Ergebnisse müssen innerhalb von 24 Stunden nach dem Spiel eingetragen werden.
 - Beide Teams sind dafür verantwortlich, das Ergebnis zeitnah zu bestätigen.
 - Bei Unstimmigkeiten oder fehlender Bestätigung entscheidet die Ligaleitung.
+- **Wichtig zur Ergebniseintragung**: Alle gewonnenen und verlorenen Legs werden zusammengezählt und als Gesamtsumme eingetragen. Beispiel: Bei 4x2 Legs (= 8 Legs insgesamt) und ein Team gewinnt alle Legs, muss das Ergebnis als 8:0 eingetragen werden.
 
 ### 5. Punktevergabe
 - Sieg: 3 Punkte
