@@ -83,6 +83,60 @@ export default function Teams() {
             ))}
           </div>
         )}
+
+        {/* Team Details Dialog */}
+        <Dialog open={!!selectedTeam} onOpenChange={(open) => !open && setSelectedTeam(null)}>
+          <DialogContent className="bg-[#111111] border-[#1a1a1a] text-white max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold flex items-center gap-3">
+                {selectedTeam?.logo_url ? (
+                  <img src={selectedTeam.logo_url} alt={selectedTeam?.name} className="w-10 h-10 rounded-lg object-cover" />
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-red-600/10 flex items-center justify-center">
+                    <span className="text-lg font-bold text-red-400">{selectedTeam?.name?.charAt(0)}</span>
+                  </div>
+                )}
+                {selectedTeam?.name}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 mt-2">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <MapPin className="w-4 h-4" />
+                  <span>{selectedTeam?.scolia_location || "Standort nicht angegeben"}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <Trophy className="w-4 h-4" />
+                  <span>Liga {selectedTeam?.league_tier} • {selectedTeam?.points || 0} Punkte</span>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Spieler ({getTeamPlayers(selectedTeam?.id).length})
+                </h4>
+                <div className="space-y-2">
+                  {getTeamPlayers(selectedTeam?.id).map((player) => (
+                    <div key={player.id} className="flex items-center gap-3 p-3 rounded-lg bg-[#0a0a0a]">
+                      <div className="w-8 h-8 rounded-full bg-red-600/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-red-400">{player.name?.charAt(0)?.toUpperCase()}</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-white">{player.name}</div>
+                        {player.nickname && <div className="text-xs text-gray-500">"{player.nickname}"</div>}
+                      </div>
+                      {player.is_captain && (
+                        <span className="text-[10px] bg-yellow-500/10 text-yellow-400 px-2 py-1 rounded font-medium">Kapitän</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
