@@ -10,6 +10,10 @@ const defaultRules = `
 ### 1. Teilnahme & Ligen
 - Jedes Team besteht aus mindestens 4 und maximal 6 Spielern.
 
+- **Spielberechtigung**: Pro Spieltag können nur 4 Spieler aktiv spielen. Die restlichen 2 Spieler sind auf der Ersatzbank.
+
+- Bei Bedarf können Spieler zwischen aktiven Spielern und Ersatzbank ausgetauscht werden.
+
 - Ein Spieler darf nur für ein Team registriert sein.
 
 - Bei der Registrierung muss die Scolia ID (zu finden in den Profil-Einstellungen) angegeben werden.
@@ -30,7 +34,7 @@ const defaultRules = `
 - Teams spielen nur gegen andere Teams ihrer eigenen Liga
 
 ### 2. Spielformat & Ablauf
-- Wenn zwei Teams aufeinandertreffen, spielt **jeder Spieler eines Teams gegen jeden Spieler des gegnerischen Teams**.
+- Wenn zwei Teams aufeinandertreffen, spielt **jeder der 4 aktiven Spieler eines Teams gegen jeden der 4 aktiven Spieler des gegnerischen Teams** (= 16 Einzelspiele pro Spieltag).
 
 - Alle Spiele werden im Modus **First to 3 Legs** ausgetragen.
 
