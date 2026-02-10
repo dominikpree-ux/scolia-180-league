@@ -45,10 +45,12 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <img 
+          <motion.img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698ae2909b02ce9f29cfad93/8fbc0d794_180logowei.png" 
             alt="Scolia 180 League" 
-            className="h-80 w-auto mx-auto mb-12"
+            className="h-96 w-auto mx-auto mb-12"
+            animate={{ y: [0, -15, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           />
 
           <p className="text-lg sm:text-xl text-gray-400 font-light tracking-wide max-w-xl mx-auto mb-10">
