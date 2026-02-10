@@ -57,9 +57,7 @@ export default function ResultsManager() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
-      queryClient.invalidateQueries({ queryKey: ["matches-recent"] });
+      queryClient.invalidateQueries();
       setEditingMatch(null);
       toast.success("Ergebnis gespeichert und Tabelle aktualisiert!");
     },
@@ -68,8 +66,7 @@ export default function ResultsManager() {
   const deleteMatch = useMutation({
     mutationFn: (id) => base44.entities.Match.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
-      queryClient.invalidateQueries({ queryKey: ["matches-recent"] });
+      queryClient.invalidateQueries();
       toast.success("Spiel gelöscht!");
     },
   });
