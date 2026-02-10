@@ -22,21 +22,23 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background effects */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#0a0a0a] to-[#0a0a0a]" />
-        {/* Dartboard rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.03]">
-          <div className="absolute inset-0 rounded-full border-2 border-red-500" />
-          <div className="absolute inset-[15%] rounded-full border border-white/50" />
-          <div className="absolute inset-[30%] rounded-full border border-red-500/50" />
-          <div className="absolute inset-[45%] rounded-full border border-white/30" />
-          <div className="absolute inset-[48%] rounded-full bg-red-600/20" />
-        </div>
-        {/* Red glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px]" />
-        {/* Grid lines */}
-        <div className="absolute inset-0 opacity-[0.015]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+       <div className="absolute inset-0">
+         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a]" />
+         {/* Dartboard rings */}
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.08]">
+           <div className="absolute inset-0 rounded-full border-2 border-red-600" />
+           <div className="absolute inset-[15%] rounded-full border border-red-500/60" />
+           <div className="absolute inset-[30%] rounded-full border border-red-600/50" />
+           <div className="absolute inset-[45%] rounded-full border border-red-500/40" />
+           <div className="absolute inset-[48%] rounded-full bg-red-600/15" />
+         </div>
+         {/* Primary red glow */}
+         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/10 rounded-full blur-[140px]" />
+         {/* Secondary accent glow */}
+         <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[120px]" />
+         {/* Grid lines */}
+         <div className="absolute inset-0 opacity-[0.03]"
+           style={{ backgroundImage: "linear-gradient(#dc2626 1px, transparent 1px), linear-gradient(90deg, #dc2626 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
