@@ -330,14 +330,15 @@ export default function Dashboard() {
                         onCancel={() => setSelectingLineupMatchId(null)}
                       />
                     ) : editingMatchId === match.id ? (
-                      <MatchResultForm
+                      <DetailedMatchResultForm
                         match={match}
-                        myTeamId={team.id}
+                        homePlayers={players.filter(p => match.home_active_players?.includes(p.id))}
+                        awayPlayers={players.filter(p => match.away_active_players?.includes(p.id))}
+                        onCancel={() => setEditingMatchId(null)}
                         onSuccess={() => {
                           setEditingMatchId(null);
                           queryClient.invalidateQueries({ queryKey: ["team-matches"] });
                         }}
-                        onCancel={() => setEditingMatchId(null)}
                       />
                     ) : (
                       <div className="rounded-xl border bg-[#111111] border-[#1a1a1a] p-4 hover:border-red-600/20 transition-colors">
