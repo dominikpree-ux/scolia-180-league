@@ -8,7 +8,7 @@ const defaultRules = `
 ## Allgemeine Regeln
 
 ### 1. Teilnahme
-- Jedes Team besteht aus mindestens 2 und maximal 6 Spielern.
+- Jedes Team besteht aus mindestens 4 und maximal 6 Spielern.
 - Ein Spieler darf nur für ein Team registriert sein.
 - Der Teamkapitän ist verantwortlich für die Koordination.
 

@@ -14,12 +14,16 @@ export default function Register() {
     captain_email: "",
     scolia_location: "",
   });
-  const [playerNames, setPlayerNames] = useState([""]);
+  const [playerNames, setPlayerNames] = useState(["", "", ""]);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
   const addPlayer = () => setPlayerNames([...playerNames, ""]);
-  const removePlayer = (i) => setPlayerNames(playerNames.filter((_, idx) => idx !== i));
+  const removePlayer = (i) => {
+    if (playerNames.length > 3) {
+      setPlayerNames(playerNames.filter((_, idx) => idx !== i));
+    }
+  };
   const updatePlayer = (i, val) => {
     const updated = [...playerNames];
     updated[i] = val;
@@ -28,6 +32,13 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const validPlayers = playerNames.filter(n => n.trim());
+    if (validPlayers.length < 3) {
+      toast.error("Mindestens 3 weitere Spieler erforderlich (4 gesamt inkl. Kapitän)!");
+      return;
+    }
+    
     setSubmitting(true);
 
     const team = await base44.entities.Team.create({
@@ -46,16 +57,13 @@ export default function Register() {
     });
 
     // Create additional players
-    const validPlayers = playerNames.filter(n => n.trim());
-    if (validPlayers.length > 0) {
-      await base44.entities.Player.bulkCreate(
-        validPlayers.map(name => ({
-          name,
-          team_id: team.id,
-          is_captain: false,
-        }))
-      );
-    }
+    await base44.entities.Player.bulkCreate(
+      validPlayers.map(name => ({
+        name,
+        team_id: team.id,
+        is_captain: false,
+      }))
+    );
 
     setSubmitting(false);
     setDone(true);
@@ -161,7 +169,7 @@ export default function Register() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-red-500" />
-                Weitere Spieler
+                Weitere Spieler (mind. 3 erforderlich)
               </h3>
               <Button type="button" variant="ghost" size="sm" onClick={addPlayer}
                 className="text-red-400 hover:text-red-300 hover:bg-red-600/10 border-0">
@@ -172,12 +180,13 @@ export default function Register() {
               {playerNames.map((name, i) => (
                 <div key={i} className="flex gap-2">
                   <Input
+                    required
                     value={name}
                     onChange={(e) => updatePlayer(i, e.target.value)}
                     className="bg-[#0a0a0a] border-[#2a2a2a] text-white placeholder:text-gray-600 focus:border-red-600"
-                    placeholder={`Spieler ${i + 1} Name`}
+                    placeholder={`Spieler ${i + 1} Name *`}
                   />
-                  {playerNames.length > 1 && (
+                  {playerNames.length > 3 && (
                     <Button type="button" variant="ghost" size="icon" onClick={() => removePlayer(i)}
                       className="text-gray-500 hover:text-red-400 hover:bg-red-600/10 border-0 shrink-0">
                       <X className="w-4 h-4" />
