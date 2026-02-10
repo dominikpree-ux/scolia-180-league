@@ -52,17 +52,20 @@ export default function ScheduleGenerator() {
     }
 
     setGenerating(true);
-    const schedule = generateRoundRobin(teams);
+    const firstLeg = generateRoundRobin(teams);
     const start = startDate ? new Date(startDate) : new Date();
 
     const allMatches = [];
-    schedule.forEach((round, roundIdx) => {
+    let matchdayCounter = 1;
+
+    // Hinrunde
+    firstLeg.forEach((round, roundIdx) => {
       const matchDate = new Date(start);
       matchDate.setDate(matchDate.getDate() + (roundIdx * 7));
       
       round.forEach((match) => {
         allMatches.push({
-          matchday: roundIdx + 1,
+          matchday: matchdayCounter,
           home_team_id: match.home.id,
           away_team_id: match.away.id,
           home_team_name: match.home.name,
@@ -71,6 +74,26 @@ export default function ScheduleGenerator() {
           status: "scheduled",
         });
       });
+      matchdayCounter++;
+    });
+
+    // Rückrunde (Heim/Auswärts getauscht)
+    firstLeg.forEach((round, roundIdx) => {
+      const matchDate = new Date(start);
+      matchDate.setDate(matchDate.getDate() + ((firstLeg.length + roundIdx) * 7));
+      
+      round.forEach((match) => {
+        allMatches.push({
+          matchday: matchdayCounter,
+          home_team_id: match.away.id, // Getauscht
+          away_team_id: match.home.id, // Getauscht
+          home_team_name: match.away.name, // Getauscht
+          away_team_name: match.home.name, // Getauscht
+          date: matchDate.toISOString().split("T")[0],
+          status: "scheduled",
+        });
+      });
+      matchdayCounter++;
     });
 
     if (allMatches.length > 0) {
