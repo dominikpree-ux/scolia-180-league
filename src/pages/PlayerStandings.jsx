@@ -6,7 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Target, TrendingUp } from "lucide-react";
 
 export default function PlayerStandings() {
+  const [allPlayers, setAllPlayers] = useState([]);
   const [playerStats, setPlayerStats] = useState([]);
+
+  const { data: players = [] } = useQuery({
+    queryKey: ["allPlayers"],
+    queryFn: () => base44.entities.Player.list(),
+  });
+
+  const { data: teams = [] } = useQuery({
+    queryKey: ["allTeams"],
+    queryFn: () => base44.entities.Team.filter({ status: "approved" }),
+  });
 
   const { data: initialStats = [] } = useQuery({
     queryKey: ["playerStats"],
@@ -16,6 +27,10 @@ export default function PlayerStandings() {
   useEffect(() => {
     setPlayerStats(initialStats);
   }, [initialStats]);
+
+  useEffect(() => {
+    setAllPlayers(players);
+  }, [players]);
 
   useEffect(() => {
     const unsubscribe = base44.entities.PlayerStats.subscribe((event) => {
@@ -33,21 +48,66 @@ export default function PlayerStandings() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = base44.entities.Player.subscribe((event) => {
+      setAllPlayers((prev) => {
+        if (event.type === "create") {
+          return [...prev, event.data];
+        } else if (event.type === "update") {
+          return prev.map((p) => (p.id === event.id ? event.data : p));
+        } else if (event.type === "delete") {
+          return prev.filter((p) => p.id !== event.id);
+        }
+        return prev;
+      });
+    });
+    return unsubscribe;
+  }, []);
+
+  // Kombiniere Spieler mit Stats
+  const getPlayerDisplayData = () => {
+    const playerMap = new Map();
+    const teamMap = new Map(teams.map(t => [t.id, t]));
+
+    // Alle Spieler mit ihren Teams hinzufügen
+    allPlayers.forEach(player => {
+      const team = teamMap.get(player.team_id);
+      if (team) {
+        const stat = playerStats.find(s => s.player_id === player.id);
+        playerMap.set(player.id, {
+          id: player.id,
+          player_name: player.name,
+          team_name: team.name,
+          league_tier: team.league_tier,
+          matches_played: stat?.matches_played || 0,
+          matches_won: stat?.matches_won || 0,
+          matches_lost: stat?.matches_lost || 0,
+          leg_difference: stat?.leg_difference || 0,
+          stat_id: stat?.id,
+        });
+      }
+    });
+
+    return playerMap;
+  };
+
+  const playerDisplayMap = getPlayerDisplayData();
+
   // Gruppiere nach Liga
   const statsByLeague = {
-    A: playerStats.filter(s => s.league_tier === "A").sort((a, b) => {
+    A: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "A").sort((a, b) => {
       const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
       const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
       if (bWinRate !== aWinRate) return bWinRate - aWinRate;
       return b.leg_difference - a.leg_difference;
     }),
-    B: playerStats.filter(s => s.league_tier === "B").sort((a, b) => {
+    B: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "B").sort((a, b) => {
       const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
       const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
       if (bWinRate !== aWinRate) return bWinRate - aWinRate;
       return b.leg_difference - a.leg_difference;
     }),
-    C: playerStats.filter(s => s.league_tier === "C").sort((a, b) => {
+    C: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "C").sort((a, b) => {
       const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
       const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
       if (bWinRate !== aWinRate) return bWinRate - aWinRate;
@@ -105,7 +165,7 @@ export default function PlayerStandings() {
                         ? ((stat.matches_won / stat.matches_played) * 100).toFixed(1)
                         : 0;
                       return (
-                        <TableRow key={stat.id} className="border-[#1a1a1a] hover:bg-white/5">
+                        <TableRow key={stat.stat_id || stat.id} className="border-[#1a1a1a] hover:bg-white/5">
                           <TableCell className="font-medium">
                             {index === 0 && (
                               <div className="flex items-center gap-1.5">
