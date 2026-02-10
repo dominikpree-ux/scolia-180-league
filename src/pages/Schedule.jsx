@@ -6,17 +6,23 @@ import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Schedule() {
+  const [selectedLeague, setSelectedLeague] = useState("all");
+
   const { data: matches = [], isLoading } = useQuery({
     queryKey: ["matches"],
     queryFn: () => base44.entities.Match.list("matchday"),
   });
 
-  const matchdays = [...new Set(matches.map(m => m.matchday))].sort((a, b) => a - b);
+  const leagueFilteredMatches = selectedLeague === "all"
+    ? matches
+    : matches.filter(m => m.league_tier === selectedLeague);
+
+  const matchdays = [...new Set(leagueFilteredMatches.map(m => m.matchday))].sort((a, b) => a - b);
   const [selectedDay, setSelectedDay] = useState(null);
 
   const filteredMatches = selectedDay
-    ? matches.filter(m => m.matchday === selectedDay)
-    : matches;
+    ? leagueFilteredMatches.filter(m => m.matchday === selectedDay)
+    : leagueFilteredMatches;
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6">
@@ -29,6 +35,42 @@ export default function Schedule() {
             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Spielplan</h1>
             <p className="text-gray-500 text-sm mt-0.5">Alle Spieltage und Begegnungen</p>
           </div>
+        </div>
+
+        {/* League filter */}
+        <div className="flex gap-2 mb-4 flex-wrap">
+          <Button
+            variant={selectedLeague === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedLeague("all")}
+            className={selectedLeague === "all" ? "bg-red-600 hover:bg-red-500 text-white" : "text-gray-400 hover:text-white border-[#2a2a2a]"}
+          >
+            Alle Ligen
+          </Button>
+          <Button
+            variant={selectedLeague === "A" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedLeague("A")}
+            className={selectedLeague === "A" ? "bg-yellow-600 hover:bg-yellow-500 text-white" : "text-gray-400 hover:text-white border-[#2a2a2a]"}
+          >
+            Liga A
+          </Button>
+          <Button
+            variant={selectedLeague === "B" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedLeague("B")}
+            className={selectedLeague === "B" ? "bg-blue-600 hover:bg-blue-500 text-white" : "text-gray-400 hover:text-white border-[#2a2a2a]"}
+          >
+            Liga B
+          </Button>
+          <Button
+            variant={selectedLeague === "C" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedLeague("C")}
+            className={selectedLeague === "C" ? "bg-green-600 hover:bg-green-500 text-white" : "text-gray-400 hover:text-white border-[#2a2a2a]"}
+          >
+            Liga C
+          </Button>
         </div>
 
         {/* Matchday filter */}
@@ -84,7 +126,7 @@ export default function Schedule() {
                     Spieltag {day}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {matches.filter(m => m.matchday === day).map((match) => (
+                    {leagueFilteredMatches.filter(m => m.matchday === day).map((match) => (
                       <MatchCard key={match.id} match={match} />
                     ))}
                   </div>

@@ -14,6 +14,7 @@ export default function Register() {
     captain_name: "",
     captain_email: "",
     scolia_location: "",
+    average_group: "B",
   });
   const [playerNames, setPlayerNames] = useState(["", "", ""]);
   const [submitting, setSubmitting] = useState(false);
@@ -44,6 +45,7 @@ export default function Register() {
 
     const team = await base44.entities.Team.create({
       ...form,
+      league_tier: form.average_group,
       status: "pending",
       points: 0, wins: 0, draws: 0, losses: 0,
       legs_won: 0, legs_lost: 0, sets_won: 0, sets_lost: 0,
@@ -130,6 +132,20 @@ export default function Register() {
                   className="bg-[#0a0a0a] border-[#2a2a2a] text-white placeholder:text-gray-600 focus:border-red-600"
                   placeholder="z.B. Berlin, Wohnzimmer"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-gray-400 text-sm">Average-Gruppe *</Label>
+                <Select value={form.average_group} onValueChange={(val) => setForm({ ...form, average_group: val })}>
+                  <SelectTrigger className="bg-[#0a0a0a] border-[#2a2a2a] text-white focus:border-red-600">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#111111] border-[#2a2a2a]">
+                    <SelectItem value="A" className="text-white focus:bg-white/5">Gruppe A (Double Out)</SelectItem>
+                    <SelectItem value="B" className="text-white focus:bg-white/5">Gruppe B (Master Out)</SelectItem>
+                    <SelectItem value="C" className="text-white focus:bg-white/5">Gruppe C (Open Out)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">Wähle deine Average-Gruppe aus dem Scolia-Profil. Bestimmt die Liga und das Spielformat.</p>
               </div>
             </div>
           </div>

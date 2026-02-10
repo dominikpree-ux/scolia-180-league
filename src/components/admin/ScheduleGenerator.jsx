@@ -12,10 +12,16 @@ export default function ScheduleGenerator() {
   const [generating, setGenerating] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: teams = [] } = useQuery({
+  const { data: allTeams = [] } = useQuery({
     queryKey: ["admin-teams-approved"],
     queryFn: () => base44.entities.Team.filter({ status: "approved" }),
   });
+
+  const teamsByTier = {
+    A: allTeams.filter(t => t.league_tier === "A"),
+    B: allTeams.filter(t => t.league_tier === "B"),
+    C: allTeams.filter(t => t.league_tier === "C"),
+  };
 
   const generateRoundRobin = (teamList) => {
     const n = teamList.length;
@@ -46,70 +52,79 @@ export default function ScheduleGenerator() {
   };
 
   const handleGenerate = async () => {
-    if (teams.length < 2) {
-      toast.error("Mindestens 2 freigegebene Teams nötig!");
+    setGenerating(true);
+    const start = startDate ? new Date(startDate) : new Date();
+    const allMatches = [];
+
+    // Generate for each league tier separately
+    for (const [tier, teams] of Object.entries(teamsByTier)) {
+      if (teams.length < 2) continue;
+
+      const firstLeg = generateRoundRobin(teams);
+      let matchdayCounter = 1;
+
+      // Hinrunde
+      firstLeg.forEach((round, roundIdx) => {
+        const matchDate = new Date(start);
+        matchDate.setDate(matchDate.getDate() + (roundIdx * 7));
+        
+        round.forEach((match) => {
+          allMatches.push({
+            matchday: matchdayCounter,
+            league_tier: tier,
+            home_team_id: match.home.id,
+            away_team_id: match.away.id,
+            home_team_name: match.home.name,
+            away_team_name: match.away.name,
+            date: matchDate.toISOString().split("T")[0],
+            status: "scheduled",
+          });
+        });
+        matchdayCounter++;
+      });
+
+      // Rückrunde
+      firstLeg.forEach((round, roundIdx) => {
+        const matchDate = new Date(start);
+        matchDate.setDate(matchDate.getDate() + ((firstLeg.length + roundIdx) * 7));
+        
+        round.forEach((match) => {
+          allMatches.push({
+            matchday: matchdayCounter,
+            league_tier: tier,
+            home_team_id: match.away.id,
+            away_team_id: match.home.id,
+            home_team_name: match.away.name,
+            away_team_name: match.home.name,
+            date: matchDate.toISOString().split("T")[0],
+            status: "scheduled",
+          });
+        });
+        matchdayCounter++;
+      });
+    }
+
+    if (allMatches.length === 0) {
+      toast.error("Keine Spiele generiert. Mindestens 2 Teams pro Liga erforderlich.");
+      setGenerating(false);
       return;
     }
 
-    setGenerating(true);
-    const firstLeg = generateRoundRobin(teams);
-    const start = startDate ? new Date(startDate) : new Date();
-
-    const allMatches = [];
-    let matchdayCounter = 1;
-
-    // Hinrunde
-    firstLeg.forEach((round, roundIdx) => {
-      const matchDate = new Date(start);
-      matchDate.setDate(matchDate.getDate() + (roundIdx * 7));
-      
-      round.forEach((match) => {
-        allMatches.push({
-          matchday: matchdayCounter,
-          home_team_id: match.home.id,
-          away_team_id: match.away.id,
-          home_team_name: match.home.name,
-          away_team_name: match.away.name,
-          date: matchDate.toISOString().split("T")[0],
-          status: "scheduled",
-        });
-      });
-      matchdayCounter++;
-    });
-
-    // Rückrunde (Heim/Auswärts getauscht)
-    firstLeg.forEach((round, roundIdx) => {
-      const matchDate = new Date(start);
-      matchDate.setDate(matchDate.getDate() + ((firstLeg.length + roundIdx) * 7));
-      
-      round.forEach((match) => {
-        allMatches.push({
-          matchday: matchdayCounter,
-          home_team_id: match.away.id, // Getauscht
-          away_team_id: match.home.id, // Getauscht
-          home_team_name: match.away.name, // Getauscht
-          away_team_name: match.home.name, // Getauscht
-          date: matchDate.toISOString().split("T")[0],
-          status: "scheduled",
-        });
-      });
-      matchdayCounter++;
-    });
-
-    if (allMatches.length > 0) {
-      await base44.entities.Match.bulkCreate(allMatches);
-    }
-
+    await base44.entities.Match.bulkCreate(allMatches);
     queryClient.invalidateQueries({ queryKey: ["matches"] });
     setGenerating(false);
-    toast.success(`${allMatches.length} Spiele erstellt!`);
+    toast.success(`${allMatches.length} Spiele für alle Ligen erstellt!`);
   };
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-500">
-        Erstellt automatisch einen Doppel-Round-Robin Spielplan für alle {teams.length} freigegebenen Teams (Hin- und Rückrunde).
-      </p>
+      <div className="text-sm text-gray-500 space-y-1">
+        <p className="font-semibold">Teams pro Liga:</p>
+        <p>• Liga A: {teamsByTier.A.length} Teams (Double Out)</p>
+        <p>• Liga B: {teamsByTier.B.length} Teams (Master Out)</p>
+        <p>• Liga C: {teamsByTier.C.length} Teams (Open Out)</p>
+        <p className="mt-2 text-xs">Generiert separate Spielpläne für jede Liga.</p>
+      </div>
 
       <div className="space-y-2">
         <Label className="text-gray-400 text-sm">Start-Datum</Label>
@@ -123,7 +138,7 @@ export default function ScheduleGenerator() {
 
       <Button
         onClick={handleGenerate}
-        disabled={generating || teams.length < 2}
+        disabled={generating}
         className="bg-red-600 hover:bg-red-500 text-white border-0"
       >
         {generating ? (
@@ -132,10 +147,6 @@ export default function ScheduleGenerator() {
           <><Zap className="w-4 h-4 mr-2" /> Spielplan generieren</>
         )}
       </Button>
-
-      {teams.length < 2 && (
-        <p className="text-xs text-yellow-400">Mindestens 2 freigegebene Teams werden benötigt.</p>
-      )}
     </div>
   );
 }

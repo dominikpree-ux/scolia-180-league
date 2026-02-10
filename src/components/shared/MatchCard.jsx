@@ -1,7 +1,8 @@
 import React from "react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function MatchCard({ match }) {
   const isCompleted = match.status === "completed";
@@ -45,6 +46,16 @@ export default function MatchCard({ match }) {
             </span>
           )}
         </div>
+
+        {/* League tier badge */}
+        {match.league_tier && (
+          <div className="mb-3">
+            <Badge className={`text-xs ${leagueColorMap[match.league_tier]}`}>
+              <Target className="w-3 h-3 mr-1" />
+              Liga {match.league_tier} · {leagueFormatMap[match.league_tier]}
+            </Badge>
+          </div>
+        )}
 
         {/* Teams */}
         <div className="flex items-center gap-3">
