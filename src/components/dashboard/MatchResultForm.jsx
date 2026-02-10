@@ -162,7 +162,7 @@ export default function MatchResultForm({ match, myTeamId, onSuccess, onCancel }
         )}
       </Button>
       <p className="text-xs text-gray-500 text-center">
-        Das Ergebnis muss vom Gegner bestätigt werden.
+        Trage die Gesamtsumme aller Legs ein (4x4 Spieler = 16 Einzelspiele). Das Ergebnis muss vom Gegner bestätigt werden.
       </p>
     </Card>
   );

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target, Upload, CheckCircle, AlertCircle, Image } from "lucide-react";
 import { toast } from "sonner";
 import MatchResultForm from "../components/dashboard/MatchResultForm";
+import PlayerLineupSelector from "../components/dashboard/PlayerLineupSelector";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const [editForm, setEditForm] = useState({});
   const [newPlayerName, setNewPlayerName] = useState("");
   const [editingMatchId, setEditingMatchId] = useState(null);
+  const [selectingLineupMatchId, setSelectingLineupMatchId] = useState(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const queryClient = useQueryClient();
 
@@ -310,10 +312,23 @@ export default function Dashboard() {
                 const needsConfirmation = match.status === "result_submitted" && match.needs_confirmation_from === team.id;
                 const waitingForConfirmation = match.status === "result_submitted" && match.submitted_by_team_id === team.id;
                 const canSubmit = match.status === "scheduled";
+                const myLineup = isHome ? match.home_active_players : match.away_active_players;
+                const hasLineup = myLineup && myLineup.length === 4;
 
                 return (
                   <div key={match.id}>
-                    {editingMatchId === match.id ? (
+                    {selectingLineupMatchId === match.id ? (
+                      <PlayerLineupSelector
+                        match={match}
+                        myTeamId={team.id}
+                        players={players}
+                        onSuccess={() => {
+                          setSelectingLineupMatchId(null);
+                          queryClient.invalidateQueries({ queryKey: ["team-matches"] });
+                        }}
+                        onCancel={() => setSelectingLineupMatchId(null)}
+                      />
+                    ) : editingMatchId === match.id ? (
                       <MatchResultForm
                         match={match}
                         myTeamId={team.id}
@@ -349,6 +364,11 @@ export default function Dashboard() {
 
                         {/* Status badges */}
                         <div className="flex items-center gap-2 flex-wrap">
+                          {hasLineup && (
+                            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs">
+                              <Users className="w-3 h-3 mr-1" /> Aufstellung festgelegt
+                            </Badge>
+                          )}
                           {match.status === "completed" && (
                             <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-xs">
                               <CheckCircle className="w-3 h-3 mr-1" /> Abgeschlossen
@@ -371,13 +391,25 @@ export default function Dashboard() {
                         {/* Actions */}
                         <div className="flex gap-2 mt-3">
                           {canSubmit && (
-                            <Button
-                              size="sm"
-                              onClick={() => setEditingMatchId(match.id)}
-                              className="bg-red-600 hover:bg-red-500 text-white border-0 text-xs h-8"
-                            >
-                              <Upload className="w-3 h-3 mr-1" /> Ergebnis eintragen
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                onClick={() => setSelectingLineupMatchId(match.id)}
+                                variant={hasLineup ? "outline" : "default"}
+                                className={hasLineup ? "border-[#2a2a2a] text-gray-400 hover:text-white text-xs h-8" : "bg-blue-600 hover:bg-blue-500 text-white border-0 text-xs h-8"}
+                              >
+                                <Users className="w-3 h-3 mr-1" /> {hasLineup ? "Aufstellung ändern" : "Aufstellung wählen"}
+                              </Button>
+                              {hasLineup && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => setEditingMatchId(match.id)}
+                                  className="bg-red-600 hover:bg-red-500 text-white border-0 text-xs h-8"
+                                >
+                                  <Upload className="w-3 h-3 mr-1" /> Ergebnis eintragen
+                                </Button>
+                              )}
+                            </>
                           )}
                           {needsConfirmation && (
                             <Button
