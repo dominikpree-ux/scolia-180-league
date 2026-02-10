@@ -108,7 +108,7 @@ export default function ScheduleGenerator() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-500">
-        Erstellt automatisch einen Round-Robin Spielplan für alle {teams.length} freigegebenen Teams.
+        Erstellt automatisch einen Doppel-Round-Robin Spielplan für alle {teams.length} freigegebenen Teams (Hin- und Rückrunde).
       </p>
 
       <div className="space-y-2">
