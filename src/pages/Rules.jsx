@@ -22,8 +22,8 @@ const defaultRules = `
 - Teams spielen nur gegen andere Teams ihrer eigenen Liga
 
 ### 2. Spielformat
-- Gespielt wird **First to 3, Double Out**.
-- Das erste Team, das 3 Legs gewinnt, gewinnt das Match.
+- Gespielt wird **First to 3** im jeweiligen Liga-Modus.
+- Jedes Match besteht aus mehreren Legs (z.B. 4x2 Legs = 8 Legs insgesamt).
 - Alle Spiele werden über Scolia Boards ausgetragen.
 
 ### 3. Spielplan
