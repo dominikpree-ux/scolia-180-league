@@ -116,12 +116,7 @@ export default function Dashboard() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-matches"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-teams"] });
-      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
-      queryClient.invalidateQueries({ queryKey: ["matches-recent"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
+      queryClient.invalidateQueries();
       toast.success("Ergebnis bestätigt und Tabelle aktualisiert!");
     },
   });
