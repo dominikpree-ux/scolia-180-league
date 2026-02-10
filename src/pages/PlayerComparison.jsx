@@ -1,17 +1,20 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Zap, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function PlayerComparison() {
   const [player1Id, setPlayer1Id] = useState("");
   const [player2Id, setPlayer2Id] = useState("");
-  const [search1, setSearch1] = useState("");
-  const [search2, setSearch2] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const p1 = params.get("p1");
+    if (p1) setPlayer1Id(p1);
+  }, []);
 
   const { data: allPlayers = [] } = useQuery({
     queryKey: ["players"],
