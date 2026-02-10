@@ -184,7 +184,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
           <Label className="text-gray-400 text-sm mb-3 block">Match-Endergebnis *</Label>
           <div className="grid grid-cols-4 gap-2">
             <div>
-              <Label className="text-xs text-gray-500">Home Beine</Label>
+              <Label className="text-xs text-gray-500">Home Legs</Label>
               <Input
                 type="number"
                 min="0"
@@ -194,7 +194,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
               />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">Away Beine</Label>
+              <Label className="text-xs text-gray-500">Away Legs</Label>
               <Input
                 type="number"
                 min="0"
@@ -237,7 +237,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-xs text-gray-500">Beine gewonnen</Label>
+                    <Label className="text-xs text-gray-500">Legs gewonnen</Label>
                     <Input
                       type="number"
                       min="0"
@@ -247,7 +247,7 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-gray-500">Beine verloren</Label>
+                    <Label className="text-xs text-gray-500">Legs verloren</Label>
                     <Input
                       type="number"
                       min="0"
