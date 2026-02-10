@@ -27,6 +27,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Tabelle", page: "Standings" },
     { name: "Spielplan", page: "Schedule" },
     { name: "Teams", page: "Teams" },
+    { name: "Chat", page: "Chat" },
     { name: "Regeln", page: "Rules" },
     { name: "Kontakt", page: "Contact" },
   ];
