@@ -53,12 +53,12 @@ import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Impressum from './pages/Impressum';
+import PlayerStandings from './pages/PlayerStandings';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
-import PlayerStandings from './pages/PlayerStandings';
 import __Layout from './Layout.jsx';
 
 
@@ -69,12 +69,12 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Home": Home,
     "Impressum": Impressum,
+    "PlayerStandings": PlayerStandings,
     "Register": Register,
     "Rules": Rules,
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
-    "PlayerStandings": PlayerStandings,
 }
 
 export const pagesConfig = {

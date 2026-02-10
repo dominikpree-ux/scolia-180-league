@@ -11,6 +11,7 @@ import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target,
 import { toast } from "sonner";
 import MatchResultForm from "../components/dashboard/MatchResultForm";
 import DetailedMatchResultForm from "../components/dashboard/DetailedMatchResultForm";
+import SimpleMatchResultForm from "../components/dashboard/SimpleMatchResultForm";
 import PlayerLineupSelector from "../components/dashboard/PlayerLineupSelector";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -330,16 +331,15 @@ export default function Dashboard() {
                         onCancel={() => setSelectingLineupMatchId(null)}
                       />
                     ) : editingMatchId === match.id ? (
-                      <DetailedMatchResultForm
-                        match={match}
-                        homePlayers={players.filter(p => match.home_active_players?.includes(p.id))}
-                        awayPlayers={players.filter(p => match.away_active_players?.includes(p.id))}
-                        onCancel={() => setEditingMatchId(null)}
-                        onSuccess={() => {
-                          setEditingMatchId(null);
-                          queryClient.invalidateQueries({ queryKey: ["team-matches"] });
-                        }}
-                      />
+                       <SimpleMatchResultForm
+                         match={match}
+                         allPlayers={players}
+                         onCancel={() => setEditingMatchId(null)}
+                         onSuccess={() => {
+                           setEditingMatchId(null);
+                           queryClient.invalidateQueries({ queryKey: ["team-matches"] });
+                         }}
+                       />
                     ) : (
                       <div className="rounded-xl border bg-[#111111] border-[#1a1a1a] p-4 hover:border-red-600/20 transition-colors">
                         <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
