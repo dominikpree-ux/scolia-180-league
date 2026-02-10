@@ -31,13 +31,7 @@ export default function PlayerComparison() {
     queryFn: () => base44.entities.PlayerStats.list(),
   });
 
-  const filteredPlayers1 = allPlayers.filter(p =>
-    p.name.toLowerCase().includes(search1.toLowerCase())
-  );
 
-  const filteredPlayers2 = allPlayers.filter(p =>
-    p.name.toLowerCase().includes(search2.toLowerCase())
-  );
 
   const comparison = useMemo(() => {
     if (!player1Id || !player2Id) return null;
