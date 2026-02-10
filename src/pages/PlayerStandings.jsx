@@ -83,6 +83,9 @@ export default function PlayerStandings() {
           matches_won: stat?.matches_won || 0,
           matches_lost: stat?.matches_lost || 0,
           leg_difference: stat?.leg_difference || 0,
+          average: stat?.average || 0,
+          high_finish: stat?.high_finish || 0,
+          century_count: stat?.century_count || 0,
           stat_id: stat?.id,
         });
       }
@@ -149,15 +152,18 @@ export default function PlayerStandings() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-[#1a1a1a] hover:bg-transparent">
-                      <TableHead className="text-gray-400 font-semibold">Rang</TableHead>
-                      <TableHead className="text-gray-400 font-semibold">Spieler</TableHead>
-                      <TableHead className="text-gray-400 font-semibold">Team</TableHead>
-                      <TableHead className="text-center text-gray-400 font-semibold">Spiele</TableHead>
-                      <TableHead className="text-center text-gray-400 font-semibold">Siege</TableHead>
-                      <TableHead className="text-center text-gray-400 font-semibold">Niederlagen</TableHead>
-                      <TableHead className="text-center text-gray-400 font-semibold">Legs +/-</TableHead>
-                      <TableHead className="text-center text-gray-400 font-semibold">Quote %</TableHead>
-                    </TableRow>
+                       <TableHead className="text-gray-400 font-semibold">Rang</TableHead>
+                       <TableHead className="text-gray-400 font-semibold">Spieler</TableHead>
+                       <TableHead className="text-gray-400 font-semibold">Team</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Spiele</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Siege</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Niederlagen</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Legs +/-</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">AVG</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">High</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">100+</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Quote %</TableHead>
+                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {statsByLeague[league].map((stat, index) => {
@@ -197,6 +203,9 @@ export default function PlayerStandings() {
                               {stat.leg_difference > 0 ? "+" : ""}{stat.leg_difference}
                             </span>
                           </TableCell>
+                          <TableCell className="text-center text-gray-300">{stat.average > 0 ? stat.average.toFixed(2) : "-"}</TableCell>
+                          <TableCell className="text-center text-gray-300">{stat.high_finish > 0 ? stat.high_finish : "-"}</TableCell>
+                          <TableCell className="text-center text-gray-300">{stat.century_count > 0 ? stat.century_count : "-"}</TableCell>
                           <TableCell className="text-center">
                             <div className="flex items-center justify-center gap-1.5">
                               <TrendingUp className="w-3.5 h-3.5 text-gray-500" />
@@ -207,12 +216,12 @@ export default function PlayerStandings() {
                       );
                     })}
                     {statsByLeague[league].length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center py-12 text-gray-500">
-                          Noch keine Spieler in dieser Liga
-                        </TableCell>
-                      </TableRow>
-                    )}
+                       <TableRow>
+                         <TableCell colSpan={11} className="text-center py-12 text-gray-500">
+                           Noch keine Spieler in dieser Liga
+                         </TableCell>
+                       </TableRow>
+                     )}
                   </TableBody>
                 </Table>
               </div>
