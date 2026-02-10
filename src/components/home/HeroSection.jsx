@@ -24,21 +24,25 @@ export default function HeroSection() {
       {/* Background effects */}
        <div className="absolute inset-0">
          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a]" />
-         {/* Dartboard rings */}
-         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-[0.08]">
-           <div className="absolute inset-0 rounded-full border-2 border-red-600" />
-           <div className="absolute inset-[15%] rounded-full border border-red-500/60" />
-           <div className="absolute inset-[30%] rounded-full border border-red-600/50" />
-           <div className="absolute inset-[45%] rounded-full border border-red-500/40" />
-           <div className="absolute inset-[48%] rounded-full bg-red-600/15" />
-         </div>
-         {/* Primary red glow */}
-         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/10 rounded-full blur-[140px]" />
-         {/* Secondary accent glow */}
-         <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[120px]" />
-         {/* Grid lines */}
-         <div className="absolute inset-0 opacity-[0.03]"
-           style={{ backgroundImage: "linear-gradient(#dc2626 1px, transparent 1px), linear-gradient(90deg, #dc2626 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+         
+         {/* Abstract geometric shapes */}
+         {/* Large shape top-right */}
+         <div className="absolute -top-40 -right-40 w-96 h-96 bg-red-600/10 rounded-full blur-3xl" />
+         
+         {/* Medium shape bottom-left */}
+         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-red-500/8 rounded-full blur-3xl" />
+         
+         {/* Small accent shapes */}
+         <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-red-600/5 rounded-full blur-2xl" />
+         <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-red-500/6 rounded-full blur-2xl" />
+         
+         {/* Diagonal lines pattern */}
+         <div className="absolute inset-0 opacity-[0.02]"
+           style={{ backgroundImage: "repeating-linear-gradient(45deg, #dc2626 1px, transparent 1px, transparent 80px, #dc2626 1px, #dc2626 2px, transparent 2px, transparent 82px)" }} />
+         
+         {/* Vertical accent lines */}
+         <div className="absolute inset-0 opacity-[0.015]"
+           style={{ backgroundImage: "linear-gradient(90deg, #dc2626 0.5px, transparent 0.5px)", backgroundSize: "200px 100%" }} />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
