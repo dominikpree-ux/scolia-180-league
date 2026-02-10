@@ -22,10 +22,13 @@ const defaultRules = `
 - Jedes Team spielt gegen jedes andere Team.
 - Die Spieltage werden im Voraus festgelegt.
 
-### 4. Ergebnisse
+### 4. Ergebnisse & Foto-Beweis
+- **Jedes Spiel benötigt einen Foto-Beweis**: Nach dem Match muss ein Team das Ergebnis mit einem Foto (z.B. vom Scolia Board Display) einreichen.
+- Das Ergebnis wird über das Team-Dashboard eingetragen.
+- Der Gegner muss das eingereichte Ergebnis bestätigen, bevor es offiziell wird.
 - Ergebnisse müssen innerhalb von 24 Stunden nach dem Spiel eingetragen werden.
-- Beide Teams müssen das Ergebnis bestätigen.
-- Bei Unstimmigkeiten entscheidet die Ligaleitung.
+- Beide Teams sind dafür verantwortlich, das Ergebnis zeitnah zu bestätigen.
+- Bei Unstimmigkeiten oder fehlender Bestätigung entscheidet die Ligaleitung.
 
 ### 5. Punktevergabe
 - Sieg: 3 Punkte
