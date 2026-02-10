@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target, Upload, CheckCircle, AlertCircle, Image } from "lucide-react";
 import { toast } from "sonner";
 import MatchResultForm from "../components/dashboard/MatchResultForm";
+import DetailedMatchResultForm from "../components/dashboard/DetailedMatchResultForm";
 import PlayerLineupSelector from "../components/dashboard/PlayerLineupSelector";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";

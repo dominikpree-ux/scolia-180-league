@@ -24,7 +24,8 @@ export default function Layout({ children, currentPageName }) {
 
   const navLinks = [
     { name: "Startseite", page: "Home" },
-    { name: "Tabelle", page: "Standings" },
+    { name: "Team-Tabelle", page: "Standings" },
+    { name: "Spieler-Tabelle", page: "PlayerStandings" },
     { name: "Spielplan", page: "Schedule" },
     { name: "Teams", page: "Teams" },
     { name: "Chat", page: "Chat" },
