@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Users, MapPin, Crown } from "lucide-react";
+import { Users, MapPin, Crown, Image } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Teams() {
@@ -47,9 +47,15 @@ export default function Teams() {
                 className="group rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-red-600/20 p-6 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-red-600/10 flex items-center justify-center text-red-500 font-black text-lg">
-                    {team.name?.charAt(0)?.toUpperCase()}
-                  </div>
+                  {team.logo_url ? (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-[#2a2a2a]">
+                      <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-red-600/10 flex items-center justify-center text-red-500 font-black text-lg">
+                      {team.name?.charAt(0)?.toUpperCase()}
+                    </div>
+                  )}
                   <span className="text-xs text-gray-600 font-medium">
                     {(team.wins || 0) + (team.draws || 0) + (team.losses || 0)} Spiele
                   </span>
