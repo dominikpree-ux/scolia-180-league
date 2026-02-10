@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, Plus, X, CheckCircle, Target } from "lucide-react";
+import { UserPlus, Plus, X, CheckCircle, Target, Upload, Image } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -17,6 +17,9 @@ export default function Register() {
     average_group: "B",
   });
   const [playerNames, setPlayerNames] = useState(["", "", ""]);
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -32,6 +35,22 @@ export default function Register() {
     setPlayerNames(updated);
   };
 
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setLogoFile(file_url);
+      setLogoPreview(URL.createObjectURL(file));
+      toast.success("Logo hochgeladen!");
+    } catch (error) {
+      toast.error("Logo-Upload fehlgeschlagen");
+    }
+    setUploadingLogo(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -45,6 +64,7 @@ export default function Register() {
 
     const team = await base44.entities.Team.create({
       ...form,
+      logo_url: logoFile || undefined,
       league_tier: form.average_group,
       status: "pending",
       points: 0, wins: 0, draws: 0, losses: 0,
@@ -146,6 +166,33 @@ export default function Register() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-gray-500">Wähle deine Average-Gruppe aus dem Scolia-Profil. Bestimmt die Liga und das Spielformat.</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-gray-400 text-sm">Team-Logo (optional)</Label>
+                <div className="flex items-center gap-3">
+                  {logoPreview ? (
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden border-2 border-[#2a2a2a]">
+                      <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => { setLogoFile(null); setLogoPreview(null); }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-500"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="w-20 h-20 rounded-lg border-2 border-dashed border-[#2a2a2a] flex items-center justify-center cursor-pointer hover:border-red-600/50 transition-colors">
+                      <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" disabled={uploadingLogo} />
+                      {uploadingLogo ? (
+                        <div className="text-xs text-gray-500">...</div>
+                      ) : (
+                        <Upload className="w-5 h-5 text-gray-600" />
+                      )}
+                    </label>
+                  )}
+                  <p className="text-xs text-gray-500 flex-1">Lade ein Logo für dein Team hoch (empfohlen: quadratisch, max. 2 MB)</p>
+                </div>
               </div>
             </div>
           </div>

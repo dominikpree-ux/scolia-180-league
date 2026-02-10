@@ -51,12 +51,12 @@ import Admin from './pages/Admin';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
+import Impressum from './pages/Impressum';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
-import Impressum from './pages/Impressum';
 import __Layout from './Layout.jsx';
 
 
@@ -65,12 +65,12 @@ export const PAGES = {
     "Contact": Contact,
     "Dashboard": Dashboard,
     "Home": Home,
+    "Impressum": Impressum,
     "Register": Register,
     "Rules": Rules,
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
-    "Impressum": Impressum,
 }
 
 export const pagesConfig = {

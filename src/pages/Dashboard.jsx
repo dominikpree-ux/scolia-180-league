@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [editForm, setEditForm] = useState({});
   const [newPlayerName, setNewPlayerName] = useState("");
   const [editingMatchId, setEditingMatchId] = useState(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -56,6 +57,22 @@ export default function Dashboard() {
       toast.success("Team aktualisiert!");
     },
   });
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await base44.entities.Team.update(team.id, { logo_url: file_url });
+      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
+      toast.success("Logo aktualisiert!");
+    } catch (error) {
+      toast.error("Logo-Upload fehlgeschlagen");
+    }
+    setUploadingLogo(false);
+  };
 
   const addPlayer = useMutation({
     mutationFn: (name) => base44.entities.Player.create({ name, team_id: team.id, is_captain: false }),
@@ -204,6 +221,29 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-gray-500 text-xs">Team-Logo</Label>
+                  <div className="flex items-center gap-3">
+                    {team.logo_url ? (
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#2a2a2a]">
+                        <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-lg border-2 border-dashed border-[#2a2a2a] flex items-center justify-center">
+                        <Image className="w-6 h-6 text-gray-600" />
+                      </div>
+                    )}
+                    <label className="cursor-pointer">
+                      <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" disabled={uploadingLogo} />
+                      <Button type="button" size="sm" variant="outline" className="border-[#2a2a2a] text-gray-400 hover:text-white" asChild>
+                        <span>
+                          <Upload className="w-3 h-3 mr-1" />
+                          {uploadingLogo ? "Lädt..." : team.logo_url ? "Ändern" : "Hochladen"}
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
+                </div>
                 <div><span className="text-xs text-gray-500">Teamname</span><p className="text-white text-sm">{team.name}</p></div>
                 <div><span className="text-xs text-gray-500">Kapitän</span><p className="text-white text-sm">{team.captain_name}</p></div>
                 <div><span className="text-xs text-gray-500">Standort</span><p className="text-white text-sm">{team.scolia_location || "—"}</p></div>
