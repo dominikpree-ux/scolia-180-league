@@ -75,14 +75,50 @@ export default function Dashboard() {
   });
 
   const confirmResult = useMutation({
-    mutationFn: (matchId) =>
-      base44.entities.Match.update(matchId, {
+    mutationFn: async (matchId) => {
+      const match = matches.find(m => m.id === matchId);
+      
+      // Update match status
+      await base44.entities.Match.update(matchId, {
         status: "completed",
         result_confirmed: true,
-      }),
+      });
+
+      // Calculate results
+      const homeWin = match.home_legs > match.away_legs;
+      const awayWin = match.away_legs > match.home_legs;
+      const draw = match.home_legs === match.away_legs;
+
+      // Update home team stats
+      const homeTeam = await base44.entities.Team.filter({ id: match.home_team_id });
+      await base44.entities.Team.update(match.home_team_id, {
+        points: (homeTeam[0].points || 0) + (homeWin ? 3 : draw ? 1 : 0),
+        wins: (homeTeam[0].wins || 0) + (homeWin ? 1 : 0),
+        draws: (homeTeam[0].draws || 0) + (draw ? 1 : 0),
+        losses: (homeTeam[0].losses || 0) + (awayWin ? 1 : 0),
+        legs_won: (homeTeam[0].legs_won || 0) + match.home_legs,
+        legs_lost: (homeTeam[0].legs_lost || 0) + match.away_legs,
+        sets_won: (homeTeam[0].sets_won || 0) + match.home_sets,
+        sets_lost: (homeTeam[0].sets_lost || 0) + match.away_sets,
+      });
+
+      // Update away team stats
+      const awayTeam = await base44.entities.Team.filter({ id: match.away_team_id });
+      await base44.entities.Team.update(match.away_team_id, {
+        points: (awayTeam[0].points || 0) + (awayWin ? 3 : draw ? 1 : 0),
+        wins: (awayTeam[0].wins || 0) + (awayWin ? 1 : 0),
+        draws: (awayTeam[0].draws || 0) + (draw ? 1 : 0),
+        losses: (awayTeam[0].losses || 0) + (homeWin ? 1 : 0),
+        legs_won: (awayTeam[0].legs_won || 0) + match.away_legs,
+        legs_lost: (awayTeam[0].legs_lost || 0) + match.home_legs,
+        sets_won: (awayTeam[0].sets_won || 0) + match.away_sets,
+        sets_lost: (awayTeam[0].sets_lost || 0) + match.home_sets,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-matches"] });
-      toast.success("Ergebnis bestätigt!");
+      queryClient.invalidateQueries({ queryKey: ["admin-teams"] });
+      toast.success("Ergebnis bestätigt und Tabelle aktualisiert!");
     },
   });
 
