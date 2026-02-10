@@ -41,17 +41,46 @@ export default function Chat() {
   });
 
   const sendMessage = useMutation({
-    mutationFn: (messageText) => 
-      base44.entities.Message.create({
+    mutationFn: async (messageText) => {
+      const message = await base44.entities.Message.create({
         league_tier: selectedLeague,
         sender_name: user?.full_name || "Unbekannt",
         sender_email: user?.email,
         team_name: myTeam?.name || "",
         message: messageText,
-      }),
+      });
+
+      // Sende Email an alle Spieler wenn Admin schreibt
+      if (user?.role === "admin") {
+        const teams = await base44.entities.Team.filter({ league_tier: selectedLeague, status: "approved" });
+        const playerEmails = new Set();
+
+        for (const team of teams) {
+          const players = await base44.entities.Player.filter({ team_id: team.id });
+          players.forEach(p => {
+            if (p.email) playerEmails.add(p.email);
+          });
+        }
+
+        // Sende Email an jeden Spieler
+        for (const email of playerEmails) {
+          await base44.integrations.Core.SendEmail({
+            to: email,
+            subject: `Neue Ankündigung in Liga ${selectedLeague}`,
+            body: `Hallo,\n\nEs gibt eine neue Nachricht im Liga-Chat von ${user.full_name}:\n\n"${messageText}"\n\nBitte prüfe den Chat für mehr Informationen.\n\nScolia 180 League`,
+            from_name: "Scolia 180 League",
+          });
+        }
+      }
+
+      return message;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages"] });
       setNewMessage("");
+      if (user?.role === "admin") {
+        toast.success("Nachricht gesendet und Emails versendet");
+      }
     },
     onError: () => {
       toast.error("Nachricht konnte nicht gesendet werden");
