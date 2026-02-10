@@ -57,13 +57,11 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-3 group">
-              <div className="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center font-black text-sm tracking-tighter group-hover:bg-red-500 transition-colors">
-                180
-              </div>
-              <div className="hidden sm:block">
-                <span className="font-bold text-white tracking-wide text-sm">SCOLIA</span>
-                <span className="text-red-500 font-light text-sm ml-1">LEAGUE</span>
-              </div>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698ae2909b02ce9f29cfad93/abb992e27_180png.png" 
+                alt="Scolia 180 League" 
+                className="h-10 w-auto group-hover:opacity-80 transition-opacity"
+              />
             </Link>
 
             {/* Desktop Nav */}
@@ -203,9 +201,12 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center font-black text-xs">180</div>
-                <span className="font-bold tracking-wide text-sm">SCOLIA LEAGUE</span>
+              <div className="mb-4">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698ae2909b02ce9f29cfad93/abb992e27_180png.png" 
+                  alt="Scolia 180 League" 
+                  className="h-12 w-auto"
+                />
               </div>
               <p className="text-gray-500 text-sm leading-relaxed">
                 Die Online-Dartsliga für ambitionierte Spieler. Precision. Competition. 180.
