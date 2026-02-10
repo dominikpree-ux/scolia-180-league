@@ -23,26 +23,10 @@ export default function HeroSection() {
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background effects */}
        <div className="absolute inset-0">
-         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a]" />
+         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] to-[#111111]" />
          
-         {/* Abstract geometric shapes */}
-         {/* Large shape top-right */}
-         <div className="absolute -top-40 -right-40 w-96 h-96 bg-red-600/10 rounded-full blur-3xl" />
-         
-         {/* Medium shape bottom-left */}
-         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-red-500/8 rounded-full blur-3xl" />
-         
-         {/* Small accent shapes */}
-         <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-red-600/5 rounded-full blur-2xl" />
-         <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-red-500/6 rounded-full blur-2xl" />
-         
-         {/* Diagonal lines pattern */}
-         <div className="absolute inset-0 opacity-[0.02]"
-           style={{ backgroundImage: "repeating-linear-gradient(45deg, #dc2626 1px, transparent 1px, transparent 80px, #dc2626 1px, #dc2626 2px, transparent 2px, transparent 82px)" }} />
-         
-         {/* Vertical accent lines */}
-         <div className="absolute inset-0 opacity-[0.015]"
-           style={{ backgroundImage: "linear-gradient(90deg, #dc2626 0.5px, transparent 0.5px)", backgroundSize: "200px 100%" }} />
+         {/* Subtle accent glow - very minimal */}
+         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-red-600/5 to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
