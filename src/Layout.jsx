@@ -26,6 +26,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Startseite", page: "Home" },
     { name: "Team-Tabelle", page: "Standings" },
     { name: "Spieler-Tabelle", page: "PlayerStandings" },
+    { name: "H2H Vergleich", page: "PlayerComparison" },
     { name: "Spielplan", page: "Schedule" },
     { name: "Teams", page: "Teams" },
     { name: "Chat", page: "Chat" },
