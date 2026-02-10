@@ -29,6 +29,8 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
         average: 0,
         high_finish: 0,
         centuries: 0,
+        short_games: 0,
+        max_scores: 0,
         won_match: false
       };
     });
@@ -114,6 +116,8 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
             average: stat.average || current.average,
             high_finish: newHighFinish,
             century_count: (current.century_count || 0) + stat.centuries,
+            short_game_count: (current.short_game_count || 0) + stat.short_games,
+            max_scores_count: (current.max_scores_count || 0) + stat.max_scores,
           });
         } else {
           const player = allPlayers.find(p => p.id === playerId);
@@ -134,6 +138,8 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
             average: stat.average || 0,
             high_finish: stat.high_finish || 0,
             century_count: stat.centuries || 0,
+            short_game_count: stat.short_games || 0,
+            max_scores_count: stat.max_scores || 0,
           });
         }
       }
@@ -282,6 +288,26 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       min="0"
                       value={playerStats[player.id]?.centuries || 0}
                       onChange={(e) => updatePlayerStat(player.id, "centuries", e.target.value)}
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-500">Short Games</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={playerStats[player.id]?.short_games || 0}
+                      onChange={(e) => updatePlayerStat(player.id, "short_games", e.target.value)}
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-500">180's</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={playerStats[player.id]?.max_scores || 0}
+                      onChange={(e) => updatePlayerStat(player.id, "max_scores", e.target.value)}
                       className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>
