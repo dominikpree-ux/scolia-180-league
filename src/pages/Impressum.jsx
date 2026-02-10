@@ -14,25 +14,25 @@ export default function Impressum() {
           <div>
             <h2 className="text-xl font-bold text-white mb-3">Angaben gemäß § 5 TMG</h2>
             <p className="text-gray-400">
-              [Ihr Name / Firmenname]<br />
-              [Straße und Hausnummer]<br />
-              [PLZ und Ort]
+              Dominik Pree<br />
+              Hauptstraße 290<br />
+              3871 Alt-Nagelberg
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-white mb-3">Kontakt</h2>
             <p className="text-gray-400">
-              Telefon: [Ihre Telefonnummer]<br />
-              E-Mail: [Ihre E-Mail-Adresse]
+              E-Mail: dominikpree@gmail.com
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-white mb-3">Verantwortlich für den Inhalt</h2>
             <p className="text-gray-400">
-              [Ihr Name]<br />
-              [Ihre Adresse]
+              Dominik Pree<br />
+              Hauptstraße 290<br />
+              3871 Alt-Nagelberg
             </p>
           </div>
 
