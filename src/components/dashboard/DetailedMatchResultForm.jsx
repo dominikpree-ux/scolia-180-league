@@ -12,11 +12,13 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [individualMatches, setIndividualMatches] = useState([]);
+  const [playerStats, setPlayerStats] = useState({});
 
   // Initialize 16 individual matches (4 home players x 4 away players)
   React.useEffect(() => {
     if (homePlayers.length === 4 && awayPlayers.length === 4) {
       const matches = [];
+      const stats = {};
       homePlayers.forEach((homePlayer) => {
         awayPlayers.forEach((awayPlayer) => {
           matches.push({
@@ -27,10 +29,21 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
             player1_legs: 0,
             player2_legs: 0,
             winner_id: "",
+            player1_average: 0,
+            player1_high: 0,
+            player1_centuries: 0,
+            player2_average: 0,
+            player2_high: 0,
+            player2_centuries: 0,
           });
         });
+        stats[homePlayer.id] = { average: 0, high: 0, centuries: 0 };
+      });
+      awayPlayers.forEach((awayPlayer) => {
+        stats[awayPlayer.id] = { average: 0, high: 0, centuries: 0 };
       });
       setIndividualMatches(matches);
+      setPlayerStats(stats);
     }
   }, [homePlayers, awayPlayers]);
 
@@ -52,7 +65,7 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
 
   const updateMatch = (index, field, value) => {
     const updated = [...individualMatches];
-    updated[index][field] = field.includes("legs") ? parseInt(value) || 0 : value;
+    updated[index][field] = field.includes("legs") ? parseInt(value) || 0 : parseInt(value) || 0;
     
     // Auto-determine winner based on legs
     const player1Legs = field === "player1_legs" ? parseInt(value) || 0 : updated[index].player1_legs;
@@ -117,12 +130,14 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
         await updatePlayerStats(individualMatch.player1_id, individualMatch.player1_name, 
           match.home_team_id, match.home_team_name, match.league_tier,
           individualMatch.winner_id === individualMatch.player1_id ? 1 : 0,
-          individualMatch.player1_legs, individualMatch.player2_legs);
-        
+          individualMatch.player1_legs, individualMatch.player2_legs,
+          individualMatch.player1_average, individualMatch.player1_high, individualMatch.player1_centuries);
+
         await updatePlayerStats(individualMatch.player2_id, individualMatch.player2_name,
           match.away_team_id, match.away_team_name, match.league_tier,
           individualMatch.winner_id === individualMatch.player2_id ? 1 : 0,
-          individualMatch.player2_legs, individualMatch.player1_legs);
+          individualMatch.player2_legs, individualMatch.player1_legs,
+          individualMatch.player2_average, individualMatch.player2_high, individualMatch.player2_centuries);
       }
 
       toast.success("Ergebnis eingetragen!");
@@ -132,11 +147,12 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
     }
   };
 
-  const updatePlayerStats = async (playerId, playerName, teamId, teamName, leagueTier, won, legsWon, legsLost) => {
+  const updatePlayerStats = async (playerId, playerName, teamId, teamName, leagueTier, won, legsWon, legsLost, average, highFinish, centuries) => {
     const existingStats = await base44.entities.PlayerStats.filter({ player_id: playerId });
     
     if (existingStats.length > 0) {
       const stat = existingStats[0];
+      const newHighFinish = Math.max(stat.high_finish, highFinish);
       await base44.entities.PlayerStats.update(stat.id, {
         matches_played: stat.matches_played + 1,
         matches_won: stat.matches_won + won,
@@ -144,6 +160,9 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
         legs_won: stat.legs_won + legsWon,
         legs_lost: stat.legs_lost + legsLost,
         leg_difference: (stat.legs_won + legsWon) - (stat.legs_lost + legsLost),
+        average: average || stat.average,
+        high_finish: newHighFinish,
+        century_count: stat.century_count + centuries,
       });
     } else {
       await base44.entities.PlayerStats.create({
@@ -158,6 +177,9 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
         legs_won: legsWon,
         legs_lost: legsLost,
         leg_difference: legsWon - legsLost,
+        average: average || 0,
+        high_finish: highFinish || 0,
+        century_count: centuries || 0,
       });
     }
   };
@@ -228,11 +250,91 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
                     <p className="text-xs text-gray-500">{match.away_team_name}</p>
                   </div>
                 </div>
-                {im.winner_id && (
-                  <p className="text-xs text-green-500 mt-2 text-center">
-                    Gewinner: {im.winner_id === im.player1_id ? im.player1_name : im.player2_name}
-                  </p>
-                )}
+                <div className="mt-3 pt-3 border-t border-[#2a2a2a] space-y-2 text-xs">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-gray-500 mb-1">{im.player1_name}</p>
+                      <div className="space-y-1">
+                        <Input
+                          type="number"
+                          placeholder="AVG"
+                          value={im.player1_average}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player1_average = parseFloat(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="High Finish"
+                          value={im.player1_high}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player1_high = parseInt(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="100+ Scores"
+                          value={im.player1_centuries}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player1_centuries = parseInt(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 mb-1">{im.player2_name}</p>
+                      <div className="space-y-1">
+                        <Input
+                          type="number"
+                          placeholder="AVG"
+                          value={im.player2_average}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player2_average = parseFloat(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="High Finish"
+                          value={im.player2_high}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player2_high = parseInt(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="100+ Scores"
+                          value={im.player2_centuries}
+                          onChange={(e) => {
+                            const updated = [...individualMatches];
+                            updated[index].player2_centuries = parseInt(e.target.value) || 0;
+                            setIndividualMatches(updated);
+                          }}
+                          className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {im.winner_id && (
+                    <p className="text-green-500 text-center">
+                      ✓ Gewinner: {im.winner_id === im.player1_id ? im.player1_name : im.player2_name}
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
