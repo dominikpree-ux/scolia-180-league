@@ -12,6 +12,7 @@ const defaultRules = `
 - Ein Spieler darf nur für ein Team registriert sein.
 - Bei der Registrierung muss die Scolia ID (zu finden in den Profil-Einstellungen) angegeben werden.
 - Der Teamkapitän ist verantwortlich für die Koordination.
+- **Wichtig**: Der Teamkapitän muss sich mit der gleichen E-Mail-Adresse anmelden, die bei der Teamregistrierung angegeben wurde, um Zugriff auf das Team-Dashboard zu erhalten.
 
 ### 2. Spielformat
 - Gespielt wird **First to 3, Double Out**.
