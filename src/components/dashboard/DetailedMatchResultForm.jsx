@@ -14,9 +14,9 @@ export default function DetailedMatchResultForm({ match, onCancel, onSuccess, ho
   const [individualMatches, setIndividualMatches] = useState([]);
   const [playerStats, setPlayerStats] = useState({});
 
-  // Initialize 16 individual matches (4 home players x 4 away players)
+  // Initialize individual matches for all home vs away players
   React.useEffect(() => {
-    if (homePlayers.length === 4 && awayPlayers.length === 4) {
+    if (homePlayers.length > 0 && awayPlayers.length > 0) {
       const matches = [];
       const stats = {};
       homePlayers.forEach((homePlayer) => {
