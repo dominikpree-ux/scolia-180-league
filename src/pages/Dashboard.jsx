@@ -6,15 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { LayoutDashboard, Users, Calendar, Edit2, Save, Plus, X, Trophy, Target, Upload, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import MatchCard from "../components/shared/MatchCard";
+import MatchResultForm from "../components/dashboard/MatchResultForm";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [newPlayerName, setNewPlayerName] = useState("");
+  const [editingMatchId, setEditingMatchId] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -70,18 +74,15 @@ export default function Dashboard() {
     },
   });
 
-  const submitResult = useMutation({
-    mutationFn: ({ matchId, homeLegs, awayLegs, homeSets, awaySets }) =>
+  const confirmResult = useMutation({
+    mutationFn: (matchId) =>
       base44.entities.Match.update(matchId, {
-        home_legs: homeLegs,
-        away_legs: awayLegs,
-        home_sets: homeSets,
-        away_sets: awaySets,
         status: "completed",
+        result_confirmed: true,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-matches"] });
-      toast.success("Ergebnis eingetragen!");
+      toast.success("Ergebnis bestätigt!");
     },
   });
 
@@ -228,10 +229,96 @@ export default function Dashboard() {
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-red-500" /> Deine Spiele
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {matches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
+            <div className="grid grid-cols-1 gap-3">
+              {matches.map((match) => {
+                const isHome = match.home_team_id === team.id;
+                const needsConfirmation = match.status === "result_submitted" && match.needs_confirmation_from === team.id;
+                const waitingForConfirmation = match.status === "result_submitted" && match.submitted_by_team_id === team.id;
+                const canSubmit = match.status === "scheduled";
+
+                return (
+                  <div key={match.id}>
+                    {editingMatchId === match.id ? (
+                      <MatchResultForm
+                        match={match}
+                        myTeamId={team.id}
+                        onSuccess={() => {
+                          setEditingMatchId(null);
+                          queryClient.invalidateQueries({ queryKey: ["team-matches"] });
+                        }}
+                        onCancel={() => setEditingMatchId(null)}
+                      />
+                    ) : (
+                      <div className="rounded-xl border bg-[#111111] border-[#1a1a1a] p-4 hover:border-red-600/20 transition-colors">
+                        <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
+                          <Calendar className="w-3 h-3" />
+                          {match.date ? format(new Date(match.date), "dd. MMM yyyy", { locale: de }) : "TBD"}
+                          <span className="ml-auto">Spieltag {match.matchday}</span>
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className={`flex-1 text-right text-sm font-semibold ${match.status === "completed" && match.home_legs > match.away_legs ? "text-white" : "text-gray-400"}`}>
+                            {match.home_team_name}
+                          </span>
+                          <div className="px-3 py-1.5 rounded-lg bg-[#0a0a0a] min-w-[80px] text-center">
+                            {match.status === "completed" || match.status === "result_submitted" ? (
+                              <span className="text-lg font-black text-white">{match.home_legs} : {match.away_legs}</span>
+                            ) : (
+                              <span className="text-sm text-gray-600">vs</span>
+                            )}
+                          </div>
+                          <span className={`flex-1 text-sm font-semibold ${match.status === "completed" && match.away_legs > match.home_legs ? "text-white" : "text-gray-400"}`}>
+                            {match.away_team_name}
+                          </span>
+                        </div>
+
+                        {/* Status badges */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {match.status === "completed" && (
+                            <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-xs">
+                              <CheckCircle className="w-3 h-3 mr-1" /> Abgeschlossen
+                            </Badge>
+                          )}
+                          {waitingForConfirmation && (
+                            <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-xs">
+                              <AlertCircle className="w-3 h-3 mr-1" /> Wartet auf Bestätigung
+                            </Badge>
+                          )}
+                          {needsConfirmation && match.result_photo_url && (
+                            <a href={match.result_photo_url} target="_blank" rel="noopener noreferrer">
+                              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs cursor-pointer hover:bg-blue-500/20">
+                                📸 Foto ansehen
+                              </Badge>
+                            </a>
+                          )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2 mt-3">
+                          {canSubmit && (
+                            <Button
+                              size="sm"
+                              onClick={() => setEditingMatchId(match.id)}
+                              className="bg-red-600 hover:bg-red-500 text-white border-0 text-xs h-8"
+                            >
+                              <Upload className="w-3 h-3 mr-1" /> Ergebnis eintragen
+                            </Button>
+                          )}
+                          {needsConfirmation && (
+                            <Button
+                              size="sm"
+                              onClick={() => confirmResult.mutate(match.id)}
+                              className="bg-green-600 hover:bg-green-500 text-white border-0 text-xs h-8"
+                            >
+                              <CheckCircle className="w-3 h-3 mr-1" /> Ergebnis bestätigen
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
