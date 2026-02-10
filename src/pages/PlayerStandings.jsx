@@ -86,6 +86,8 @@ export default function PlayerStandings() {
           average: stat?.average || 0,
           high_finish: stat?.high_finish || 0,
           century_count: stat?.century_count || 0,
+          short_game_count: stat?.short_game_count || 0,
+          max_scores_count: stat?.max_scores_count || 0,
           stat_id: stat?.id,
         });
       }
@@ -162,6 +164,8 @@ export default function PlayerStandings() {
                        <TableHead className="text-center text-gray-400 font-semibold">AVG</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">High</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">100+</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">SG</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">180's</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">Quote %</TableHead>
                      </TableRow>
                   </TableHeader>
@@ -206,6 +210,8 @@ export default function PlayerStandings() {
                           <TableCell className="text-center text-gray-300">{stat.average > 0 ? stat.average.toFixed(2) : "-"}</TableCell>
                           <TableCell className="text-center text-gray-300">{stat.high_finish > 0 ? stat.high_finish : "-"}</TableCell>
                           <TableCell className="text-center text-gray-300">{stat.century_count > 0 ? stat.century_count : "-"}</TableCell>
+                          <TableCell className="text-center text-gray-300">{stat.short_game_count > 0 ? stat.short_game_count : "-"}</TableCell>
+                          <TableCell className="text-center text-gray-300">{stat.max_scores_count > 0 ? stat.max_scores_count : "-"}</TableCell>
                           <TableCell className="text-center">
                             <div className="flex items-center justify-center gap-1.5">
                               <TrendingUp className="w-3.5 h-3.5 text-gray-500" />
@@ -217,7 +223,7 @@ export default function PlayerStandings() {
                     })}
                     {statsByLeague[league].length === 0 && (
                        <TableRow>
-                         <TableCell colSpan={11} className="text-center py-12 text-gray-500">
+                         <TableCell colSpan={13} className="text-center py-12 text-gray-500">
                            Noch keine Spieler in dieser Liga
                          </TableCell>
                        </TableRow>
