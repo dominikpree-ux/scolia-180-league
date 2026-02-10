@@ -4,8 +4,19 @@ import { createPageUrl } from "../../utils";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Target, Trophy, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HeroSection() {
+  const { data: teams = [] } = useQuery({
+    queryKey: ["teams"],
+    queryFn: () => base44.entities.Team.filter({ status: "approved" }),
+  });
+
+  const { data: matches = [] } = useQuery({
+    queryKey: ["matches-recent"],
+    queryFn: () => base44.entities.Match.list(),
+  });
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background effects */}
@@ -71,8 +82,8 @@ export default function HeroSection() {
           className="mt-20 grid grid-cols-3 gap-4 max-w-lg mx-auto"
         >
           {[
-            { icon: Users, label: "Teams", value: "—" },
-            { icon: Target, label: "Matches", value: "—" },
+            { icon: Users, label: "Teams", value: teams.length || "—" },
+            { icon: Target, label: "Matches", value: matches.length || "—" },
             { icon: Trophy, label: "Saisons", value: "1" },
           ].map((stat, i) => (
             <div key={i} className="text-center p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
