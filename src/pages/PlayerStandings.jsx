@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Target, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Trophy, Target, Zap } from "lucide-react";
+import PlayerStandingsTable from "../components/shared/PlayerStandingsTable";
 
 export default function PlayerStandings() {
   const [allPlayers, setAllPlayers] = useState([]);
