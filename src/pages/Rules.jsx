@@ -16,14 +16,17 @@ const defaultRules = `
 
 **Liga-Einteilung:**
 - Teams werden basierend auf ihrer Average-Gruppe aus Scolia automatisch in Ligen eingeteilt
-- **Liga A** (Average-Gruppe A): Double Out
-- **Liga B** (Average-Gruppe B): Master Out  
-- **Liga C** (Average-Gruppe C): Open Out
+- **Liga A** (Average-Gruppe A): Double Out (DO)
+- **Liga B** (Average-Gruppe B): Master Out (MO)
+- **Liga C** (Average-Gruppe C): Open Out (OO)
 - Teams spielen nur gegen andere Teams ihrer eigenen Liga
 
-### 2. Spielformat
-- Gespielt wird **First to 3** im jeweiligen Liga-Modus.
-- Jedes Match besteht aus mehreren Legs (z.B. 4x2 Legs = 8 Legs insgesamt).
+### 2. Spielformat & Ablauf
+- Wenn zwei Teams aufeinandertreffen, spielt **jeder Spieler eines Teams gegen jeden Spieler des gegnerischen Teams**.
+- Alle Spiele werden im Modus **First to 3 Legs** ausgetragen.
+- Der Out-Modus richtet sich nach der jeweiligen Liga (A: Double Out, B: Master Out, C: Open Out).
+- Nach Abschluss aller Partien eines Spieltags werden die **gewonnenen und verlorenen Legs beider Teams zusammengerechnet**.
+- Das Gesamtergebnis entscheidet über den Ausgang des Teamduells und wird automatisch in die Tabelle übernommen.
 - Alle Spiele werden über Scolia Boards ausgetragen.
 
 ### 3. Spielplan
@@ -45,12 +48,18 @@ const defaultRules = `
 - Unentschieden: 1 Punkt
 - Niederlage: 0 Punkte
 
-### 6. Fair Play
+### 6. Auf- und Abstieg
+- Am Ende der Saison wird die Tabelle ausgewertet.
+- Das **erstplatzierte Team** steigt automatisch in die nächsthöhere Liga auf.
+- Das **letztplatzierte Team** steigt in die darunterliegende Liga ab.
+- So bleibt die Liga spannend, fair und leistungsorientiert für alle Teams.
+
+### 7. Fair Play
 - Respektvoller Umgang miteinander ist Pflicht.
 - Manipulation oder Betrug führt zum sofortigen Ausschluss.
 - Die Ligaleitung behält sich das Recht vor, Entscheidungen zu treffen.
 
-### 7. Kontakt
+### 8. Kontakt
 Bei Fragen oder Problemen kontaktiere uns über die Kontaktseite.
 `;
 
