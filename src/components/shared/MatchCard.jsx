@@ -5,6 +5,18 @@ import { Calendar, Clock } from "lucide-react";
 
 export default function MatchCard({ match }) {
   const isCompleted = match.status === "completed";
+  
+  const leagueFormatMap = {
+    A: "Double Out",
+    B: "Master Out",
+    C: "Open Out",
+  };
+  
+  const leagueColorMap = {
+    A: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+    B: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    C: "bg-green-500/10 text-green-400 border-green-500/20",
+  };
 
   return (
     <div className={`rounded-xl border transition-all duration-200 ${

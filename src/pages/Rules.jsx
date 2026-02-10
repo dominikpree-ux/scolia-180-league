@@ -7,12 +7,19 @@ import { BookOpen } from "lucide-react";
 const defaultRules = `
 ## Allgemeine Regeln
 
-### 1. Teilnahme
+### 1. Teilnahme & Ligen
 - Jedes Team besteht aus mindestens 4 und maximal 6 Spielern.
 - Ein Spieler darf nur für ein Team registriert sein.
 - Bei der Registrierung muss die Scolia ID (zu finden in den Profil-Einstellungen) angegeben werden.
 - Der Teamkapitän ist verantwortlich für die Koordination.
 - **Wichtig**: Der Teamkapitän muss sich mit der gleichen E-Mail-Adresse anmelden, die bei der Teamregistrierung angegeben wurde, um Zugriff auf das Team-Dashboard zu erhalten.
+
+**Liga-Einteilung:**
+- Teams werden basierend auf ihrer Average-Gruppe aus Scolia automatisch in Ligen eingeteilt
+- **Liga A** (Average-Gruppe A): Double Out
+- **Liga B** (Average-Gruppe B): Master Out  
+- **Liga C** (Average-Gruppe C): Open Out
+- Teams spielen nur gegen andere Teams ihrer eigenen Liga
 
 ### 2. Spielformat
 - Gespielt wird **First to 3, Double Out**.
