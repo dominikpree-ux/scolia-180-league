@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, CheckCircle, Trash2 } from "lucide-react";
+import { Save, CheckCircle, Trash2, Image } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -124,11 +124,19 @@ export default function ResultsManager() {
               <div className="flex items-center justify-between gap-2 mb-2 text-xs text-gray-500">
                 <span>Spieltag {match.matchday}</span>
                 {match.date && <span>{format(new Date(match.date), "dd.MM.yyyy")}</span>}
-                {match.status === "completed" && (
-                  <span className="flex items-center gap-1 text-green-400">
-                    <CheckCircle className="w-3 h-3" /> Beendet
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {match.result_photo_url && (
+                    <a href={match.result_photo_url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-blue-400 hover:text-blue-300">
+                      <Image className="w-3 h-3" /> Foto
+                    </a>
+                  )}
+                  {match.status === "completed" && (
+                    <span className="flex items-center gap-1 text-green-400">
+                      <CheckCircle className="w-3 h-3" /> Beendet
+                    </span>
+                  )}
+                </div>
               </div>
 
               {editingMatch === match.id ? (
