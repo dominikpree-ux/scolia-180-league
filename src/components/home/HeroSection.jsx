@@ -13,10 +13,12 @@ export default function HeroSection() {
     queryFn: () => base44.entities.Team.filter({ status: "approved" }),
   });
 
-  const { data: matches = [] } = useQuery({
+  const { data: allMatches = [] } = useQuery({
     queryKey: ["matches-recent"],
     queryFn: () => base44.entities.Match.list(),
   });
+
+  const openMatches = allMatches.filter(m => m.status !== "completed" && m.status !== "cancelled");
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background effects */}
@@ -83,7 +85,7 @@ export default function HeroSection() {
         >
           {[
             { icon: Users, label: "Teams", value: teams.length || "—" },
-            { icon: Target, label: "Matches", value: matches.length || "—" },
+            { icon: Target, label: "Matches", value: openMatches.length || "—" },
             { icon: Trophy, label: "Saisons", value: "1" },
           ].map((stat, i) => (
             <div key={i} className="text-center p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">

@@ -20,11 +20,48 @@ export default function ResultsManager() {
   });
 
   const updateMatch = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Match.update(id, data),
+    mutationFn: async ({ id, data, match }) => {
+      // Update match
+      await base44.entities.Match.update(id, data);
+
+      // Update team statistics
+      const homeTeam = await base44.entities.Team.filter({ id: match.home_team_id });
+      const awayTeam = await base44.entities.Team.filter({ id: match.away_team_id });
+
+      if (homeTeam[0] && awayTeam[0]) {
+        const homeWins = data.home_legs > data.away_legs ? 1 : 0;
+        const awayWins = data.away_legs > data.home_legs ? 1 : 0;
+        const draws = data.home_legs === data.away_legs ? 1 : 0;
+
+        await base44.entities.Team.update(homeTeam[0].id, {
+          points: homeTeam[0].points + (homeWins ? 3 : draws ? 1 : 0),
+          wins: homeTeam[0].wins + homeWins,
+          draws: homeTeam[0].draws + draws,
+          losses: homeTeam[0].losses + (awayWins ? 1 : 0),
+          legs_won: homeTeam[0].legs_won + data.home_legs,
+          legs_lost: homeTeam[0].legs_lost + data.away_legs,
+          sets_won: homeTeam[0].sets_won + data.home_sets,
+          sets_lost: homeTeam[0].sets_lost + data.away_sets,
+        });
+
+        await base44.entities.Team.update(awayTeam[0].id, {
+          points: awayTeam[0].points + (awayWins ? 3 : draws ? 1 : 0),
+          wins: awayTeam[0].wins + awayWins,
+          draws: awayTeam[0].draws + draws,
+          losses: awayTeam[0].losses + (homeWins ? 1 : 0),
+          legs_won: awayTeam[0].legs_won + data.away_legs,
+          legs_lost: awayTeam[0].legs_lost + data.home_legs,
+          sets_won: awayTeam[0].sets_won + data.away_sets,
+          sets_lost: awayTeam[0].sets_lost + data.home_sets,
+        });
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["matches-recent"] });
       setEditingMatch(null);
-      toast.success("Ergebnis gespeichert!");
+      toast.success("Ergebnis gespeichert und Tabelle aktualisiert!");
     },
   });
 
@@ -32,6 +69,7 @@ export default function ResultsManager() {
     mutationFn: (id) => base44.entities.Match.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-matches"] });
+      queryClient.invalidateQueries({ queryKey: ["matches-recent"] });
       toast.success("Spiel gelöscht!");
     },
   });
@@ -50,8 +88,10 @@ export default function ResultsManager() {
   };
 
   const saveResult = (matchId) => {
+    const match = matches.find(m => m.id === matchId);
     updateMatch.mutate({
       id: matchId,
+      match,
       data: {
         ...resultForm,
         status: "completed",

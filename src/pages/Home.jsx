@@ -16,10 +16,12 @@ export default function Home() {
     queryFn: () => base44.entities.Team.filter({ status: "approved" }, "-points", 10),
   });
 
-  const { data: matches = [] } = useQuery({
+  const { data: allMatches = [] } = useQuery({
     queryKey: ["matches-recent"],
-    queryFn: () => base44.entities.Match.list("-matchday", 6),
+    queryFn: () => base44.entities.Match.list("matchday"),
   });
+
+  const openMatches = allMatches.filter(m => m.status !== "completed" && m.status !== "cancelled");
 
   return (
     <div>
@@ -47,13 +49,13 @@ export default function Home() {
       </section>
 
       {/* Recent Matches */}
-      {matches.length > 0 && (
+      {openMatches.length > 0 && (
         <section className="pb-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <span className="text-xs font-semibold text-red-500 uppercase tracking-widest">Spielplan</span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 tracking-tight">Aktuelle Spiele</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 tracking-tight">Offene Spiele</h2>
               </div>
               <Link to={createPageUrl("Schedule")}>
                 <Button variant="ghost" className="text-gray-400 hover:text-white">
@@ -62,7 +64,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {matches.slice(0, 6).map((match) => (
+              {openMatches.slice(0, 6).map((match) => (
                 <MatchCard key={match.id} match={match} />
               ))}
             </div>
