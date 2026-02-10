@@ -90,11 +90,11 @@ export default function Rules() {
             className="prose prose-invert prose-sm max-w-none
               prose-headings:text-white prose-headings:font-bold prose-headings:tracking-tight
               prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-[#1a1a1a] prose-h2:pb-3
-              prose-h3:text-base prose-h3:mt-6 prose-h3:mb-2
+              prose-h3:text-base prose-h3:mt-6 prose-h3:mb-3
               prose-p:text-gray-400 prose-p:leading-relaxed
-              prose-li:text-gray-400
+              prose-li:text-gray-400 prose-li:my-2
               prose-strong:text-white
-              prose-ul:my-2
+              prose-ul:my-4 prose-ul:space-y-2
             "
           >
             {rulesContent}
