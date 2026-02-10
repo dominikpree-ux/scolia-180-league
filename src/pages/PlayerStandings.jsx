@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Trophy, Target, Zap } from "lucide-react";
 
 export default function PlayerStandings() {
+  const navigate = useNavigate();
   const [allPlayers, setAllPlayers] = useState([]);
   const [playerStats, setPlayerStats] = useState([]);
 
