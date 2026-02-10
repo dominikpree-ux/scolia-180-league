@@ -229,6 +229,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("Register")} className="block text-sm text-gray-500 hover:text-white transition-colors">Team registrieren</Link>
                 <Link to={createPageUrl("Rules")} className="block text-sm text-gray-500 hover:text-white transition-colors">Regeln</Link>
                 <Link to={createPageUrl("Contact")} className="block text-sm text-gray-500 hover:text-white transition-colors">Kontakt</Link>
+                <Link to={createPageUrl("Impressum")} className="block text-sm text-gray-500 hover:text-white transition-colors">Impressum</Link>
               </div>
             </div>
           </div>
