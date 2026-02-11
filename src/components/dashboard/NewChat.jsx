@@ -297,8 +297,8 @@ export default function NewChat({ userId, userType, team = null }) {
           <div className="w-2/3 flex flex-col">
             <div className="flex-1 overflow-y-auto space-y-3 mb-4">
               {chatMessages.map((msg, i) => {
-                const isSent = userType === "player" ? true : msg.team_from_id === userId;
-                const sender = isSent ? (team?.name || user?.full_name || "Du") : msg.player_name || msg.team_from_name;
+                const isSent = userType === "player" ? msg.player_from_id === userId : msg.team_from_id === userId;
+                const sender = isSent ? (team?.name || user?.full_name || "Du") : msg.player_from_name || msg.team_from_name;
 
                 return (
                   <div key={i} className={`flex ${isSent ? "justify-end" : "justify-start"}`}>
@@ -309,12 +309,6 @@ export default function NewChat({ userId, userType, team = null }) {
                     >
                       <p className="text-xs text-gray-400 mb-1">{sender}</p>
                       <p className="text-sm text-white">{msg.message}</p>
-                      {(msg.team_response || msg.response) && (
-                        <div className="mt-2 pt-2 border-t border-gray-600">
-                          <p className="text-xs text-gray-300 mb-1">Antwort:</p>
-                          <p className="text-sm text-white">{msg.team_response || msg.response}</p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 );
