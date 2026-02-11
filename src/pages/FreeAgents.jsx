@@ -77,6 +77,77 @@ export default function FreeAgents() {
     C: "bg-purple-500/20 text-purple-400 border-purple-500/30",
   };
 
+  // Contact button for player-to-player
+  const PlayerContactButton = ({ player, currentUser, queryClient }) => {
+    const sendMutation = useMutation({
+      mutationFn: async () => {
+        await base44.entities.PlayerMessage.create({
+          player_from_id: currentUser.id,
+          player_from_name: currentUser.full_name,
+          player_to_id: player.id,
+          player_to_name: player.nickname || player.name,
+          message: `Hallo ${player.nickname || player.name}, ich würde gerne mit dir chatten!`,
+        });
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
+        toast.success("Nachricht gesendet!");
+      },
+    });
+
+    return (
+      <Button
+        onClick={() => sendMutation.mutate()}
+        disabled={sendMutation.isPending}
+        className="w-full bg-red-600 hover:bg-red-500"
+      >
+        <Mail className="w-4 h-4 mr-2" />
+        {sendMutation.isPending ? "Sende..." : "Kontaktieren"}
+      </Button>
+    );
+  };
+
+  // Contact button for team contact
+  const TeamContactButton = ({ team, currentUser, queryClient, userType }) => {
+    const sendMutation = useMutation({
+      mutationFn: async () => {
+        if (userType === "team") {
+          await base44.entities.TeamMessage.create({
+            team_from_id: currentUser.id,
+            team_from_name: currentUser.full_name,
+            team_to_id: team.id,
+            team_to_name: team.name,
+            message: `Hallo ${team.name}, wir interessieren uns für eine Zusammenarbeit!`,
+            status: "pending",
+          });
+        } else {
+          await base44.entities.PlayerMessage.create({
+            player_from_id: currentUser.id,
+            player_from_name: currentUser.full_name,
+            player_to_id: team.id,
+            player_to_name: team.name,
+            message: `Hallo ${team.name}, ich bin interessiert!`,
+          });
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
+        toast.success("Nachricht gesendet!");
+      },
+    });
+
+    return (
+      <Button
+        onClick={() => sendMutation.mutate()}
+        disabled={sendMutation.isPending}
+        className="w-full bg-red-600 hover:bg-red-500"
+      >
+        <Mail className="w-4 h-4 mr-2" />
+        {sendMutation.isPending ? "Sende..." : "Kontaktieren"}
+      </Button>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
