@@ -5,13 +5,12 @@ import { base44 } from "@/api/base44Client";
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/components/ui/translations";
 
 export default function Layout({ children, currentPageName }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { t, lang } = useLanguage();
+  const [lang, setLang] = useState(() => localStorage.getItem('language') || 'de');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -65,6 +64,11 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const t = (key) => translations[lang]?.[key] || key;
+
+  const handleLanguageChange = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('language', newLang);
+  };
 
   const navLinks = [
     { name: t("nav")[0], page: "Home" },
@@ -131,7 +135,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
-              <LanguageSwitcher />
+              <LanguageSwitcher onLanguageChange={handleLanguageChange} />
               {isAuthenticated ? (
                 <div className="hidden sm:flex items-center gap-2">
                   {user?.role === "admin" && (
