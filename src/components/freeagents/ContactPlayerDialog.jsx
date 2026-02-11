@@ -1,80 +1,90 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { base44 } from "@/api/base44Client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Send } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
-export default function ContactPlayerDialog({ player, team }) {
-  const [open, setOpen] = useState(false);
+export default function ContactPlayerDialog({ player, open, onOpenChange }) {
   const [message, setMessage] = useState("");
   const queryClient = useQueryClient();
 
-  const sendRequestMutation = useMutation({
-    mutationFn: async (data) => {
-      return await base44.entities.PlayerRequest.create(data);
+  const contactMutation = useMutation({
+    mutationFn: async (msg) => {
+      const currentUser = await base44.auth.me();
+      if (!currentUser) throw new Error("Not authenticated");
+
+      return base44.entities.PlayerMessage.create({
+        player_from_id: currentUser.id,
+        player_from_name: currentUser.full_name,
+        player_to_id: player.id,
+        player_to_name: player.name,
+        message: msg,
+        status: "pending",
+      });
     },
     onSuccess: () => {
-      toast.success("Anfrage gesendet!");
-      setOpen(false);
+      queryClient.invalidateQueries();
       setMessage("");
+      onOpenChange(false);
+      toast.success("Nachricht gesendet!");
     },
     onError: () => {
-      toast.error("Fehler beim Senden");
+      toast.error("Fehler beim Senden der Nachricht");
     },
   });
 
-  const handleSend = () => {
-    if (!message.trim()) {
-      toast.error("Bitte Nachricht eingeben");
-      return;
-    }
-
-    sendRequestMutation.mutate({
-      player_id: player.id,
-      player_name: player.nickname || player.name,
-      player_email: player.email || player.team?.captain_email,
-      team_id: team.id,
-      team_name: team.name,
-      message: message.trim(),
-    });
-  };
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full bg-red-600 hover:bg-red-500">
-          <Mail className="w-4 h-4 mr-2" />
-          Spieler kontaktieren
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="bg-[#111111] border-[#1a1a1a] text-white">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-[#111111] border-[#1a1a1a]">
         <DialogHeader>
-          <DialogTitle>Anfrage an {player.nickname || player.name}</DialogTitle>
+          <DialogTitle className="text-white flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-blue-500" />
+            Nachricht an {player?.name}
+          </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 mt-4">
-          <div>
-            <p className="text-sm text-gray-400 mb-2">
-              Schreibe eine Nachricht an den Spieler. Er/sie sieht dein Team-Profil und kann antworten.
-            </p>
+
+        <div className="space-y-4 py-4">
+          <div className="p-3 rounded-lg bg-[#0a0a0a] border border-[#1a1a1a]">
+            <p className="text-xs text-gray-500 mb-1">Spieler</p>
+            <p className="text-sm text-white font-medium">{player?.name}</p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs text-gray-500">Deine Nachricht</label>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Hallo, wir suchen Verstärkung für unser Team..."
-              className="bg-[#0a0a0a] border-[#2a2a2a] text-white min-h-[120px]"
+              placeholder="Schreibe eine Nachricht..."
+              className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm min-h-24"
             />
           </div>
-          <Button
-            onClick={handleSend}
-            disabled={sendRequestMutation.isPending}
-            className="w-full bg-red-600 hover:bg-red-500"
-          >
-            <Send className="w-4 h-4 mr-2" />
-            {sendRequestMutation.isPending ? "Wird gesendet..." : "Anfrage senden"}
-          </Button>
         </div>
+
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-[#2a2a2a] text-gray-400 hover:text-white"
+          >
+            Abbrechen
+          </Button>
+          <Button
+            onClick={() => {
+              if (!message.trim()) {
+                toast.error("Bitte schreibe eine Nachricht");
+                return;
+              }
+              contactMutation.mutate(message);
+            }}
+            disabled={contactMutation.isPending}
+            className="bg-blue-600 hover:bg-blue-500 text-white border-0"
+          >
+            {contactMutation.isPending ? "Sendet..." : "Senden"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
