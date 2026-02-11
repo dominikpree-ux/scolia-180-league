@@ -145,6 +145,11 @@ export default function Chat() {
           ))}
         </div>
 
+        {/* Voice Chat Section */}
+        <div className="mb-8">
+          <VoiceChat selectedLeague={selectedLeague} user={user} />
+        </div>
+
         {/* Chat container */}
         <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] overflow-hidden flex flex-col" style={{ height: "calc(100vh - 280px)", minHeight: "500px" }}>
           {/* Messages */}
