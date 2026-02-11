@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 
 export default function Schedule() {
   const [selectedLeague, setSelectedLeague] = useState("all");
+  const [registrationTimeRemaining, setRegistrationTimeRemaining] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
     hours: 0,
@@ -32,8 +38,24 @@ export default function Schedule() {
 
   useEffect(() => {
     const calculateTimeRemaining = () => {
-      const seasonStart = new Date("2026-02-27T00:00:00");
+      // Anmeldeschluss
+      const registrationDeadline = new Date("2026-02-20T00:00:00");
       const now = new Date();
+      const regDiff = registrationDeadline - now;
+
+      if (regDiff > 0) {
+        const days = Math.floor(regDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((regDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((regDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((regDiff % (1000 * 60)) / 1000);
+
+        setRegistrationTimeRemaining({ days, hours, minutes, seconds });
+      } else {
+        setRegistrationTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+
+      // Saisonstart
+      const seasonStart = new Date("2026-02-27T00:00:00");
       const diff = seasonStart - now;
 
       if (diff > 0) {
@@ -54,6 +76,7 @@ export default function Schedule() {
     return () => clearInterval(interval);
   }, []);
 
+  const showRegistrationCountdown = registrationTimeRemaining.days > 0 || registrationTimeRemaining.hours > 0 || registrationTimeRemaining.minutes > 0 || registrationTimeRemaining.seconds > 0;
   const showCountdown = timeRemaining.days > 0 || timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
 
   return (
@@ -68,6 +91,45 @@ export default function Schedule() {
             <p className="text-gray-500 text-sm mt-0.5">Alle Spieltage und Begegnungen</p>
           </div>
         </div>
+
+        {/* Registrierungsfrist Countdown */}
+        {showRegistrationCountdown && (
+          <div className="bg-gradient-to-r from-amber-600/20 to-yellow-600/20 border border-amber-600/30 rounded-xl p-6 mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-5 h-5 text-amber-500" />
+              <h2 className="text-lg font-semibold text-white">Anmeldeschluss in:</h2>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {registrationTimeRemaining.days}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Tage</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {registrationTimeRemaining.hours}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Stunden</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {registrationTimeRemaining.minutes}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Minuten</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {registrationTimeRemaining.seconds}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Sekunden</div>
+              </div>
+            </div>
+            <div className="text-center mt-4 text-sm text-gray-400">
+              Deadline: 20. Februar 2026
+            </div>
+          </div>
+        )}
 
         {/* Countdown */}
         {showCountdown && (
