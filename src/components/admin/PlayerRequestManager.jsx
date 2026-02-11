@@ -15,7 +15,7 @@ export default function PlayerRequestManager() {
 
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["admin-player-requests"],
-    queryFn: () => base44.entities.PlayerRequest.list("-created_date"),
+    queryFn: () => base44.entities.PlayerRequest.list("-created_date", 1000),
   });
 
   const updateMutation = useMutation({
