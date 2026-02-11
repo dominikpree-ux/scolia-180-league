@@ -19,6 +19,11 @@ export default function ResultsManager() {
     queryFn: () => base44.entities.Match.list("matchday"),
   });
 
+  const { data: playerMatches = [] } = useQuery({
+    queryKey: ["admin-player-matches"],
+    queryFn: () => base44.entities.PlayerMatch.list(),
+  });
+
   const updateMatch = useMutation({
     mutationFn: async ({ id, data, match }) => {
       // Update match
@@ -145,6 +150,22 @@ export default function ResultsManager() {
                     <img src={match.result_photo_url} alt="Ergebnis Foto" 
                       className="w-full h-48 object-cover rounded-lg border border-[#2a2a2a] hover:opacity-80 transition-opacity" />
                   </a>
+                </div>
+              )}
+
+              {/* Einzelspiele */}
+              {playerMatches.filter(pm => pm.match_id === match.id).length > 0 && (
+                <div className="mb-3 space-y-1">
+                  <div className="text-xs text-gray-500 mb-1">Einzelspiele:</div>
+                  {playerMatches.filter(pm => pm.match_id === match.id).map((pm, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs bg-[#0a0a0a] rounded px-2 py-1">
+                      <span className="text-gray-400 flex-1 text-right truncate">{pm.player1_name}</span>
+                      <span className={`mx-2 font-bold ${pm.winner_id === pm.player1_id ? 'text-green-400' : pm.winner_id === pm.player2_id ? 'text-red-400' : 'text-white'}`}>
+                        {pm.player1_legs} : {pm.player2_legs}
+                      </span>
+                      <span className="text-gray-400 flex-1 truncate">{pm.player2_name}</span>
+                    </div>
+                  ))}
                 </div>
               )}
 
