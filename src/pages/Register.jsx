@@ -205,13 +205,13 @@ export default function Register() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-gray-400 text-sm">Scolia ID *</Label>
+                <Label className="text-gray-400 text-sm">Scolia Name + ID *</Label>
                 <Input
                   required
                   value={form.captain_name}
                   onChange={(e) => setForm({ ...form, captain_name: e.target.value })}
                   className="bg-[#0a0a0a] border-[#2a2a2a] text-white placeholder:text-gray-600 focus:border-red-600"
-                  placeholder="Scolia ID aus Profil-Einstellungen"
+                  placeholder="z.B. Max Mustermann (ID: 12345)"
                 />
               </div>
               <div className="space-y-2">
@@ -248,7 +248,7 @@ export default function Register() {
                     value={name}
                     onChange={(e) => updatePlayer(i, e.target.value)}
                     className="bg-[#0a0a0a] border-[#2a2a2a] text-white placeholder:text-gray-600 focus:border-red-600"
-                    placeholder={`Spieler ${i + 1} (Scolia ID aus Profil-Einstellungen) *`}
+                    placeholder={`Spieler ${i + 1} - Scolia Name + ID (z.B. Max (ID: 12345)) *`}
                   />
                   {playerNames.length > 3 && (
                     <Button type="button" variant="ghost" size="icon" onClick={() => removePlayer(i)}
