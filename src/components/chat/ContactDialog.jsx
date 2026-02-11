@@ -66,8 +66,8 @@ export default function ContactDialog({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages", currentUser.id] });
-      queryClient.invalidateQueries({ queryKey: ["requests", currentUser.id] });
+      queryClient.invalidateQueries({ queryKey: ["messages", currentUser.id, currentUserType] });
+      queryClient.invalidateQueries({ queryKey: ["requests", currentUser.id, currentUserType] });
       setMessage("");
       setOpen(false);
       toast.success("Nachricht gesendet!");
