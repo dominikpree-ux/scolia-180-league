@@ -34,11 +34,12 @@ export default function ContactPlayerDialog({ player, open, onOpenChange, team =
       return base44.entities.PlayerMessage.create(messageData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries();
-      setMessage("");
-      onOpenChange(false);
-      toast.success("Nachricht gesendet!");
-    },
+       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
+       setMessage("");
+       onOpenChange(false);
+       toast.success("Nachricht gesendet!");
+     },
     onError: () => {
       toast.error("Fehler beim Senden der Nachricht");
     },
