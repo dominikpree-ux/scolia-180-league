@@ -176,12 +176,16 @@ export default function PlayerComparison() {
                     <span className="text-white font-semibold">{comparison.p1.stats?.high_finish || "—"}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
-                    <span className="text-gray-400">180er</span>
-                    <span className="text-white font-semibold">{comparison.p1.stats?.max_scores_count || "—"}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
                     <span className="text-gray-400">100+ Scores</span>
                     <span className="text-white font-semibold">{comparison.p1.stats?.century_count || "—"}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
+                    <span className="text-gray-400">140+ Scores</span>
+                    <span className="text-white font-semibold">{comparison.p1.stats?.double_count || "—"}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-gray-400">180er</span>
+                    <span className="text-white font-semibold">{comparison.p1.stats?.max_scores_count || "—"}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -201,12 +205,16 @@ export default function PlayerComparison() {
                     <span className="text-white font-semibold">{comparison.p2.stats?.high_finish || "—"}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
-                    <span className="text-gray-400">180er</span>
-                    <span className="text-white font-semibold">{comparison.p2.stats?.max_scores_count || "—"}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
                     <span className="text-gray-400">100+ Scores</span>
                     <span className="text-white font-semibold">{comparison.p2.stats?.century_count || "—"}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
+                    <span className="text-gray-400">140+ Scores</span>
+                    <span className="text-white font-semibold">{comparison.p2.stats?.double_count || "—"}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-gray-400">180er</span>
+                    <span className="text-white font-semibold">{comparison.p2.stats?.max_scores_count || "—"}</span>
                   </div>
                 </CardContent>
               </Card>
