@@ -20,8 +20,6 @@ export default function ContactTeamDialog({ team, player }) {
       toast.success("Anfrage gesendet!");
       setOpen(false);
       setMessage("");
-      // Invalidate dashboard chat queries
-      const queryClient = useQueryClient();
       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
     },
