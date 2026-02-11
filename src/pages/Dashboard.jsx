@@ -495,7 +495,7 @@ export default function Dashboard() {
               <ChatInterface />
             </div>
           </div>
-          </div>
-          </div>
-          );
-          }
+        </div>
+      </div>
+    );
+  }
