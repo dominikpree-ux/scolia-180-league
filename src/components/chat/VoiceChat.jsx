@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Users, Phone, PhoneOff } from "lucide-react";
+import { Users, Phone, PhoneOff, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function VoiceChat({ selectedLeague, user }) {
