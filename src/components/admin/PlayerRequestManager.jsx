@@ -23,7 +23,13 @@ export default function PlayerRequestManager() {
     queryFn: () => base44.entities.Team.list(),
   });
 
+  const { data: players = [], isLoading: playersLoading } = useQuery({
+    queryKey: ["admin-players-looking"],
+    queryFn: () => base44.entities.Player.list("-created_date", 1000),
+  });
+
   const recruitingTeams = teams.filter(t => t.looking_for_players && t.status === "approved");
+  const lookingPlayers = players.filter(p => p.looking_for_team);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.PlayerRequest.update(id, data),
@@ -54,7 +60,7 @@ export default function PlayerRequestManager() {
     updateMutation.mutate({ id, data: editForm });
   };
 
-  if (isLoading || teamsLoading) {
+  if (isLoading || teamsLoading || playersLoading) {
     return <div className="text-gray-400">Lade Spielersuchen...</div>;
   }
 
@@ -96,14 +102,57 @@ export default function PlayerRequestManager() {
         </CardContent>
       </Card>
 
-      {/* Spieler suchen Teams */}
+      {/* Spieler suchen Teams - aus Player Entity */}
       <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
         <CardHeader>
-          <CardTitle className="text-white">Spieler suchen Teams ({requests.length})</CardTitle>
+          <CardTitle className="text-white">Spieler suchen Teams ({lookingPlayers.length})</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {lookingPlayers.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">Keine Spieler suchen aktuell ein Team</p>
+          ) : (
+            lookingPlayers.map((player) => (
+              <div key={player.id} className="bg-[#0a0a0a] rounded-lg p-4 border border-[#2a2a2a]">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white font-medium">{player.name}</span>
+                      {player.nickname && <span className="text-gray-500 text-sm">"{player.nickname}"</span>}
+                      {player.available_as_substitute && (
+                        <Badge className="bg-purple-600">Als Ersatz verfügbar</Badge>
+                      )}
+                    </div>
+                    {player.preferred_league && player.preferred_league.length > 0 && (
+                      <div className="text-sm text-gray-400 mb-2">
+                        Bevorzugte Ligen: {player.preferred_league.map(l => `Liga ${l}`).join(", ")}
+                      </div>
+                    )}
+                    {player.bio && (
+                      <div className="text-sm text-gray-300 bg-[#111111] rounded p-2 border border-[#2a2a2a]">
+                        {player.bio}
+                      </div>
+                    )}
+                    {player.email && (
+                      <div className="text-xs text-gray-600 mt-2">
+                        Email: {player.email}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Spieler-Anfragen an Teams */}
+      <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+        <CardHeader>
+          <CardTitle className="text-white">Spieler-Anfragen an Teams ({requests.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
         {requests.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">Keine Spielersuchen vorhanden</p>
+          <p className="text-gray-500 text-center py-4">Keine Anfragen vorhanden</p>
         ) : (
           requests.map((request) => (
             <div key={request.id} className="bg-[#0a0a0a] rounded-lg p-4 border border-[#2a2a2a]">
