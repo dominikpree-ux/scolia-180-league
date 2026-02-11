@@ -168,7 +168,7 @@ export default function PlayerComparison() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
-                    <span className="text-gray-400">Durchschnitt</span>
+                    <span className="text-gray-400">AVG</span>
                     <span className="text-white font-semibold">{comparison.p1.stats?.average?.toFixed(1) || "—"}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
@@ -197,7 +197,7 @@ export default function PlayerComparison() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
-                    <span className="text-gray-400">Durchschnitt</span>
+                    <span className="text-gray-400">AVG</span>
                     <span className="text-white font-semibold">{comparison.p2.stats?.average?.toFixed(1) || "—"}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-[#1a1a1a]">
