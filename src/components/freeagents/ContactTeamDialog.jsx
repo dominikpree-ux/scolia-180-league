@@ -20,8 +20,8 @@ export default function ContactTeamDialog({ team, player }) {
       toast.success("Anfrage gesendet!");
       setOpen(false);
       setMessage("");
-      queryClient.invalidateQueries({ queryKey: ["player-requests"] });
-      queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["player-requests", player.id, team.id] });
+      queryClient.invalidateQueries({ queryKey: ["player-messages", player.id] });
     },
     onError: () => {
       toast.error("Fehler beim Senden");
