@@ -129,59 +129,45 @@ export default function NewChat({ userId, userType, team = null }) {
       if (userType === "player") {
         if (selectedChatId.startsWith("team-")) {
           const teamId = selectedChatId.replace("team-", "");
-          const existingMsg = chatMessages.find(m => m.player_id === userId && m.team_id === teamId);
-
-          if (existingMsg) {
-            await base44.entities.PlayerRequest.update(existingMsg.id, {
-              team_response: messageText,
-              status: "accepted",
-            });
-          } else {
-            const chat = uniqueChats.find(c => c.otherId === teamId);
-            await base44.entities.PlayerRequest.create({
-              player_id: userId,
-              player_name: user?.full_name,
-              player_email: user?.email,
-              team_id: teamId,
-              team_name: chat?.name || "Unknown",
-              message: messageText,
-              status: "pending",
-            });
-          }
+          const chat = uniqueChats.find(c => c.otherId === teamId);
+          await base44.entities.PlayerMessage.create({
+            player_from_id: userId,
+            player_from_name: user?.full_name,
+            team_from_id: null,
+            team_from_name: null,
+            player_to_id: null,
+            player_to_name: null,
+            team_to_id: teamId,
+            team_to_name: chat?.name || "Unknown",
+            message: messageText,
+          });
         }
       } else {
         if (selectedChatId.startsWith("player-")) {
           const playerId = selectedChatId.replace("player-", "");
           const player = allPlayers.find(p => p.id === playerId);
-          await base44.entities.PlayerRequest.create({
-            player_id: playerId,
-            player_name: player?.name || player?.nickname || "Unknown",
-            player_email: player?.email || "",
-            team_id: userId,
-            team_name: team?.name || "Unknown",
+          await base44.entities.PlayerMessage.create({
+            player_from_id: null,
+            player_from_name: null,
+            team_from_id: userId,
+            team_from_name: team?.name || "Unknown",
+            player_to_id: playerId,
+            player_to_name: player?.name || player?.nickname || "Unknown",
+            team_to_id: null,
+            team_to_name: null,
             message: messageText,
-            status: "pending",
           });
         } else {
           const teamId = selectedChatId.replace("team-", "");
-          const existingMsg = chatMessages.find(m => m.team_from_id === teamId && m.team_to_id === userId);
-
-          if (existingMsg) {
-            await base44.entities.TeamMessage.update(existingMsg.id, {
-              response: messageText,
-              status: "answered",
-            });
-          } else {
-            const chat = uniqueChats.find(c => c.otherId === teamId);
-            await base44.entities.TeamMessage.create({
-              team_from_id: userId,
-              team_from_name: team?.name || "Unknown",
-              team_to_id: teamId,
-              team_to_name: chat?.name || "Unknown",
-              message: messageText,
-              status: "pending",
-            });
-          }
+          const chat = uniqueChats.find(c => c.otherId === teamId);
+          await base44.entities.TeamMessage.create({
+            team_from_id: userId,
+            team_from_name: team?.name || "Unknown",
+            team_to_id: teamId,
+            team_to_name: chat?.name || "Unknown",
+            message: messageText,
+            status: "pending",
+          });
         }
       }
 
@@ -190,7 +176,6 @@ export default function NewChat({ userId, userType, team = null }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
-      setShowNewChat(false);
     },
   });
 
