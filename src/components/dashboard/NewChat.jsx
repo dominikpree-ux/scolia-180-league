@@ -137,10 +137,8 @@ export default function NewChat({ userId, userType, team = null }) {
 
   // Send message
   const sendMutation = useMutation({
-    mutationFn: async (newChatId = null) => {
+    mutationFn: async () => {
       if (!messageText.trim() || !selectedChatId) return;
-      
-      const chatId = newChatId || selectedChatId;
 
       if (userType === "player") {
         if (chatId.startsWith("team-")) {
