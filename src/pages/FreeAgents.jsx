@@ -15,6 +15,7 @@ export default function FreeAgents() {
   const [user, setUser] = useState(null);
   const [myTeam, setMyTeam] = useState(null);
   const [myPlayer, setMyPlayer] = useState(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const loadUser = async () => {
