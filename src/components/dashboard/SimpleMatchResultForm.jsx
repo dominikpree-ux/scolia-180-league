@@ -22,18 +22,19 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
   React.useEffect(() => {
     const stats = {};
     allPlayers.forEach(p => {
-      stats[p.id] = {
-        name: p.name,
-        legs_won: 0,
-        legs_lost: 0,
-        average: 0,
-        high_finish: 0,
-        centuries: 0,
-        short_games: 0,
-        max_scores: 0,
-        won_match: false
-      };
-    });
+       stats[p.id] = {
+         name: p.name,
+         legs_won: 0,
+         legs_lost: 0,
+         average: 0,
+         high_finish: 0,
+         centuries: 0,
+         doubles: 0,
+         short_games: 0,
+         max_scores: 0,
+         won_match: false
+       };
+     });
     setPlayerStats(stats);
   }, [allPlayers]);
 
@@ -116,8 +117,9 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
             average: stat.average || current.average,
             high_finish: newHighFinish,
             century_count: (current.century_count || 0) + stat.centuries,
-            short_game_count: (current.short_game_count || 0) + stat.short_games,
-            max_scores_count: (current.max_scores_count || 0) + stat.max_scores,
+             double_count: (current.double_count || 0) + stat.doubles,
+             short_game_count: (current.short_game_count || 0) + stat.short_games,
+             max_scores_count: (current.max_scores_count || 0) + stat.max_scores,
           });
         } else {
           const player = allPlayers.find(p => p.id === playerId);
@@ -138,8 +140,9 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
             average: stat.average || 0,
             high_finish: stat.high_finish || 0,
             century_count: stat.centuries || 0,
-            short_game_count: stat.short_games || 0,
-            max_scores_count: stat.max_scores || 0,
+             double_count: stat.doubles || 0,
+             short_game_count: stat.short_games || 0,
+             max_scores_count: stat.max_scores || 0,
           });
         }
       }
@@ -288,6 +291,16 @@ export default function SimpleMatchResultForm({ match, onCancel, onSuccess, allP
                       min="0"
                       value={playerStats[player.id]?.centuries || 0}
                       onChange={(e) => updatePlayerStat(player.id, "centuries", e.target.value)}
+                      className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-gray-500">140+ Scores</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={playerStats[player.id]?.doubles || 0}
+                      onChange={(e) => updatePlayerStat(player.id, "doubles", e.target.value)}
                       className="w-full text-xs h-7 bg-[#111111] border-[#2a2a2a] text-white"
                     />
                   </div>

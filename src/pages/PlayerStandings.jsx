@@ -100,6 +100,7 @@ export default function PlayerStandings() {
           average: stat?.average || 0,
           high_finish: stat?.high_finish || 0,
           century_count: stat?.century_count || 0,
+          double_count: stat?.double_count || 0,
           short_game_count: stat?.short_game_count || 0,
           max_scores_count: stat?.max_scores_count || 0,
           quote: quote,
@@ -223,7 +224,7 @@ export default function PlayerStandings() {
                            </TableCell>
                            <TableCell className="text-center text-gray-300">{stat.average > 0 ? stat.average.toFixed(2) : "-"}</TableCell>
                            <TableCell className="text-center text-gray-300">{stat.century_count > 0 ? stat.century_count : "-"}</TableCell>
-                           <TableCell className="text-center text-gray-300">—</TableCell>
+                           <TableCell className="text-center text-gray-300">{stat.double_count > 0 ? stat.double_count : "-"}</TableCell>
                            <TableCell className="text-center text-gray-300">{stat.max_scores_count > 0 ? stat.max_scores_count : "-"}</TableCell>
                            <TableCell className="text-center text-gray-300">{stat.high_finish > 0 ? stat.high_finish : "-"}</TableCell>
                            <TableCell className="text-center text-gray-300">{stat.short_game_count > 0 ? stat.short_game_count : "-"}</TableCell>
