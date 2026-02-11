@@ -177,10 +177,11 @@ export default function PlayerStandings() {
                        <TableHead className="text-center text-gray-400 font-semibold">Niederlagen</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">Legs +/-</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">AVG</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">High</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">100+</TableHead>
-                       <TableHead className="text-center text-gray-400 font-semibold">SG</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">140+</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">180's</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">High Finish</TableHead>
+                       <TableHead className="text-center text-gray-400 font-semibold">Short Game</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">Quote %</TableHead>
                        <TableHead className="text-center text-gray-400 font-semibold">H2H</TableHead>
                      </TableRow>
