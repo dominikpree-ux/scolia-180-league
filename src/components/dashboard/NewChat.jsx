@@ -233,16 +233,17 @@ export default function NewChat({ userId, userType, team = null }) {
 
   // Start new chat
   const startNewChat = (target, type) => {
+    let chatId;
     if (userType === "player") {
-      setSelectedChatId(`team-${target.id}`);
+      chatId = `team-${target.id}`;
     } else {
       if (type === "player") {
-        setSelectedChatId(`player-${target.id}`);
+        chatId = `player-${target.id}`;
       } else {
-        setSelectedChatId(`team-${target.id}`);
+        chatId = `team-${target.id}`;
       }
     }
-    setShowNewChat(false);
+    setSelectedChatId(chatId);
   };
 
   const availableTargets = userType === "player" ? allTeams : [...allPlayers, ...allTeams];
