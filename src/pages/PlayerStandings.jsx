@@ -238,12 +238,12 @@ export default function PlayerStandings() {
                        );
                      })}
                     {statsByLeague[league].length === 0 && (
-                       <TableRow>
-                         <TableCell colSpan={14} className="text-center py-12 text-gray-500">
-                           Noch keine Spieler in dieser Liga
-                         </TableCell>
-                       </TableRow>
-                     )}
+                        <TableRow>
+                          <TableCell colSpan={15} className="text-center py-12 text-gray-500">
+                            Noch keine Spieler in dieser Liga
+                          </TableCell>
+                        </TableRow>
+                      )}
                   </TableBody>
                 </Table>
               </div>
