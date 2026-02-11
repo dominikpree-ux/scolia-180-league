@@ -7,14 +7,15 @@ import { Input } from "@/components/ui/input";
 import { MessageCircle, Send } from "lucide-react";
 import { toast } from "sonner";
 
-export default function PlayerChat({ player }) {
-  const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+export default function PlayerChat({ player, team = null }) {
+  const [selectedId, setSelectedId] = useState(null);
+  const [selectedType, setSelectedType] = useState(null); // 'player' or 'team'
   const [messageText, setMessageText] = useState("");
   const queryClient = useQueryClient();
 
   // Fetch all messages for this player
-  const { data: allMessages = [] } = useQuery({
-    queryKey: ["player-chat", player.id],
+  const { data: playerMessages = [] } = useQuery({
+    queryKey: ["player-messages", player.id],
     queryFn: async () => {
       const sent = await base44.entities.PlayerMessage.filter({ player_from_id: player.id });
       const received = await base44.entities.PlayerMessage.filter({ player_to_id: player.id });
@@ -22,56 +23,108 @@ export default function PlayerChat({ player }) {
     },
   });
 
-  // Get unique conversations
-  const conversations = Array.from(
+  // Fetch all requests for this player
+  const { data: playerRequests = [] } = useQuery({
+    queryKey: ["player-requests", player.id],
+    queryFn: async () => {
+      const sent = await base44.entities.PlayerRequest.filter({ player_id: player.id });
+      const received = team ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
+      return [...sent, ...received];
+    },
+  });
+
+  // Get unique conversations from player messages
+  const playerConversations = Array.from(
     new Map(
-      allMessages.map((msg) => {
+      playerMessages.map((msg) => {
         const otherId = msg.player_from_id === player.id ? msg.player_to_id : msg.player_from_id;
         const otherName = msg.player_from_id === player.id ? msg.player_to_name : msg.player_from_name;
-        return [otherId, { id: otherId, name: otherName }];
+        return [otherId, { id: otherId, name: otherName, type: 'player' }];
       })
     ).values()
   );
 
+  // Get unique conversations from player requests
+  const requestConversations = Array.from(
+    new Map(
+      playerRequests.map((req) => {
+        const otherId = req.player_id === player.id ? req.team_id : req.player_id;
+        const otherName = req.player_id === player.id ? req.team_name : req.player_name;
+        const type = req.player_id === player.id ? 'team' : 'player';
+        return [otherId + '-' + type, { id: otherId, name: otherName, type }];
+      })
+    ).values()
+  );
+
+  const conversations = [...playerConversations, ...requestConversations];
+
   // Get messages for selected conversation
-  const conversationMessages = selectedPlayerId
-    ? allMessages.filter(
+  const conversationMessages = selectedType === 'player' && selectedId
+    ? playerMessages.filter(
         (msg) =>
-          (msg.player_from_id === player.id && msg.player_to_id === selectedPlayerId) ||
-          (msg.player_from_id === selectedPlayerId && msg.player_to_id === player.id)
+          (msg.player_from_id === player.id && msg.player_to_id === selectedId) ||
+          (msg.player_from_id === selectedId && msg.player_to_id === player.id)
+      )
+    : selectedType === 'team' && selectedId
+    ? playerRequests.filter(
+        (req) =>
+          (req.player_id === player.id && req.team_id === selectedId) ||
+          (req.team_id === team?.id && req.player_id === selectedId)
       )
     : [];
 
-  const selectedConversation = conversations.find((c) => c.id === selectedPlayerId);
+  const selectedConversation = conversations.find((c) => c.id === selectedId && c.type === selectedType);
 
   // Send or respond to message
   const sendMessage = useMutation({
     mutationFn: async () => {
-      if (!messageText.trim() || !selectedPlayerId) return;
+      if (!messageText.trim() || !selectedId || !selectedType) return;
 
-      const existingMsg = conversationMessages.find(
-        (m) => m.player_from_id === selectedPlayerId && m.player_to_id === player.id && m.status === "pending"
-      );
+      if (selectedType === 'player') {
+        const existingMsg = conversationMessages.find(
+          (m) => m.player_from_id === selectedId && m.player_to_id === player.id && m.status === "pending"
+        );
 
-      if (existingMsg) {
-        // Respond to existing message
-        await base44.entities.PlayerMessage.update(existingMsg.id, {
-          response: messageText,
-          status: "answered",
-        });
-      } else {
-        // Send new message
-        await base44.entities.PlayerMessage.create({
-          player_from_id: player.id,
-          player_from_name: player.name,
-          player_to_id: selectedPlayerId,
-          player_to_name: selectedConversation.name,
-          message: messageText,
-          status: "pending",
-        });
+        if (existingMsg) {
+          await base44.entities.PlayerMessage.update(existingMsg.id, {
+            response: messageText,
+            status: "answered",
+          });
+        } else {
+          await base44.entities.PlayerMessage.create({
+            player_from_id: player.id,
+            player_from_name: player.name,
+            player_to_id: selectedId,
+            player_to_name: selectedConversation.name,
+            message: messageText,
+            status: "pending",
+          });
+        }
+        queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+      } else if (selectedType === 'team') {
+        const existingReq = conversationMessages.find(
+          (r) => r.player_id === player.id && r.team_id === selectedId && r.status === "pending"
+        );
+
+        if (existingReq) {
+          await base44.entities.PlayerRequest.update(existingReq.id, {
+            team_response: messageText,
+            status: "accepted",
+          });
+        } else {
+          await base44.entities.PlayerRequest.create({
+            player_id: player.id,
+            player_name: player.name,
+            player_email: player.email,
+            team_id: selectedId,
+            team_name: selectedConversation.name,
+            message: messageText,
+            status: "pending",
+          });
+        }
+        queryClient.invalidateQueries({ queryKey: ["player-requests"] });
       }
 
-      queryClient.invalidateQueries({ queryKey: ["player-chat"] });
       setMessageText("");
       toast.success("Nachricht gesendet!");
     },
@@ -94,56 +147,67 @@ export default function PlayerChat({ player }) {
             ) : (
               conversations.map((conv) => (
                 <button
-                  key={conv.id}
+                  key={`${conv.id}-${conv.type}`}
                   onClick={() => {
-                    setSelectedPlayerId(conv.id);
+                    setSelectedId(conv.id);
+                    setSelectedType(conv.type);
                     setMessageText("");
                   }}
                   className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
-                    selectedPlayerId === conv.id
+                    selectedId === conv.id && selectedType === conv.type
                       ? "bg-blue-600/20 border border-blue-500/30"
                       : "hover:bg-white/5 border border-transparent"
                   }`}
                 >
                   <p className="text-sm font-medium text-white">{conv.name}</p>
-                  <p className="text-xs text-gray-500 mt-1">Klicken zum Öffnen</p>
+                  <p className="text-xs text-gray-500 mt-1">{conv.type === 'team' ? 'Team' : 'Spieler'}</p>
                 </button>
               ))
             )}
           </div>
 
           {/* Chat Area */}
-          {selectedPlayerId ? (
+          {selectedId && selectedType ? (
             <div className="w-2/3 flex flex-col">
               <div className="flex-1 overflow-y-auto space-y-3 mb-4">
                 {conversationMessages.length === 0 ? (
                   <p className="text-gray-500 text-sm">Keine Nachrichten</p>
                 ) : (
-                  conversationMessages.map((msg) => (
-                    <div key={msg.id} className="space-y-2">
-                      {/* Incoming message */}
-                      {msg.player_from_id === selectedPlayerId && (
-                        <div className="bg-gray-800 rounded-lg p-3">
-                          <p className="text-xs text-gray-400 mb-1">{msg.player_from_name}</p>
-                          <p className="text-sm text-white">{msg.message}</p>
-                          {msg.response && (
-                            <div className="mt-2 pt-2 border-t border-gray-700">
-                              <p className="text-xs text-gray-400 mb-1">Antwort:</p>
-                              <p className="text-sm text-white">{msg.response}</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                  conversationMessages.map((msg) => {
+                    const isIncoming = selectedType === 'player' 
+                      ? msg.player_from_id === selectedId
+                      : msg.player_id !== player.id;
 
-                      {/* Outgoing message */}
-                      {msg.player_from_id === player.id && (
-                        <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
-                          <p className="text-xs text-blue-400 mb-1">Du</p>
-                          <p className="text-sm text-white">{msg.message}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                    return (
+                      <div key={msg.id} className="space-y-2">
+                        {isIncoming && (
+                          <div className="bg-gray-800 rounded-lg p-3">
+                            <p className="text-xs text-gray-400 mb-1">
+                              {selectedType === 'player' ? msg.player_from_name : msg.team_name}
+                            </p>
+                            <p className="text-sm text-white">
+                              {selectedType === 'player' ? msg.message : msg.message}
+                            </p>
+                            {(msg.response || msg.team_response) && (
+                              <div className="mt-2 pt-2 border-t border-gray-700">
+                                <p className="text-xs text-gray-400 mb-1">Antwort:</p>
+                                <p className="text-sm text-white">{msg.response || msg.team_response}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {!isIncoming && (
+                          <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
+                            <p className="text-xs text-blue-400 mb-1">Du</p>
+                            <p className="text-sm text-white">
+                              {selectedType === 'player' ? msg.message : msg.message}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
 
