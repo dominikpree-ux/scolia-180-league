@@ -486,8 +486,16 @@ export default function Dashboard() {
               })}
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
+          )}
+
+          {/* Chat - großer Bereich unten mit fixer Höhe */}
+          <div className="mt-8 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6 h-96">
+          <h3 className="text-sm font-semibold text-white mb-4">Chat</h3>
+          <div className="h-full overflow-hidden">
+            <ChatInterface />
+          </div>
+          </div>
+          </div>
+          </div>
+          );
+          }
