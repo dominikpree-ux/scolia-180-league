@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Inbox, Check, X, Mail } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Inbox, Check, X, Mail, MessageSquare } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 export default function PlayerRequestsCard({ team }) {
   const queryClient = useQueryClient();
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
 
   const { data: requests = [] } = useQuery({
     queryKey: ["player-requests", team.id],
@@ -17,12 +20,27 @@ export default function PlayerRequestsCard({ team }) {
   });
 
   const updateRequestMutation = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.PlayerRequest.update(id, { status }),
+    mutationFn: ({ id, status, team_response }) => base44.entities.PlayerRequest.update(id, { status, team_response }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
       toast.success("Anfrage aktualisiert!");
+      setReplyingTo(null);
+      setReplyText("");
     },
   });
+
+  const handleAccept = (id) => {
+    if (!replyText.trim()) {
+      toast.error("Bitte eine Nachricht eingeben");
+      return;
+    }
+    updateRequestMutation.mutate({ id, status: "accepted", team_response: replyText.trim() });
+  };
+
+  const handleDecline = (id) => {
+    const response = replyText.trim() || "Leider können wir dich aktuell nicht aufnehmen.";
+    updateRequestMutation.mutate({ id, status: "declined", team_response: response });
+  };
 
   if (requests.length === 0) {
     return null;
@@ -49,33 +67,65 @@ export default function PlayerRequestsCard({ team }) {
               </Badge>
             </div>
             <p className="text-gray-400 text-sm mb-3">{request.message}</p>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => updateRequestMutation.mutate({ id: request.id, status: "accepted" })}
-                className="flex-1 bg-green-600 hover:bg-green-500 h-8 text-xs"
-              >
-                <Check className="w-3 h-3 mr-1" />
-                Annehmen
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => updateRequestMutation.mutate({ id: request.id, status: "declined" })}
-                className="flex-1 border-[#2a2a2a] text-gray-400 hover:text-white h-8 text-xs"
-              >
-                <X className="w-3 h-3 mr-1" />
-                Ablehnen
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => window.location.href = `mailto:${request.player_email}`}
-                className="border-[#2a2a2a] text-gray-400 hover:text-white h-8 text-xs"
-              >
-                <Mail className="w-3 h-3" />
-              </Button>
-            </div>
+            
+            {replyingTo === request.id ? (
+              <div className="space-y-2">
+                <Textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Schreibe eine Antwort an den Spieler..."
+                  className="bg-[#1a1a1a] border-[#2a2a2a] text-white text-sm min-h-[80px]"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => handleAccept(request.id)}
+                    disabled={updateRequestMutation.isPending}
+                    className="flex-1 bg-green-600 hover:bg-green-500 h-8 text-xs"
+                  >
+                    <Check className="w-3 h-3 mr-1" />
+                    Annehmen & Senden
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDecline(request.id)}
+                    disabled={updateRequestMutation.isPending}
+                    className="flex-1 border-[#2a2a2a] text-gray-400 hover:text-white h-8 text-xs"
+                  >
+                    <X className="w-3 h-3 mr-1" />
+                    Ablehnen
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => { setReplyingTo(null); setReplyText(""); }}
+                    className="border-[#2a2a2a] text-gray-400 hover:text-white h-8 text-xs"
+                  >
+                    Abbrechen
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => setReplyingTo(request.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-500 h-8 text-xs"
+                >
+                  <MessageSquare className="w-3 h-3 mr-1" />
+                  Antworten
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => window.location.href = `mailto:${request.player_email}`}
+                  className="border-[#2a2a2a] text-gray-400 hover:text-white h-8 text-xs"
+                >
+                  <Mail className="w-3 h-3" />
+                </Button>
+              </div>
+            )}
           </div>
         ))}
       </CardContent>
