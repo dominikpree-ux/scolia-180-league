@@ -138,6 +138,17 @@ export default function PlayerRequestManager() {
                       </div>
                     )}
                   </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      if (confirm(`Spieler ${player.name} wirklich löschen?`)) {
+                        deletePlayerMutation.mutate(player.id);
+                      }
+                    }}
+                  >
+                    Löschen
+                  </Button>
                 </div>
               </div>
             ))
