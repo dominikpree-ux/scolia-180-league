@@ -236,17 +236,9 @@ export default function ConversationManager({ userId, userType = "player", team 
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["messages", userId, userType] });
+      queryClient.invalidateQueries({ queryKey: ["requests", userId, userType] });
       setMessageText("");
-
-      // Auto-select the conversation after sending
-      setTimeout(() => {
-        if (userType === "player" && selectedConvId.startsWith("team-")) {
-          setSelectedConvId(selectedConvId);
-        }
-      }, 100);
-
       toast.success("Nachricht gesendet!");
       },
       });
