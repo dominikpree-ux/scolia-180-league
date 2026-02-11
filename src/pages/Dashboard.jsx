@@ -247,9 +247,15 @@ export default function Dashboard() {
         </div>
 
         {/* Player Requests */}
-         <div className="mb-6">
-           <PlayerRequestsCard team={team} />
-         </div>
+        <div className="mb-6">
+          <PlayerRequestsCard team={team} />
+        </div>
+
+        {/* Chat */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-white mb-4">Chat mit Spielersuchenden</h3>
+          <ChatInterface />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Team Info */}
