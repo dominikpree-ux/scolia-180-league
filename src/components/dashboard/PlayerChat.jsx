@@ -17,32 +17,48 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function PlayerChat({ player, team = null }) {
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedType, setSelectedType] = useState(null); // 'player' or 'team'
-  const [messageText, setMessageText] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const queryClient = useQueryClient();
+   const [selectedId, setSelectedId] = useState(null);
+   const [selectedType, setSelectedType] = useState(null); // 'player' or 'team'
+   const [messageText, setMessageText] = useState("");
+   const [deleteConfirm, setDeleteConfirm] = useState(null);
+   const queryClient = useQueryClient();
 
-  // Fetch all messages for this player
-  const { data: playerMessages = [] } = useQuery({
-   queryKey: ["player-messages", player.id],
-   queryFn: async () => {
-     const sent = await base44.entities.PlayerMessage.filter({ player_from_id: player.id });
-     const received = await base44.entities.PlayerMessage.filter({ player_to_id: player.id });
-     const fromTeam = team ? await base44.entities.PlayerMessage.filter({ team_from_id: team.id }) : [];
-     return [...sent, ...received, ...fromTeam];
-   },
-  });
-
-  // Fetch all requests for this player
-  const { data: playerRequests = [] } = useQuery({
-    queryKey: ["player-requests", player.id, team?.id],
+   // Fetch all messages for this player
+   const { data: playerMessages = [] } = useQuery({
+    queryKey: ["player-messages", player.id],
     queryFn: async () => {
-      const sent = await base44.entities.PlayerRequest.filter({ player_id: player.id });
-      const received = team?.id ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
-      return [...sent, ...received];
+      const sent = await base44.entities.PlayerMessage.filter({ player_from_id: player.id });
+      const received = await base44.entities.PlayerMessage.filter({ player_to_id: player.id });
+      const fromTeam = team ? await base44.entities.PlayerMessage.filter({ team_from_id: team.id }) : [];
+      return [...sent, ...received, ...fromTeam];
     },
-  });
+   });
+
+   // Fetch all requests for this player
+   const { data: playerRequests = [] } = useQuery({
+     queryKey: ["player-requests", player.id, team?.id],
+     queryFn: async () => {
+       const sent = await base44.entities.PlayerRequest.filter({ player_id: player.id });
+       const received = team?.id ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
+       return [...sent, ...received];
+     },
+   });
+
+   // Subscribe to real-time updates for PlayerMessage
+   React.useEffect(() => {
+     const unsubscribeMsg = base44.entities.PlayerMessage.subscribe((event) => {
+       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+     });
+     return unsubscribeMsg;
+   }, [queryClient]);
+
+   // Subscribe to real-time updates for PlayerRequest
+   React.useEffect(() => {
+     const unsubscribeReq = base44.entities.PlayerRequest.subscribe((event) => {
+       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
+     });
+     return unsubscribeReq;
+   }, [queryClient]);
 
   // Get unique conversations from player messages
   const playerConversations = Array.from(
