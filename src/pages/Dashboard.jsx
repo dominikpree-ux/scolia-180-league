@@ -181,7 +181,6 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-             <NewChat userId={player.id} userType="player" team={null} />
             </div>
         </div>
       </div>
