@@ -125,11 +125,10 @@ export default function ResultsManager() {
                 <span>Spieltag {match.matchday}</span>
                 {match.date && <span>{format(new Date(match.date), "dd.MM.yyyy")}</span>}
                 <div className="flex items-center gap-2">
-                  {match.result_photo_url && (
-                    <a href={match.result_photo_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-blue-400 hover:text-blue-300">
-                      <Image className="w-3 h-3" /> Foto
-                    </a>
+                  {match.status === "result_submitted" && (
+                    <span className="flex items-center gap-1 text-yellow-400">
+                      ⏳ Wartet auf Bestätigung
+                    </span>
                   )}
                   {match.status === "completed" && (
                     <span className="flex items-center gap-1 text-green-400">
@@ -138,6 +137,16 @@ export default function ResultsManager() {
                   )}
                 </div>
               </div>
+
+              {/* Foto-Vorschau */}
+              {match.result_photo_url && (
+                <div className="mb-3">
+                  <a href={match.result_photo_url} target="_blank" rel="noopener noreferrer">
+                    <img src={match.result_photo_url} alt="Ergebnis Foto" 
+                      className="w-full h-48 object-cover rounded-lg border border-[#2a2a2a] hover:opacity-80 transition-opacity" />
+                  </a>
+                </div>
+              )}
 
               {editingMatch === match.id ? (
                 <div className="space-y-3">
@@ -179,8 +188,8 @@ export default function ResultsManager() {
                     <Button variant="ghost" size="sm" onClick={() => setEditingMatch(null)}
                       className="text-gray-400 border-0">Abbrechen</Button>
                     <Button size="sm" onClick={() => saveResult(match.id)}
-                      className="bg-red-600 hover:bg-red-500 text-white border-0">
-                      <Save className="w-3 h-3 mr-1" /> Speichern
+                      className="bg-green-600 hover:bg-green-500 text-white border-0">
+                      <CheckCircle className="w-3 h-3 mr-1" /> {match.status === "result_submitted" ? "Bestätigen" : "Speichern"}
                     </Button>
                   </div>
                 </div>
