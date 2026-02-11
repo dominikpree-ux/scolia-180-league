@@ -85,11 +85,8 @@ export default function PlayerChat({ player, team = null }) {
         ...playerRequests.filter(
           (req) =>
             (req.player_id === player.id && req.player_id !== selectedId) ||
-            (req.player_id === selectedId && req.player_id !== player.id)
-        ).filter(req => {
-          const otherId = req.player_id === player.id ? req.player_id : req.player_id;
-          return (req.player_id === player.id && req.player_id !== selectedId) || (req.player_id === selectedId);
-        })
+            (req.player_id === selectedId)
+        )
       ]
     : selectedType === 'team' && selectedId
     ? [
