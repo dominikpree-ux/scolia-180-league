@@ -29,6 +29,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "H2H Vergleich", page: "PlayerComparison" },
     { name: "Spielplan", page: "Schedule" },
     { name: "Teams", page: "Teams" },
+    { name: "Spielersuche", page: "FreeAgents" },
     { name: "Chat", page: "Chat" },
     { name: "Regeln", page: "Rules" },
     { name: "Kontakt", page: "Contact" },

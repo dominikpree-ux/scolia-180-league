@@ -53,13 +53,14 @@ import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Impressum from './pages/Impressum';
+import PlayerComparison from './pages/PlayerComparison';
 import PlayerStandings from './pages/PlayerStandings';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
-import PlayerComparison from './pages/PlayerComparison';
+import FreeAgents from './pages/FreeAgents';
 import __Layout from './Layout.jsx';
 
 
@@ -70,13 +71,14 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Home": Home,
     "Impressum": Impressum,
+    "PlayerComparison": PlayerComparison,
     "PlayerStandings": PlayerStandings,
     "Register": Register,
     "Rules": Rules,
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
-    "PlayerComparison": PlayerComparison,
+    "FreeAgents": FreeAgents,
 }
 
 export const pagesConfig = {
