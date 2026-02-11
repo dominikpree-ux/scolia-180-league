@@ -4,13 +4,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function PlayerChat({ player, team = null }) {
   const [selectedId, setSelectedId] = useState(null);
   const [selectedType, setSelectedType] = useState(null); // 'player' or 'team'
   const [messageText, setMessageText] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const queryClient = useQueryClient();
 
   // Fetch all messages for this player
@@ -139,6 +149,43 @@ export default function PlayerChat({ player, team = null }) {
     },
   });
 
+  // Delete conversation
+  const deleteConversation = useMutation({
+    mutationFn: async (convId, convType) => {
+      if (convType === 'player') {
+        const messagesToDelete = playerMessages.filter(
+          (msg) =>
+            (msg.player_from_id === convId && msg.player_to_id === player.id && !msg.team_from_id) ||
+            (msg.player_from_id === player.id && msg.player_to_id === convId && !msg.team_from_id)
+        );
+        for (const msg of messagesToDelete) {
+          await base44.entities.PlayerMessage.delete(msg.id);
+        }
+      } else if (convType === 'team') {
+        const messagesToDelete = playerMessages.filter(
+          (msg) => msg.team_from_id === convId && msg.player_to_id === player.id
+        );
+        for (const msg of messagesToDelete) {
+          await base44.entities.PlayerMessage.delete(msg.id);
+        }
+        const requestsToDelete = playerRequests.filter(
+          (req) => (req.player_id === player.id && req.team_id === convId) || (req.team_id === team?.id && req.player_id === convId)
+        );
+        for (const req of requestsToDelete) {
+          await base44.entities.PlayerRequest.delete(req.id);
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["player-requests"] });
+      setSelectedId(null);
+      setSelectedType(null);
+      setDeleteConfirm(null);
+      toast.success("Konversation gelöscht!");
+    },
+  });
+
   return (
     <Card className="bg-[#111111] border-gray-800">
       <CardHeader>
@@ -155,22 +202,34 @@ export default function PlayerChat({ player, team = null }) {
               <p className="text-gray-500 text-sm">Keine Konversationen</p>
             ) : (
               conversations.map((conv) => (
-                <button
+                <div
                   key={`${conv.id}-${conv.type}`}
-                  onClick={() => {
-                    setSelectedId(conv.id);
-                    setSelectedType(conv.type);
-                    setMessageText("");
-                  }}
-                  className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
+                  className={`flex items-center gap-2 p-3 rounded-lg mb-2 transition-colors group ${
                     selectedId === conv.id && selectedType === conv.type
                       ? "bg-blue-600/20 border border-blue-500/30"
                       : "hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  <p className="text-sm font-medium text-white">{conv.name}</p>
-                  <p className="text-xs text-gray-500 mt-1">{conv.type === 'team' ? 'Team' : 'Spieler'}</p>
-                </button>
+                  <button
+                    onClick={() => {
+                      setSelectedId(conv.id);
+                      setSelectedType(conv.type);
+                      setMessageText("");
+                    }}
+                    className="flex-1 text-left"
+                  >
+                    <p className="text-sm font-medium text-white">{conv.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{conv.type === 'team' ? 'Team' : 'Spieler'}</p>
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => setDeleteConfirm({ id: conv.id, type: conv.type, name: conv.name })}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               ))
             )}
           </div>
