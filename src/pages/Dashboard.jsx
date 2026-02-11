@@ -13,6 +13,8 @@ import MatchResultForm from "../components/dashboard/MatchResultForm";
 import DetailedMatchResultForm from "../components/dashboard/DetailedMatchResultForm";
 import SimpleMatchResultForm from "../components/dashboard/SimpleMatchResultForm";
 import PlayerLineupSelector from "../components/dashboard/PlayerLineupSelector";
+import PlayerRecruitmentCard from "../components/dashboard/PlayerRecruitmentCard";
+import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -192,6 +194,16 @@ export default function Dashboard() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Player Profile & Team Recruitment */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <PlayerProfileCard 
+            player={players.find(p => p.email === user?.email || (p.is_captain && !p.email))} 
+            teamCaptainEmail={team.captain_email}
+            userEmail={user?.email}
+          />
+          <PlayerRecruitmentCard team={team} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
