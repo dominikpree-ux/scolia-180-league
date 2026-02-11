@@ -232,7 +232,7 @@ export default function PlayerChat({ player, team = null }) {
             </div>
           ) : (
             <div className="w-2/3 flex items-center justify-center text-gray-500">
-              <p className="text-sm">Wähle eine Konversation</p>
+              <p className="text-sm">{conversations.length === 0 ? 'Keine Konversationen' : 'Wähle eine Konversation'}</p>
             </div>
           )}
         </div>
