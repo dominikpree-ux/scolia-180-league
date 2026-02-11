@@ -109,15 +109,12 @@ export default function NewChat({ userId, userType, team = null }) {
         if (userType === "player") {
           if (selectedChatId.startsWith("team-")) {
             const teamId = selectedChatId.replace("team-", "");
-            return m.team_id === teamId;
+            return (m.team_from_id === teamId || m.team_to_id === teamId);
           }
         } else {
           if (selectedChatId.startsWith("player-")) {
             const playerId = selectedChatId.replace("player-", "");
-            return m.player_id === playerId;
-          } else {
-            const id = selectedChatId.replace("team-", "");
-            return m.team_from_id === id || m.team_to_id === id;
+            return (m.player_from_id === playerId || m.player_to_id === playerId);
           }
         }
         return false;
