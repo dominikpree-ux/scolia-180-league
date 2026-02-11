@@ -137,12 +137,14 @@ export default function NewChat({ userId, userType, team = null }) {
 
   // Send message
   const sendMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (newChatId = null) => {
       if (!messageText.trim() || !selectedChatId) return;
+      
+      const chatId = newChatId || selectedChatId;
 
       if (userType === "player") {
-        if (selectedChatId.startsWith("team-")) {
-          const teamId = selectedChatId.replace("team-", "");
+        if (chatId.startsWith("team-")) {
+          const teamId = chatId.replace("team-", "");
           const existingMsg = chatMessages.find(m => m.player_id === userId && m.team_id === teamId);
 
           if (existingMsg) {
@@ -164,8 +166,8 @@ export default function NewChat({ userId, userType, team = null }) {
           }
         }
       } else {
-        if (selectedChatId.startsWith("player-")) {
-          const playerId = selectedChatId.replace("player-", "");
+        if (chatId.startsWith("player-")) {
+          const playerId = chatId.replace("player-", "");
           const player = allPlayers.find(p => p.id === playerId);
           await base44.entities.PlayerRequest.create({
             player_id: playerId,
@@ -177,7 +179,7 @@ export default function NewChat({ userId, userType, team = null }) {
             status: "pending",
           });
         } else {
-          const teamId = selectedChatId.replace("team-", "");
+          const teamId = chatId.replace("team-", "");
           const existingMsg = chatMessages.find(m => m.team_from_id === teamId && m.team_to_id === userId);
 
           if (existingMsg) {
@@ -204,6 +206,7 @@ export default function NewChat({ userId, userType, team = null }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
+      setShowNewChat(false);
     },
   });
 
