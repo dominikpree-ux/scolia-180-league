@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Calendar, Trophy, Clock } from "lucide-react";
+import { Shield, Users, Calendar, Trophy, Clock, UserSearch } from "lucide-react";
 import TeamManagement from "../components/admin/TeamManagement";
 import ScheduleGenerator from "../components/admin/ScheduleGenerator";
 import ResultsManager from "../components/admin/ResultsManager";
 import SeasonManager from "../components/admin/SeasonManager";
+import PlayerRequestManager from "../components/admin/PlayerRequestManager";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -67,6 +68,9 @@ export default function Admin() {
             <TabsTrigger value="results" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
               <Trophy className="w-3.5 h-3.5 mr-1.5" /> Ergebnisse
             </TabsTrigger>
+            <TabsTrigger value="requests" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
+              <UserSearch className="w-3.5 h-3.5 mr-1.5" /> Spielersuchen
+            </TabsTrigger>
             <TabsTrigger value="seasons" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
               <Clock className="w-3.5 h-3.5 mr-1.5" /> Saisons
             </TabsTrigger>
@@ -90,6 +94,13 @@ export default function Admin() {
             <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
               <h3 className="text-lg font-bold text-white mb-4">Ergebnisse verwalten</h3>
               <ResultsManager />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="requests">
+            <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
+              <h3 className="text-lg font-bold text-white mb-4">Spielersuchen verwalten</h3>
+              <PlayerRequestManager />
             </div>
           </TabsContent>
 
