@@ -192,6 +192,8 @@ export default function ConversationManager({ userId, userType = "player", team 
           }
         } else {
         const playerId = selectedConvId.replace("player-", "");
+        const player = await base44.auth.me();
+
         const existingMsg = conversationMessages.find(
           (m) => m.player_from_id === playerId && m.player_to_id === userId && m.status === "pending"
         );
@@ -202,14 +204,14 @@ export default function ConversationManager({ userId, userType = "player", team 
             status: "answered",
           });
         } else {
-          const player = await base44.auth.me();
-          const otherPlayer = conversationMessages[0];
-          const otherName = otherPlayer?.player_from_id === userId ? otherPlayer?.player_to_name : otherPlayer?.player_from_name;
+          const otherConv = conversations.find(c => c.type === "player" && c.id === playerId);
+          const otherName = otherConv?.name || "Unknown";
+
           await base44.entities.PlayerMessage.create({
             player_from_id: userId,
             player_from_name: player.full_name,
             player_to_id: playerId,
-            player_to_name: otherName || "Unknown",
+            player_to_name: otherName,
             message: messageText,
             status: "pending",
           });
