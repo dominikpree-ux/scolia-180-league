@@ -261,6 +261,11 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Team Chat */}
+        <div className="mb-6">
+          <TeamChat team={team} />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Team Info */}
           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
