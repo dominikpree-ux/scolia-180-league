@@ -182,6 +182,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
+            <PlayerMessagesCard playerId={player.id} />
           </div>
         </div>
       </div>
