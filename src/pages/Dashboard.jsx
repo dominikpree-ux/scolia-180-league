@@ -256,7 +256,7 @@ export default function Dashboard() {
         {/* Player Chat */}
         {players.find(p => p.email === user?.email) && (
           <div className="mb-6">
-            <PlayerChat player={players.find(p => p.email === user?.email)} />
+            <PlayerChat player={players.find(p => p.email === user?.email)} team={team} />
           </div>
         )}
 
