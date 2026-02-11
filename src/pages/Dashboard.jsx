@@ -251,9 +251,9 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
            {/* Team Info */}
-           <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-white">Team-Daten</h3>
               <Button variant="ghost" size="sm" onClick={() => {
