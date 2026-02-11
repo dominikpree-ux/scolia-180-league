@@ -184,7 +184,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-            <PlayerChat player={player} />
+            <PlayerChat player={player} team={null} />
           </div>
         </div>
       </div>
