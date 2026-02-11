@@ -39,7 +39,7 @@ export default function PlayerChat({ player, team = null }) {
     queryKey: ["player-requests", player.id],
     queryFn: async () => {
       const sent = await base44.entities.PlayerRequest.filter({ player_id: player.id });
-      const received = team ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
+      const received = await base44.entities.PlayerRequest.filter({ team_id: team?.id || "" });
       return [...sent, ...received];
     },
   });
