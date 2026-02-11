@@ -141,8 +141,8 @@ export default function NewChat({ userId, userType, team = null }) {
       if (!messageText.trim() || !selectedChatId) return;
 
       if (userType === "player") {
-        if (chatId.startsWith("team-")) {
-          const teamId = chatId.replace("team-", "");
+        if (selectedChatId.startsWith("team-")) {
+          const teamId = selectedChatId.replace("team-", "");
           const existingMsg = chatMessages.find(m => m.player_id === userId && m.team_id === teamId);
 
           if (existingMsg) {
