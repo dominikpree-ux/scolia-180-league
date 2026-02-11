@@ -52,6 +52,12 @@ export default function HeroSection() {
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
+            <Link to={createPageUrl("PlayerRegister")}>
+              <Button size="lg" className="bg-red-600 hover:bg-red-500 text-white rounded-xl px-8 h-12 text-sm font-semibold border-0 shadow-lg shadow-red-600/20 transition-all hover:shadow-red-500/30">
+                Spieler werden
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
             <Link to={createPageUrl("Standings")}>
               <Button variant="outline" size="lg" className="bg-transparent border-[#2a2a2a] text-gray-300 hover:text-white hover:bg-white/5 rounded-xl px-8 h-12 text-sm font-medium">
                 Tabelle ansehen
