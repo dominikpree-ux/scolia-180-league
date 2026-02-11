@@ -232,15 +232,19 @@ export default function ConversationManager({ userId, userType = "player", team 
             status: "answered",
           });
         } else {
-          await base44.entities.TeamMessage.create({
-            team_from_id: userId,
-            team_from_name: conversationMessages[0]?.team_from_name || "Unknown",
-            team_to_id: teamId,
-            team_to_name: conversationMessages[0]?.team_to_name || "Unknown",
-            message: messageText,
-            status: "pending",
-          });
-        }
+           const teamConv = conversations.find(c => c.type === "team" && c.id === teamId);
+           const myTeamName = conversations.find(c => c.type === "team" && c.id === userId)?.name || "Unknown";
+           const otherTeamName = teamConv?.name || "Unknown";
+
+           await base44.entities.TeamMessage.create({
+             team_from_id: userId,
+             team_from_name: myTeamName,
+             team_to_id: teamId,
+             team_to_name: otherTeamName,
+             message: messageText,
+             status: "pending",
+           });
+         }
       }
     },
     onSuccess: () => {
