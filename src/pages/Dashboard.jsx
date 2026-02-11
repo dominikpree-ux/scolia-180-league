@@ -173,11 +173,14 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <PlayerProfileCard 
-            player={player}
-            teamCaptainEmail={null}
-            userEmail={user?.email}
-          />
+          <div className="space-y-6">
+            <PlayerProfileCard 
+              player={player}
+              teamCaptainEmail={null}
+              userEmail={user?.email}
+            />
+            <MyPlayerRequestsCard player={player} />
+          </div>
         </div>
       </div>
     );
