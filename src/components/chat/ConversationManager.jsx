@@ -180,12 +180,15 @@ export default function ConversationManager({ userId, userType = "player", team 
             });
           } else {
             const player = await base44.auth.me();
+            const teamConv = conversations.find(c => c.type === "team" && c.id === teamId);
+            const teamName = teamConv?.name || "Unknown";
+
             await base44.entities.PlayerRequest.create({
               player_id: userId,
               player_name: player.full_name,
               player_email: player.email,
               team_id: teamId,
-              team_name: conversationMessages[0]?.team_name || "Unknown",
+              team_name: teamName,
               message: messageText,
               status: "pending",
             });
