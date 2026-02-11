@@ -55,20 +55,20 @@ export default function ConversationManager({ userId, userType = "player", team 
   // Real-time subscriptions
   useEffect(() => {
     const unsubMsg = base44.entities.PlayerMessage.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
+      queryClient.invalidateQueries({ queryKey: ["messages", userId, userType] });
     });
     const unsubReq = base44.entities.PlayerRequest.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["requests", userId, userType] });
     });
     const unsubTeamMsg = base44.entities.TeamMessage.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
+      queryClient.invalidateQueries({ queryKey: ["messages", userId, userType] });
     });
     return () => {
       unsubMsg();
       unsubReq();
       unsubTeamMsg();
     };
-  }, [queryClient]);
+  }, [queryClient, userId, userType]);
 
   // Build conversations list
   const conversations = (() => {
