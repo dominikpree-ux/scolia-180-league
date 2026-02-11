@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { BookOpen } from "lucide-react";
+import { useLanguage } from "@/components/ui/translations";
 
 const defaultRules = `
 ## Allgemeine Regeln
@@ -100,6 +101,8 @@ Bei Fragen oder Problemen kontaktiere uns über die Kontaktseite.
 `;
 
 export default function Rules() {
+  const { t } = useLanguage();
+
   const { data: seasons = [] } = useQuery({
     queryKey: ["seasons"],
     queryFn: () => base44.entities.Season.filter({ status: "active" }),
@@ -111,15 +114,15 @@ export default function Rules() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-red-500" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Regeln</h1>
-            <p className="text-gray-500 text-sm mt-0.5">Scolia 180 League Regelwerk</p>
-          </div>
-        </div>
+         <div className="flex items-center gap-3 mb-8">
+           <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
+             <BookOpen className="w-5 h-5 text-red-500" />
+           </div>
+           <div>
+             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t('rules.title')}</h1>
+             <p className="text-gray-500 text-sm mt-0.5">{t('rules.subtitle')}</p>
+           </div>
+         </div>
 
         <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6 sm:p-8">
           <ReactMarkdown

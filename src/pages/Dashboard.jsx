@@ -19,8 +19,11 @@ import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { useLanguage } from "@/components/ui/translations";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
+  
   const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
@@ -67,44 +70,44 @@ export default function Dashboard() {
   const updateTeam = useMutation({
     mutationFn: (data) => base44.entities.Team.update(team.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
-      setEditing(false);
-      toast.success("Team aktualisiert!");
-    },
-  });
+       queryClient.invalidateQueries({ queryKey: ["my-teams"] });
+       setEditing(false);
+       toast.success(t('dashboard.updated'));
+     },
+    });
 
-  const handleLogoUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const handleLogoUpload = async (e) => {
+     const file = e.target.files?.[0];
+     if (!file) return;
 
-    setUploadingLogo(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      await base44.entities.Team.update(team.id, { logo_url: file_url });
-      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
-      toast.success("Logo aktualisiert!");
-    } catch (error) {
-      toast.error("Logo-Upload fehlgeschlagen");
-    }
-    setUploadingLogo(false);
-  };
+     setUploadingLogo(true);
+     try {
+       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+       await base44.entities.Team.update(team.id, { logo_url: file_url });
+       queryClient.invalidateQueries({ queryKey: ["my-teams"] });
+       toast.success(t('dashboard.logoUpdated'));
+     } catch (error) {
+       toast.error(t('dashboard.logoFailed'));
+     }
+     setUploadingLogo(false);
+    };
 
-  const addPlayer = useMutation({
-    mutationFn: (name) => base44.entities.Player.create({ name, team_id: team.id, is_captain: false }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-players"] });
-      setNewPlayerName("");
-      toast.success("Spieler hinzugefügt!");
-    },
-  });
+    const addPlayer = useMutation({
+     mutationFn: (name) => base44.entities.Player.create({ name, team_id: team.id, is_captain: false }),
+     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ["team-players"] });
+       setNewPlayerName("");
+       toast.success(t('dashboard.playerAdded'));
+     },
+    });
 
-  const removePlayer = useMutation({
-    mutationFn: (id) => base44.entities.Player.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["team-players"] });
-      toast.success("Spieler entfernt.");
-    },
-  });
+    const removePlayer = useMutation({
+     mutationFn: (id) => base44.entities.Player.delete(id),
+     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ["team-players"] });
+       toast.success(t('dashboard.playerRemoved'));
+     },
+    });
 
   const confirmResult = useMutation({
     mutationFn: async (matchId) => {
@@ -148,30 +151,30 @@ export default function Dashboard() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries();
-      toast.success("Ergebnis bestätigt und Tabelle aktualisiert!");
-    },
-  });
+       queryClient.invalidateQueries();
+       toast.success(t('dashboard.resultConfirmed'));
+     },
+    });
 
-  if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500 text-sm">Lade Dashboard...</div>;
-  }
+    if (isLoading) {
+     return <div className="min-h-screen flex items-center justify-center text-gray-500 text-sm">{t('dashboard.loading')}</div>;
+    }
 
-  // Standalone player dashboard
-  if (!team && myPlayerProfile.length > 0) {
-    const player = myPlayerProfile[0];
-    return (
-      <div className="min-h-screen py-12 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
-              <LayoutDashboard className="w-5 h-5 text-red-500" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Spieler Dashboard</h1>
-              <p className="text-gray-500 text-sm mt-0.5">{player.nickname || player.name}</p>
-            </div>
-          </div>
+    // Standalone player dashboard
+    if (!team && myPlayerProfile.length > 0) {
+     const player = myPlayerProfile[0];
+     return (
+       <div className="min-h-screen py-12 px-4 sm:px-6">
+         <div className="max-w-3xl mx-auto">
+           <div className="flex items-center gap-3 mb-8">
+             <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
+               <LayoutDashboard className="w-5 h-5 text-red-500" />
+             </div>
+             <div>
+               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t('dashboard.playerTitle')}</h1>
+               <p className="text-gray-500 text-sm mt-0.5">{player.nickname || player.name}</p>
+             </div>
+           </div>
 
           <div className="space-y-6">
             <PlayerProfileCard 
@@ -193,8 +196,8 @@ export default function Dashboard() {
           <div className="w-16 h-16 rounded-2xl bg-red-600/10 flex items-center justify-center mx-auto mb-4">
             <LayoutDashboard className="w-8 h-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Kein Team gefunden</h2>
-          <p className="text-gray-500 text-sm">Du bist noch nicht als Kapitän eines Teams registriert.</p>
+          <h2 className="text-xl font-bold text-white mb-2">{t('dashboard.notFound')}</h2>
+          <p className="text-gray-500 text-sm">{t('dashboard.noTeam')}</p>
         </div>
       </div>
     );
@@ -208,7 +211,7 @@ export default function Dashboard() {
             <LayoutDashboard className="w-5 h-5 text-red-500" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Team Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t('dashboard.teamTitle')}</h1>
             <p className="text-gray-500 text-sm mt-0.5">{team.name}</p>
           </div>
         </div>
@@ -216,9 +219,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           {/* Stats */}
           {[
-            { label: "Punkte", value: team.points || 0, icon: Trophy, color: "text-yellow-500" },
-            { label: "Siege", value: team.wins || 0, icon: Target, color: "text-green-500" },
-            { label: "Spiele", value: (team.wins || 0) + (team.draws || 0) + (team.losses || 0), icon: Calendar, color: "text-blue-500" },
+            { label: t('dashboard.points'), value: team.points || 0, icon: Trophy, color: "text-yellow-500" },
+            { label: t('dashboard.wins'), value: team.wins || 0, icon: Target, color: "text-green-500" },
+            { label: t('dashboard.matches'), value: (team.wins || 0) + (team.draws || 0) + (team.losses || 0), icon: Calendar, color: "text-blue-500" },
           ].map((s, i) => (
             <div key={i} className="rounded-xl bg-[#111111] border border-[#1a1a1a] p-5">
               <div className="flex items-center gap-3">
@@ -253,7 +256,7 @@ export default function Dashboard() {
           {/* Team Info */}
           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-white">Team-Daten</h3>
+              <h3 className="text-sm font-semibold text-white">{t('dashboard.teamData')}</h3>
               <Button variant="ghost" size="sm" onClick={() => {
                 if (editing) {
                   updateTeam.mutate(editForm);
@@ -262,18 +265,18 @@ export default function Dashboard() {
                   setEditing(true);
                 }
               }} className="text-gray-400 hover:text-white border-0">
-                {editing ? <><Save className="w-3 h-3 mr-1" /> Speichern</> : <><Edit2 className="w-3 h-3 mr-1" /> Bearbeiten</>}
+                {editing ? <><Save className="w-3 h-3 mr-1" /> {t('dashboard.save')}</> : <><Edit2 className="w-3 h-3 mr-1" /> {t('dashboard.edit')}</>}
               </Button>
             </div>
             {editing ? (
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label className="text-gray-500 text-xs">Teamname</Label>
+                  <Label className="text-gray-500 text-xs">{t('dashboard.teamName')}</Label>
                   <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                     className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-gray-500 text-xs">Scolia Standort</Label>
+                  <Label className="text-gray-500 text-xs">{t('dashboard.scoliaLocation')}</Label>
                   <Input value={editForm.scolia_location} onChange={(e) => setEditForm({ ...editForm, scolia_location: e.target.value })}
                     className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm" />
                 </div>
@@ -281,7 +284,7 @@ export default function Dashboard() {
             ) : (
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label className="text-gray-500 text-xs">Team-Logo</Label>
+                  <Label className="text-gray-500 text-xs">{t('dashboard.teamLogo')}</Label>
                   <div className="flex items-center gap-3">
                     {team.logo_url ? (
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#2a2a2a]">
@@ -297,20 +300,20 @@ export default function Dashboard() {
                       <Button type="button" size="sm" variant="outline" className="border-[#2a2a2a] text-gray-400 hover:text-white" asChild>
                         <span>
                           <Upload className="w-3 h-3 mr-1" />
-                          {uploadingLogo ? "Lädt..." : team.logo_url ? "Ändern" : "Hochladen"}
+                          {uploadingLogo ? t('dashboard.uploading') : team.logo_url ? t('dashboard.change') : t('dashboard.upload')}
                         </span>
                       </Button>
                     </label>
-                  </div>
-                </div>
-                <div><span className="text-xs text-gray-500">Teamname</span><p className="text-white text-sm">{team.name}</p></div>
-                <div><span className="text-xs text-gray-500">Kapitän</span><p className="text-white text-sm">{team.captain_name}</p></div>
-                <div><span className="text-xs text-gray-500">Standort</span><p className="text-white text-sm">{team.scolia_location || "—"}</p></div>
-                <div><span className="text-xs text-gray-500">Status</span>
-                  <p className={`text-sm font-medium ${team.status === "approved" ? "text-green-400" : team.status === "pending" ? "text-yellow-400" : "text-red-400"}`}>
-                    {team.status === "approved" ? "Freigegeben" : team.status === "pending" ? "Ausstehend" : "Abgelehnt"}
-                  </p>
-                </div>
+                    </div>
+                    </div>
+                    <div><span className="text-xs text-gray-500">{t('dashboard.teamName')}</span><p className="text-white text-sm">{team.name}</p></div>
+                    <div><span className="text-xs text-gray-500">{t('dashboard.captain')}</span><p className="text-white text-sm">{team.captain_name}</p></div>
+                    <div><span className="text-xs text-gray-500">{t('dashboard.scoliaLocation')}</span><p className="text-white text-sm">{team.scolia_location || "—"}</p></div>
+                    <div><span className="text-xs text-gray-500">Status</span>
+                    <p className={`text-sm font-medium ${team.status === "approved" ? "text-green-400" : team.status === "pending" ? "text-yellow-400" : "text-red-400"}`}>
+                    {team.status === "approved" ? t('dashboard.approved') : team.status === "pending" ? t('dashboard.pending') : t('dashboard.rejected')}
+                    </p>
+                    </div>
               </div>
             )}
           </div>
@@ -318,7 +321,7 @@ export default function Dashboard() {
           {/* Players */}
           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-              <Users className="w-4 h-4 text-red-500" /> Spieler ({players.length})
+              <Users className="w-4 h-4 text-red-500" /> {t('dashboard.players')} ({players.length})
             </h3>
             <div className="space-y-2 mb-4">
               {players.map((p) => (
@@ -328,7 +331,7 @@ export default function Dashboard() {
                       {p.name?.charAt(0)?.toUpperCase()}
                     </div>
                     <span className="text-sm text-white">{p.name}</span>
-                    {p.is_captain && <span className="text-[10px] bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded font-medium">Kapitän</span>}
+                    {p.is_captain && <span className="text-[10px] bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded font-medium">{t('dashboard.captain')}</span>}
                   </div>
                   {!p.is_captain && (
                     <Button variant="ghost" size="icon" className="w-7 h-7 text-gray-600 hover:text-red-400 border-0"
@@ -343,7 +346,7 @@ export default function Dashboard() {
               <Input
                 value={newPlayerName}
                 onChange={(e) => setNewPlayerName(e.target.value)}
-                placeholder="Spieler hinzufügen"
+                placeholder={t('dashboard.addPlayer')}
                 className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm placeholder:text-gray-600"
               />
               <Button
@@ -361,7 +364,7 @@ export default function Dashboard() {
         {matches.length > 0 && (
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-red-500" /> Deine Spiele
+              <Calendar className="w-4 h-4 text-red-500" /> {t('dashboard.yourMatches')}
             </h3>
             <div className="grid grid-cols-1 gap-3">
               {matches.map((match) => {
@@ -423,23 +426,23 @@ export default function Dashboard() {
                         <div className="flex items-center gap-2 flex-wrap">
                           {hasLineup && (
                             <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs">
-                              <Users className="w-3 h-3 mr-1" /> Aufstellung festgelegt
+                              <Users className="w-3 h-3 mr-1" /> {t('dashboard.lineupSet')}
                             </Badge>
                           )}
                           {match.status === "completed" && (
                             <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-xs">
-                              <CheckCircle className="w-3 h-3 mr-1" /> Abgeschlossen
+                              <CheckCircle className="w-3 h-3 mr-1" /> {t('dashboard.completed')}
                             </Badge>
                           )}
                           {waitingForConfirmation && (
                             <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-xs">
-                              <AlertCircle className="w-3 h-3 mr-1" /> Wartet auf Bestätigung
+                              <AlertCircle className="w-3 h-3 mr-1" /> {t('dashboard.waitingConfirm')}
                             </Badge>
                           )}
                           {needsConfirmation && match.result_photo_url && (
                             <a href={match.result_photo_url} target="_blank" rel="noopener noreferrer">
                               <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs cursor-pointer hover:bg-blue-500/20">
-                                📸 Foto ansehen
+                                {t('dashboard.viewPhoto')}
                               </Badge>
                             </a>
                           )}
@@ -455,7 +458,7 @@ export default function Dashboard() {
                                 variant={hasLineup ? "outline" : "default"}
                                 className={hasLineup ? "border-[#2a2a2a] text-gray-400 hover:text-white text-xs h-8" : "bg-blue-600 hover:bg-blue-500 text-white border-0 text-xs h-8"}
                               >
-                                <Users className="w-3 h-3 mr-1" /> {hasLineup ? "Aufstellung ändern" : "Aufstellung wählen"}
+                                <Users className="w-3 h-3 mr-1" /> {hasLineup ? t('dashboard.changeLineup') : t('dashboard.selectLineup')}
                               </Button>
                               {hasLineup && (
                                 <Button
@@ -463,7 +466,7 @@ export default function Dashboard() {
                                   onClick={() => setEditingMatchId(match.id)}
                                   className="bg-red-600 hover:bg-red-500 text-white border-0 text-xs h-8"
                                 >
-                                  <Upload className="w-3 h-3 mr-1" /> Ergebnis eintragen
+                                  <Upload className="w-3 h-3 mr-1" /> {t('dashboard.submitResult')}
                                 </Button>
                               )}
                             </>
@@ -474,7 +477,7 @@ export default function Dashboard() {
                               onClick={() => confirmResult.mutate(match.id)}
                               className="bg-green-600 hover:bg-green-500 text-white border-0 text-xs h-8"
                             >
-                              <CheckCircle className="w-3 h-3 mr-1" /> Ergebnis bestätigen
+                              <CheckCircle className="w-3 h-3 mr-1" /> {t('dashboard.confirmResult')}
                             </Button>
                           )}
                         </div>
