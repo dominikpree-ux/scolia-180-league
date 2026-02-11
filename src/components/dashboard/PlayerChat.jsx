@@ -198,7 +198,23 @@ export default function PlayerChat({ player, team = null }) {
             {conversations.length === 0 ? (
               <p className="text-gray-500 text-sm">Keine Konversationen</p>
             ) : (
-              conversations.map((conv) => (
+              conversations.map((conv) => {
+                // Check for unread messages
+                let hasUnread = false;
+                
+                if (conv.type === 'player') {
+                  hasUnread = playerMessages.some(
+                    msg => msg.player_from_id === conv.id && msg.player_to_id === player.id && msg.status === "pending"
+                  );
+                } else if (conv.type === 'team') {
+                  hasUnread = playerMessages.some(
+                    msg => msg.team_from_id === conv.id && msg.player_to_id === player.id && msg.status === "pending"
+                  ) || playerRequests.some(
+                    req => req.team_id === conv.id && req.player_id === player.id && req.status === "pending"
+                  );
+                }
+
+                return (
                 <div
                   key={`${conv.id}-${conv.type}`}
                   className={`flex items-center gap-2 p-3 rounded-lg mb-2 transition-colors group ${
@@ -215,9 +231,12 @@ export default function PlayerChat({ player, team = null }) {
                     }}
                     className="flex-1 text-left"
                   >
-                    <p className="text-sm font-medium text-white">{conv.name}</p>
-                    <p className="text-xs text-gray-500 mt-1">{conv.type === 'team' ? 'Team' : 'Spieler'}</p>
+                    <p className={`text-sm font-medium ${hasUnread ? "text-white font-semibold" : "text-white"}`}>{conv.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{conv.type === 'team' ? 'Team' : 'Spieler'} {hasUnread && "• neue Nachricht"}</p>
                   </button>
+                  {hasUnread && (
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -227,7 +246,8 @@ export default function PlayerChat({ player, team = null }) {
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
-              ))
+              );
+              })
             )}
           </div>
 
