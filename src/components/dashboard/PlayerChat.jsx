@@ -76,11 +76,21 @@ export default function PlayerChat({ player, team = null }) {
 
   // Get messages for selected conversation
   const conversationMessages = selectedType === 'player' && selectedId
-    ? playerMessages.filter(
-        (msg) =>
-          (msg.player_from_id === player.id && msg.player_to_id === selectedId && !msg.team_from_id) ||
-          (msg.player_from_id === selectedId && msg.player_to_id === player.id && !msg.team_from_id)
-      )
+    ? [
+        ...playerMessages.filter(
+          (msg) =>
+            (msg.player_from_id === player.id && msg.player_to_id === selectedId && !msg.team_from_id) ||
+            (msg.player_from_id === selectedId && msg.player_to_id === player.id && !msg.team_from_id)
+        ),
+        ...playerRequests.filter(
+          (req) =>
+            (req.player_id === player.id && req.player_id !== selectedId) ||
+            (req.player_id === selectedId && req.player_id !== player.id)
+        ).filter(req => {
+          const otherId = req.player_id === player.id ? req.player_id : req.player_id;
+          return (req.player_id === player.id && req.player_id !== selectedId) || (req.player_id === selectedId);
+        })
+      ]
     : selectedType === 'team' && selectedId
     ? [
         ...playerMessages.filter((msg) => msg.team_from_id === selectedId && msg.player_to_id === player.id),
