@@ -151,7 +151,7 @@ export default function PlayerChat({ player, team = null }) {
 
   // Delete conversation
   const deleteConversation = useMutation({
-    mutationFn: async (convId, convType) => {
+    mutationFn: async ({ convId, convType }) => {
       if (convType === 'player') {
         const messagesToDelete = playerMessages.filter(
           (msg) =>
@@ -320,7 +320,7 @@ export default function PlayerChat({ player, team = null }) {
               Abbrechen
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteConversation.mutate(deleteConfirm.id, deleteConfirm.type)}
+              onClick={() => deleteConversation.mutate({ convId: deleteConfirm.id, convType: deleteConfirm.type })}
               disabled={deleteConversation.isPending}
               className="bg-red-600 hover:bg-red-500 text-white border-0"
             >
