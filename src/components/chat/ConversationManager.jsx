@@ -70,6 +70,13 @@ export default function ConversationManager({ userId, userType = "player", team 
     };
   }, [queryClient]);
 
+  // Auto-select first conversation if none selected
+  useEffect(() => {
+    if (!selectedConvId && conversations.length > 0) {
+      setSelectedConvId(`${conversations[0].type}-${conversations[0].id}`);
+    }
+  }, [conversations.length, selectedConvId]);
+
   // Build conversations list
   const conversations = (() => {
     const convMap = new Map();
