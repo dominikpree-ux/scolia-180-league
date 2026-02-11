@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
-export default function ContactPlayerDialog({ player, open, onOpenChange }) {
+export default function ContactPlayerDialog({ player, open, onOpenChange, team = null }) {
   const [message, setMessage] = useState("");
   const queryClient = useQueryClient();
 
@@ -16,14 +16,22 @@ export default function ContactPlayerDialog({ player, open, onOpenChange }) {
       const currentUser = await base44.auth.me();
       if (!currentUser) throw new Error("Not authenticated");
 
-      return base44.entities.PlayerMessage.create({
-        player_from_id: currentUser.id,
-        player_from_name: currentUser.full_name,
+      const messageData = {
         player_to_id: player.id,
         player_to_name: player.name,
         message: msg,
         status: "pending",
-      });
+      };
+
+      if (team) {
+        messageData.team_from_id = team.id;
+        messageData.team_from_name = team.name;
+      } else {
+        messageData.player_from_id = currentUser.id;
+        messageData.player_from_name = currentUser.full_name;
+      }
+
+      return base44.entities.PlayerMessage.create(messageData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
