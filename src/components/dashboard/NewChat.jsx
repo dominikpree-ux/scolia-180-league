@@ -46,13 +46,13 @@ export default function NewChat({ userId, userType, team = null }) {
     },
   });
 
-  // Fetch conversations
+  // Fetch conversations - only messages, not requests
   const { data: conversations = [] } = useQuery({
     queryKey: ["chats", userId, userType],
     queryFn: async () => {
       if (userType === "player") {
-        const sent = await base44.entities.PlayerRequest.filter({ player_id: userId });
-        const received = await base44.entities.PlayerRequest.filter({ player_to_id: userId });
+        const sent = await base44.entities.PlayerMessage.filter({ player_from_id: userId });
+        const received = await base44.entities.PlayerMessage.filter({ player_to_id: userId });
         return [...sent, ...received];
       } else {
         const sent = await base44.entities.TeamMessage.filter({ team_from_id: userId });
@@ -64,19 +64,17 @@ export default function NewChat({ userId, userType, team = null }) {
 
   // Real-time updates
   useEffect(() => {
-    const unsub1 = base44.entities.PlayerRequest.subscribe(() => {
+    const unsub1 = base44.entities.PlayerMessage.subscribe(() => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
-      queryClient.invalidateQueries({ queryKey: ["free-players"] });
     });
     const unsub2 = base44.entities.TeamMessage.subscribe(() => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
-      queryClient.invalidateQueries({ queryKey: ["recruiting-teams"] });
     });
     return () => {
       unsub1();
       unsub2();
     };
-  }, [queryClient, userId, userType]);
+  }, [queryClient]);
 
   // Build unique conversations
   const uniqueChats = (() => {
