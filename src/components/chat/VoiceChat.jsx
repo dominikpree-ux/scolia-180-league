@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { base44 } from "@/api/base44Client";
 
 export default function VoiceChat({ selectedLeague, user }) {
+  const [lang] = useState(() => localStorage.getItem('language') || 'de');
+
+  const translations = {
+    de: {
+      title: "Voice-Chat",
+      league: "Liga",
+      subtitle: "Alle Spieler",
+      description: "Tritt dem Voice-Chat bei und sprich mit Spielern deiner Liga",
+      openBtn: "Chat öffnen",
+      loginBtn: "Anmelden"
+    },
+    en: {
+      title: "Voice Chat",
+      league: "League",
+      subtitle: "All Players",
+      description: "Join the voice chat and talk with players in your league",
+      openBtn: "Open Chat",
+      loginBtn: "Sign In"
+    }
+  };
+
+  const t = (key) => translations[lang]?.[key] || key;
   const roomName = `scolia-180-liga-${selectedLeague.toLowerCase()}`;
   const jitsiUrl = `https://meet.jit.si/${roomName}`;
 
@@ -17,10 +40,10 @@ export default function VoiceChat({ selectedLeague, user }) {
           <Phone className="w-8 h-8 text-red-500" />
         </div>
         
-        <h2 className="text-2xl font-bold text-white mb-2">Voice-Chat</h2>
-        <p className="text-gray-500 text-sm mb-6">Liga {selectedLeague} - Alle Spieler</p>
+        <h2 className="text-2xl font-bold text-white mb-2">{t("title")}</h2>
+        <p className="text-gray-500 text-sm mb-6">{t("league")} {selectedLeague} - {t("subtitle")}</p>
         <p className="text-gray-400 text-sm mb-6">
-          Tritt dem Voice-Chat bei und sprich mit Spielern deiner Liga
+          {t("description")}
         </p>
         
         {user ? (
@@ -29,14 +52,14 @@ export default function VoiceChat({ selectedLeague, user }) {
             className="bg-red-600 hover:bg-red-500 text-white border-0 gap-2"
           >
             <Phone className="w-4 h-4" />
-            Chat öffnen
+            {t("openBtn")}
           </Button>
         ) : (
           <Button
             onClick={() => base44.auth.redirectToLogin()}
             className="bg-red-600 hover:bg-red-500 text-white border-0"
           >
-            Anmelden
+            {t("loginBtn")}
           </Button>
         )}
       </div>
