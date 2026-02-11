@@ -277,23 +277,10 @@ export default function FreeAgents() {
 
                     {/* Contact Button */}
                     {myTeam && myTeam.id !== team.id && user && (
-                      <ContactDialog 
-                        targetId={team.id}
-                        targetName={team.name}
-                        targetType="team"
-                        currentUser={user}
-                        currentUserType="team"
-                        currentTeam={myTeam}
-                      />
+                      <TeamContactButton team={team} currentUser={user} queryClient={queryClient} userType="team" />
                     )}
                     {myPlayer && myPlayer.team_id !== team.id && user && (
-                      <ContactDialog 
-                        targetId={team.id}
-                        targetName={team.name}
-                        targetType="team"
-                        currentUser={user}
-                        currentUserType="player"
-                      />
+                      <TeamContactButton team={team} currentUser={user} queryClient={queryClient} userType="player" />
                     )}
                   </CardContent>
                 </Card>
