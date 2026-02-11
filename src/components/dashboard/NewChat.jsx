@@ -164,8 +164,8 @@ export default function NewChat({ userId, userType, team = null }) {
           }
         }
       } else {
-        if (chatId.startsWith("player-")) {
-          const playerId = chatId.replace("player-", "");
+        if (selectedChatId.startsWith("player-")) {
+          const playerId = selectedChatId.replace("player-", "");
           const player = allPlayers.find(p => p.id === playerId);
           await base44.entities.PlayerRequest.create({
             player_id: playerId,
@@ -177,7 +177,7 @@ export default function NewChat({ userId, userType, team = null }) {
             status: "pending",
           });
         } else {
-          const teamId = chatId.replace("team-", "");
+          const teamId = selectedChatId.replace("team-", "");
           const existingMsg = chatMessages.find(m => m.team_from_id === teamId && m.team_to_id === userId);
 
           if (existingMsg) {
