@@ -71,7 +71,7 @@ export default function ContactDialog({
       setMessage("");
       setOpen(false);
       toast.success("Nachricht gesendet!");
-      navigate(createPageUrl("Dashboard"));
+      setTimeout(() => navigate(createPageUrl("Dashboard")), 100);
     },
     onError: () => {
       toast.error("Fehler beim Senden");
