@@ -268,6 +268,12 @@ export default function PlayerChat({ player, team = null }) {
                             <p className="text-sm text-white">
                               {msg.message}
                             </p>
+                            {(msg.response || msg.team_response) && (
+                              <div className="mt-2 pt-2 border-t border-blue-500/30">
+                                <p className="text-xs text-blue-300 mb-1">Antwort:</p>
+                                <p className="text-sm text-white">{msg.response || msg.team_response}</p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
