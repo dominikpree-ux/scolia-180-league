@@ -59,16 +59,19 @@ export default function TeamChat({ team }) {
     mutationFn: async () => {
       if (!messageText.trim() || !selectedId) return;
 
-      const existingMsg = conversationMessages.find(
+      // Check if there's a pending message from the other team waiting for response
+      const pendingFromOtherTeam = conversationMessages.find(
         (m) => m.team_from_id === selectedId && m.team_to_id === team.id && m.status === "pending"
       );
 
-      if (existingMsg) {
-        await base44.entities.TeamMessage.update(existingMsg.id, {
+      if (pendingFromOtherTeam) {
+        // Respond to their message
+        await base44.entities.TeamMessage.update(pendingFromOtherTeam.id, {
           response: messageText,
           status: "answered",
         });
       } else {
+        // Send new message
         await base44.entities.TeamMessage.create({
           team_from_id: team.id,
           team_from_name: team.name,
@@ -119,7 +122,16 @@ export default function TeamChat({ team }) {
             {conversations.length === 0 ? (
               <p className="text-gray-500 text-sm">Keine Konversationen</p>
             ) : (
-              conversations.map((conv) => (
+              conversations.map((conv) => {
+                // Check if conversation has unread messages
+                const unreadMessages = teamMessages.filter(
+                  msg => 
+                    (msg.team_from_id === conv.id && msg.team_to_id === team.id && msg.status === "pending") ||
+                    (msg.team_from_id === conv.id && msg.team_to_id === team.id && !msg.response)
+                );
+                const hasUnread = unreadMessages.length > 0;
+
+                return (
                 <div
                   key={conv.id}
                   className={`flex items-center gap-2 p-3 rounded-lg mb-2 transition-colors group ${
@@ -135,9 +147,12 @@ export default function TeamChat({ team }) {
                     }}
                     className="flex-1 text-left"
                   >
-                    <p className="text-sm font-medium text-white">{conv.name}</p>
-                    <p className="text-xs text-gray-500 mt-1">Team</p>
+                    <p className={`text-sm font-medium ${hasUnread ? "text-white font-semibold" : "text-white"}`}>{conv.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">Team {hasUnread && "• neue Nachricht"}</p>
                   </button>
+                  {hasUnread && (
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -147,7 +162,8 @@ export default function TeamChat({ team }) {
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
-              ))
+              );
+              })
             )}
           </div>
 
