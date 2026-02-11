@@ -292,6 +292,15 @@ export default function FreeAgents() {
             )}
           </div>
         )}
+
+        {/* Player Contact Dialog */}
+        {contactingPlayer && (
+          <ContactPlayerDialog
+            player={contactingPlayer}
+            open={!!contactingPlayer}
+            onOpenChange={(open) => !open && setContactingPlayer(null)}
+          />
+        )}
       </div>
     </div>
   );

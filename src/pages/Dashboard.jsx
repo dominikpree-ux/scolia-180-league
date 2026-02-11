@@ -17,6 +17,7 @@ import PlayerRecruitmentCard from "../components/dashboard/PlayerRecruitmentCard
 import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
+import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
