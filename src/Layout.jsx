@@ -122,6 +122,11 @@ export default function Layout({ children, currentPageName }) {
                   >
                     Login
                   </Button>
+                  <Link to={createPageUrl("PlayerRegister")}>
+                    <Button size="sm" variant="outline" className="border-gray-700 text-gray-400 hover:text-white rounded-lg">
+                      Spieler werden
+                    </Button>
+                  </Link>
                   <Link to={createPageUrl("Register")}>
                     <Button size="sm" className="bg-red-600 hover:bg-red-500 text-white border-0 rounded-lg">
                       Team registrieren
@@ -183,6 +188,10 @@ export default function Layout({ children, currentPageName }) {
                       className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">
                       Login
                     </button>
+                    <Link to={createPageUrl("PlayerRegister")} onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-700 text-gray-400 text-center">
+                      Spieler werden
+                    </Link>
                     <Link to={createPageUrl("Register")} onClick={() => setMenuOpen(false)}
                       className="block px-4 py-2.5 rounded-lg text-sm font-medium bg-red-600 text-white text-center">
                       Team registrieren

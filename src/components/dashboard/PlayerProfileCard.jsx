@@ -47,9 +47,9 @@ export default function PlayerProfileCard({ player, teamCaptainEmail, userEmail 
 
   if (!player) return null;
 
-  // Only show for captain's own player entry
-  const myPlayerEntry = player.email === userEmail || (isCaptain && !player.email);
-  if (!myPlayerEntry) return null;
+  // Show for: own player entry, standalone player, or captain's player
+  const myPlayerEntry = player.email === userEmail || (isCaptain && !player.email) || !player.team_id;
+  if (!myPlayerEntry && player.email !== userEmail) return null;
 
   return (
     <Card className="bg-[#111111] border-[#1a1a1a]">

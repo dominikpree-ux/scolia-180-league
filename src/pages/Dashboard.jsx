@@ -32,6 +32,13 @@ export default function Dashboard() {
     base44.auth.me().then(setUser);
   }, []);
 
+  // Check if user is a standalone player (no team)
+  const { data: myPlayerProfile = [] } = useQuery({
+    queryKey: ["my-player-profile", user?.email],
+    queryFn: () => base44.entities.Player.filter({ email: user?.email }),
+    enabled: !!user?.email,
+  });
+
   const { data: myTeams = [], isLoading } = useQuery({
     queryKey: ["my-teams", user?.email],
     queryFn: () => base44.entities.Team.filter({ captain_email: user?.email }),
@@ -146,6 +153,32 @@ export default function Dashboard() {
 
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500 text-sm">Lade Dashboard...</div>;
+  }
+
+  // Standalone player dashboard
+  if (!team && myPlayerProfile.length > 0) {
+    const player = myPlayerProfile[0];
+    return (
+      <div className="min-h-screen py-12 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
+              <LayoutDashboard className="w-5 h-5 text-red-500" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Spieler Dashboard</h1>
+              <p className="text-gray-500 text-sm mt-0.5">{player.nickname || player.name}</p>
+            </div>
+          </div>
+
+          <PlayerProfileCard 
+            player={player}
+            teamCaptainEmail={null}
+            userEmail={user?.email}
+          />
+        </div>
+      </div>
+    );
   }
 
   if (!team) {

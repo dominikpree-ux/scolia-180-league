@@ -61,6 +61,7 @@ import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
 import FreeAgents from './pages/FreeAgents';
+import PlayerRegister from './pages/PlayerRegister';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "Standings": Standings,
     "Teams": Teams,
     "FreeAgents": FreeAgents,
+    "PlayerRegister": PlayerRegister,
 }
 
 export const pagesConfig = {
