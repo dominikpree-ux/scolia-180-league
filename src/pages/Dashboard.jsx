@@ -318,7 +318,7 @@ export default function Dashboard() {
           </div>
 
           {/* Players */}
-          <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+          <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
               <Users className="w-4 h-4 text-red-500" /> Spieler ({players.length})
             </h3>
