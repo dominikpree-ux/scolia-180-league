@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import MatchCard from "../components/shared/MatchCard";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Schedule() {
   const [selectedLeague, setSelectedLeague] = useState("all");
+  const [timeRemaining, setTimeRemaining] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
 
   const { data: matches = [], isLoading } = useQuery({
     queryKey: ["matches"],
@@ -24,6 +30,32 @@ export default function Schedule() {
     ? leagueFilteredMatches.filter(m => m.matchday === selectedDay)
     : leagueFilteredMatches;
 
+  useEffect(() => {
+    const calculateTimeRemaining = () => {
+      const seasonStart = new Date("2026-02-27T00:00:00");
+      const now = new Date();
+      const diff = seasonStart - now;
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        setTimeRemaining({ days, hours, minutes, seconds });
+      } else {
+        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateTimeRemaining();
+    const interval = setInterval(calculateTimeRemaining, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const showCountdown = timeRemaining.days > 0 || timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
@@ -36,6 +68,45 @@ export default function Schedule() {
             <p className="text-gray-500 text-sm mt-0.5">Alle Spieltage und Begegnungen</p>
           </div>
         </div>
+
+        {/* Countdown */}
+        {showCountdown && (
+          <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-600/30 rounded-xl p-6 mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-5 h-5 text-red-500" />
+              <h2 className="text-lg font-semibold text-white">Saisonstart in:</h2>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {timeRemaining.days}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Tage</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {timeRemaining.hours}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Stunden</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {timeRemaining.minutes}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Minuten</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                  {timeRemaining.seconds}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wide">Sekunden</div>
+              </div>
+            </div>
+            <div className="text-center mt-4 text-sm text-gray-400">
+              Start: 27. Februar 2026
+            </div>
+          </div>
+        )}
 
         {/* League filter */}
         <div className="flex gap-2 mb-4 flex-wrap">
