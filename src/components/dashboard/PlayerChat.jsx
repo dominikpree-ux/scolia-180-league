@@ -305,6 +305,30 @@ export default function PlayerChat({ player, team = null }) {
           )}
         </div>
       </CardContent>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent className="bg-[#111111] border-[#1a1a1a]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Konversation löschen?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Die Konversation mit <span className="font-semibold text-white">{deleteConfirm?.name}</span> wird gelöscht und kann nicht wiederhergestellt werden.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel className="border-[#2a2a2a] text-gray-400 hover:text-white hover:bg-white/5">
+              Abbrechen
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConversation.mutate(deleteConfirm.id, deleteConfirm.type)}
+              disabled={deleteConversation.isPending}
+              className="bg-red-600 hover:bg-red-500 text-white border-0"
+            >
+              {deleteConversation.isPending ? "Löscht..." : "Löschen"}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
