@@ -184,8 +184,8 @@ export default function NewChat({ userId, userType, team = null }) {
     mutationFn: async () => {
       for (const msg of chatMessages) {
         if (msg.id) {
-          if (msg.player_id) {
-            await base44.entities.PlayerRequest.delete(msg.id);
+          if (msg.player_from_id || msg.player_to_id) {
+            await base44.entities.PlayerMessage.delete(msg.id);
           } else {
             await base44.entities.TeamMessage.delete(msg.id);
           }
