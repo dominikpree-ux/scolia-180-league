@@ -127,12 +127,14 @@ export default function ConversationManager({ userId, userType = "player", team 
     return Array.from(convMap.values());
   })();
 
-  // Auto-select first conversation if none selected
+  // Auto-select first conversation if none selected or conversations changed
   useEffect(() => {
-    if (!selectedConvId && conversations.length > 0) {
-      setSelectedConvId(`${conversations[0].type}-${conversations[0].id}`);
+    if (conversations.length > 0) {
+      if (!selectedConvId) {
+        setSelectedConvId(`${conversations[0].type}-${conversations[0].id}`);
+      }
     }
-  }, [conversations.length, selectedConvId]);
+  }, [conversations, selectedConvId]);
 
   // Get messages for selected conversation
   const conversationMessages = selectedConvId
