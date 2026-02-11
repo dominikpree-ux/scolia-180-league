@@ -44,21 +44,21 @@ export default function PlayerChat({ player, team = null }) {
      },
    });
 
-   // Subscribe to real-time updates for PlayerMessage
-   React.useEffect(() => {
-     const unsubscribeMsg = base44.entities.PlayerMessage.subscribe((event) => {
-       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
-     });
-     return unsubscribeMsg;
-   }, [queryClient]);
+   // Subscribe to real-time updates for PlayerMessage and PlayerRequest
+      React.useEffect(() => {
+        const unsubscribeMsg = base44.entities.PlayerMessage.subscribe(() => {
+          queryClient.invalidateQueries({ queryKey: ["player-messages", player.id] });
+        });
 
-   // Subscribe to real-time updates for PlayerRequest
-   React.useEffect(() => {
-     const unsubscribeReq = base44.entities.PlayerRequest.subscribe((event) => {
-       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
-     });
-     return unsubscribeReq;
-   }, [queryClient]);
+        const unsubscribeReq = base44.entities.PlayerRequest.subscribe(() => {
+          queryClient.invalidateQueries({ queryKey: ["player-requests", player.id, team?.id] });
+        });
+
+        return () => {
+          unsubscribeMsg();
+          unsubscribeReq();
+        };
+      }, [queryClient, player.id, team?.id]);
 
   // Get unique conversations from player messages
   const playerConversations = Array.from(
