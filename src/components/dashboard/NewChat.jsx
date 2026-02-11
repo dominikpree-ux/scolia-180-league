@@ -166,11 +166,13 @@ export default function NewChat({ userId, userType, team = null }) {
       } else {
         if (selectedChatId.startsWith("player-")) {
           const playerId = selectedChatId.replace("player-", "");
+          const player = allPlayers.find(p => p.id === playerId);
           await base44.entities.PlayerRequest.create({
             player_id: playerId,
-            player_name: uniqueChats.find(c => c.otherId === playerId)?.name || "Unknown",
-            team_from_id: userId,
-            team_from_name: team?.name || "Unknown",
+            player_name: player?.name || player?.nickname || "Unknown",
+            player_email: player?.email || "",
+            team_id: userId,
+            team_name: team?.name || "Unknown",
             message: messageText,
             status: "pending",
           });
