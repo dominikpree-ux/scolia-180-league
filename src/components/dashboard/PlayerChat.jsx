@@ -284,7 +284,7 @@ export default function PlayerChat({ player, team = null }) {
                   conversationMessages.map((msg) => {
                     const isIncoming = selectedType === 'player' 
                       ? msg.player_from_id === selectedId
-                      : msg.team_from_id === selectedId || msg.player_id !== player.id;
+                      : msg.team_from_id === selectedId || (msg.player_id && msg.player_id !== player.id);
 
                     return (
                       <div key={msg.id} className="space-y-2">
