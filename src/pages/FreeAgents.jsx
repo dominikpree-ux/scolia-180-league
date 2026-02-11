@@ -15,6 +15,7 @@ export default function FreeAgents() {
   const [user, setUser] = useState(null);
   const [myTeam, setMyTeam] = useState(null);
   const [myPlayer, setMyPlayer] = useState(null);
+  const [contactingPlayer, setContactingPlayer] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -207,8 +208,15 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {myTeam && player.id !== myPlayer?.id && (
-                      <ContactPlayerDialog player={player} team={myTeam} />
+                    {myPlayer && player.id !== myPlayer?.id && (
+                      <Button
+                        size="sm"
+                        onClick={() => setContactingPlayer(player)}
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white border-0"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Kontaktieren
+                      </Button>
                     )}
                   </CardContent>
                 </Card>
