@@ -255,7 +255,7 @@ export default function Dashboard() {
 
         {/* Chat */}
         <div className="mb-6">
-          <ConversationManager userId={team.id} userType="team" team={team} />
+          <SimpleChat user={team} userType="team" team={team} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
