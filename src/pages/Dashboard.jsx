@@ -251,8 +251,14 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Team Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+           {/* Chat - rechts als schmale Spalte */}
+           <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-4 h-fit">
+            <h3 className="text-xs font-semibold text-white mb-3">Chat Spielersuchende</h3>
+            <ChatInterface />
+          </div>
+
+           {/* Team Info */}
           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-white">Team-Daten</h3>
