@@ -285,14 +285,7 @@ export default function FreeAgents() {
 
                     {/* Contact Button */}
                     {myTeam && myTeam.id !== team.id && (
-                      <Button
-                        size="sm"
-                        onClick={() => setContactingPlayer(team)}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white border-0"
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Kontaktieren
-                      </Button>
+                      <ContactTeamToTeamDialog team={team} myTeam={myTeam} />
                     )}
                     {myPlayer && myPlayer.team_id !== team.id && (
                       <ContactTeamDialog team={team} player={myPlayer} />
