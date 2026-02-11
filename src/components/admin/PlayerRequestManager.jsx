@@ -46,6 +46,13 @@ export default function PlayerRequestManager() {
     },
   });
 
+  const deletePlayerMutation = useMutation({
+    mutationFn: (id) => base44.entities.Player.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-players-looking"] });
+    },
+  });
+
   const startEdit = (request) => {
     setEditingId(request.id);
     setEditForm({
