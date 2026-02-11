@@ -4,13 +4,11 @@ import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Layout({ children, currentPageName }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [lang, setLang] = useState(() => localStorage.getItem('language') || 'de');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -24,63 +22,17 @@ export default function Layout({ children, currentPageName }) {
     checkAuth();
   }, []);
 
-  const translations = {
-    de: {
-      nav: ["Startseite", "Team-Tabelle", "Spieler-Tabelle", "H2H Vergleich", "Spielplan", "Teams", "Spielersuche", "Chat", "Regeln", "Kontakt"],
-      admin: "Admin",
-      dashboard: "Dashboard",
-      logout: "Logout",
-      login: "Login",
-      becomeplayer: "Spieler werden",
-      registerteam: "Team registrieren",
-      adminPanel: "Admin Panel",
-      footerNav: "Navigation",
-      footerLeague: "Liga",
-      footerDesc: "Die Online-Dartsliga für ambitionierte Spieler. Precision. Competition. 180.",
-      footerTeamReg: "Team registrieren",
-      footerRules: "Regeln",
-      footerContact: "Kontakt",
-      footerImpressum: "Impressum",
-      copyright: "© 2026 Scolia 180 League. Alle Rechte vorbehalten."
-    },
-    en: {
-      nav: ["Home", "Team Standings", "Player Standings", "H2H Comparison", "Schedule", "Teams", "Find Players", "Chat", "Rules", "Contact"],
-      admin: "Admin",
-      dashboard: "Dashboard",
-      logout: "Logout",
-      login: "Login",
-      becomeplayer: "Become a Player",
-      registerteam: "Register Team",
-      adminPanel: "Admin Panel",
-      footerNav: "Navigation",
-      footerLeague: "League",
-      footerDesc: "The online darts league for ambitious players. Precision. Competition. 180.",
-      footerTeamReg: "Register Team",
-      footerRules: "Rules",
-      footerContact: "Contact",
-      footerImpressum: "Legal",
-      copyright: "© 2026 Scolia 180 League. All rights reserved."
-    }
-  };
-
-  const t = (key) => translations[lang]?.[key] || key;
-
-  const handleLanguageChange = (newLang) => {
-    setLang(newLang);
-    localStorage.setItem('language', newLang);
-  };
-
   const navLinks = [
-    { name: t("nav")[0], page: "Home" },
-    { name: t("nav")[1], page: "Standings" },
-    { name: t("nav")[2], page: "PlayerStandings" },
-    { name: t("nav")[3], page: "PlayerComparison" },
-    { name: t("nav")[4], page: "Schedule" },
-    { name: t("nav")[5], page: "Teams" },
-    { name: t("nav")[6], page: "FreeAgents" },
-    { name: t("nav")[7], page: "Chat" },
-    { name: t("nav")[8], page: "Rules" },
-    { name: t("nav")[9], page: "Contact" },
+    { name: "Startseite", page: "Home" },
+    { name: "Team-Tabelle", page: "Standings" },
+    { name: "Spieler-Tabelle", page: "PlayerStandings" },
+    { name: "H2H Vergleich", page: "PlayerComparison" },
+    { name: "Spielplan", page: "Schedule" },
+    { name: "Teams", page: "Teams" },
+    { name: "Spielersuche", page: "FreeAgents" },
+    { name: "Chat", page: "Chat" },
+    { name: "Regeln", page: "Rules" },
+    { name: "Kontakt", page: "Contact" },
   ];
 
   const isActive = (page) => currentPageName === page;
@@ -135,21 +87,20 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
-              <LanguageSwitcher onLanguageChange={handleLanguageChange} />
               {isAuthenticated ? (
                 <div className="hidden sm:flex items-center gap-2">
                   {user?.role === "admin" && (
                     <Link to={createPageUrl("Admin")}>
                       <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/5">
                         <Shield className="w-4 h-4 mr-1.5" />
-                        {t("admin")}
+                        Admin
                       </Button>
                     </Link>
                   )}
                   <Link to={createPageUrl("Dashboard")}>
                     <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/5">
                       <LayoutDashboard className="w-4 h-4 mr-1.5" />
-                      {t("dashboard")}
+                      Dashboard
                     </Button>
                   </Link>
                   <Button
@@ -169,16 +120,16 @@ export default function Layout({ children, currentPageName }) {
                     className="text-gray-400 hover:text-white"
                     onClick={() => base44.auth.redirectToLogin()}
                   >
-                    {t("login")}
+                    Login
                   </Button>
                   <Link to={createPageUrl("PlayerRegister")}>
                     <Button size="sm" variant="outline" className="border-gray-700 text-gray-400 hover:text-white rounded-lg">
-                      {t("becomeplayer")}
+                      Spieler werden
                     </Button>
                   </Link>
                   <Link to={createPageUrl("Register")}>
                     <Button size="sm" className="bg-red-600 hover:bg-red-500 text-white border-0 rounded-lg">
-                      {t("registerteam")}
+                      Team registrieren
                     </Button>
                   </Link>
                 </div>
@@ -219,31 +170,31 @@ export default function Layout({ children, currentPageName }) {
                      {user?.role === "admin" && (
                        <Link to={createPageUrl("Admin")} onClick={() => setMenuOpen(false)}
                          className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">
-                         {t("adminPanel")}
+                         Admin Panel
                        </Link>
                      )}
                      <Link to={createPageUrl("Dashboard")} onClick={() => setMenuOpen(false)}
                        className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">
-                       {t("dashboard")}
+                       Dashboard
                      </Link>
                      <button onClick={() => { base44.auth.logout(); setMenuOpen(false); }}
                        className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">
-                       {t("logout")}
+                       Logout
                      </button>
                    </>
                 ) : (
                    <>
                      <button onClick={() => { base44.auth.redirectToLogin(); setMenuOpen(false); }}
                        className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">
-                       {t("login")}
+                       Login
                      </button>
                      <Link to={createPageUrl("PlayerRegister")} onClick={() => setMenuOpen(false)}
                        className="block px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-700 text-gray-400 text-center">
-                       {t("becomeplayer")}
+                       Spieler werden
                      </Link>
                      <Link to={createPageUrl("Register")} onClick={() => setMenuOpen(false)}
                        className="block px-4 py-2.5 rounded-lg text-sm font-medium bg-red-600 text-white text-center">
-                       {t("registerteam")}
+                       Team registrieren
                      </Link>
                    </>
                 )}
@@ -271,11 +222,11 @@ export default function Layout({ children, currentPageName }) {
                 />
               </div>
               <p className="text-gray-500 text-sm leading-relaxed">
-                {t("footerDesc")}
+                Die Online-Dartsliga für ambitionierte Spieler. Precision. Competition. 180.
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">{t("footerNav")}</h4>
+              <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Navigation</h4>
               <div className="space-y-2">
                 {navLinks.slice(0, 4).map((link) => (
                   <Link key={link.page} to={createPageUrl(link.page)}
@@ -286,17 +237,17 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">{t("footerLeague")}</h4>
+              <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Liga</h4>
               <div className="space-y-2">
-                <Link to={createPageUrl("Register")} className="block text-sm text-gray-500 hover:text-white transition-colors">{t("footerTeamReg")}</Link>
-                <Link to={createPageUrl("Rules")} className="block text-sm text-gray-500 hover:text-white transition-colors">{t("footerRules")}</Link>
-                <Link to={createPageUrl("Contact")} className="block text-sm text-gray-500 hover:text-white transition-colors">{t("footerContact")}</Link>
-                <Link to={createPageUrl("Impressum")} className="block text-sm text-gray-500 hover:text-white transition-colors">{t("footerImpressum")}</Link>
+                <Link to={createPageUrl("Register")} className="block text-sm text-gray-500 hover:text-white transition-colors">Team registrieren</Link>
+                <Link to={createPageUrl("Rules")} className="block text-sm text-gray-500 hover:text-white transition-colors">Regeln</Link>
+                <Link to={createPageUrl("Contact")} className="block text-sm text-gray-500 hover:text-white transition-colors">Kontakt</Link>
+                <Link to={createPageUrl("Impressum")} className="block text-sm text-gray-500 hover:text-white transition-colors">Impressum</Link>
               </div>
             </div>
           </div>
           <div className="border-t border-[#1a1a1a] mt-8 pt-8 text-center">
-            <p className="text-gray-600 text-xs">{t("copyright")}</p>
+            <p className="text-gray-600 text-xs">© 2026 Scolia 180 League. Alle Rechte vorbehalten.</p>
           </div>
         </div>
       </footer>

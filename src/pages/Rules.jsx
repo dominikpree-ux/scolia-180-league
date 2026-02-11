@@ -3,7 +3,6 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { BookOpen } from "lucide-react";
-import { useLanguage } from "@/components/ui/translations";
 
 const defaultRules = `
 ## Allgemeine Regeln
@@ -101,8 +100,6 @@ Bei Fragen oder Problemen kontaktiere uns über die Kontaktseite.
 `;
 
 export default function Rules() {
-  const { t } = useLanguage();
-
   const { data: seasons = [] } = useQuery({
     queryKey: ["seasons"],
     queryFn: () => base44.entities.Season.filter({ status: "active" }),
@@ -119,8 +116,8 @@ export default function Rules() {
              <BookOpen className="w-5 h-5 text-red-500" />
            </div>
            <div>
-             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t('rules.title')}</h1>
-             <p className="text-gray-500 text-sm mt-0.5">{t('rules.subtitle')}</p>
+             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Regeln</h1>
+             <p className="text-gray-500 text-sm mt-0.5">Scolia 180 League Regelwerk</p>
            </div>
          </div>
 
