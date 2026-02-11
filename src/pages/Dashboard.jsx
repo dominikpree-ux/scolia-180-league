@@ -15,6 +15,7 @@ import SimpleMatchResultForm from "../components/dashboard/SimpleMatchResultForm
 import PlayerLineupSelector from "../components/dashboard/PlayerLineupSelector";
 import PlayerRecruitmentCard from "../components/dashboard/PlayerRecruitmentCard";
 import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
+import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -237,6 +238,11 @@ export default function Dashboard() {
             userEmail={user?.email}
           />
           <PlayerRecruitmentCard team={team} />
+        </div>
+
+        {/* Player Requests */}
+        <div className="mb-6">
+          <PlayerRequestsCard team={team} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

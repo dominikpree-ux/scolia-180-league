@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,10 +6,32 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Search, Mail, TrendingUp, Target, Award } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ContactTeamDialog from "../components/freeagents/ContactTeamDialog";
+import ContactPlayerDialog from "../components/freeagents/ContactPlayerDialog";
 
 export default function FreeAgents() {
   const [leagueFilter, setLeagueFilter] = useState("all");
   const [viewMode, setViewMode] = useState("players"); // "players" or "teams"
+  const [user, setUser] = useState(null);
+  const [myTeam, setMyTeam] = useState(null);
+  const [myPlayer, setMyPlayer] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const me = await base44.auth.me();
+        setUser(me);
+        
+        const teams = await base44.entities.Team.filter({ captain_email: me.email });
+        if (teams.length > 0) setMyTeam(teams[0]);
+        
+        const players = await base44.entities.Player.filter({ email: me.email });
+        if (players.length > 0) setMyPlayer(players[0]);
+      }
+    };
+    loadUser();
+  }, []);
 
   const { data: players = [] } = useQuery({
     queryKey: ['players'],
@@ -185,14 +207,8 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {player.team?.captain_email && (
-                      <Button
-                        className="w-full bg-red-600 hover:bg-red-500"
-                        onClick={() => window.location.href = `mailto:${player.team.captain_email}?subject=Interesse an ${player.nickname || player.name}`}
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Captain kontaktieren
-                      </Button>
+                    {myTeam && player.id !== myPlayer?.id && (
+                      <ContactPlayerDialog player={player} team={myTeam} />
                     )}
                   </CardContent>
                 </Card>
@@ -259,13 +275,9 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    <Button
-                      className="w-full bg-red-600 hover:bg-red-500"
-                      onClick={() => window.location.href = `mailto:${team.captain_email}?subject=Interesse an ${team.name}`}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Team kontaktieren
-                    </Button>
+                    {myPlayer && myPlayer.team_id !== team.id && (
+                      <ContactTeamDialog team={team} player={myPlayer} />
+                    )}
                   </CardContent>
                 </Card>
               ))
