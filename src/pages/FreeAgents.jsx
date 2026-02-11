@@ -262,15 +262,15 @@ export default function FreeAgents() {
                     {/* Team Stats */}
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <div className="bg-[#111] rounded-lg p-2">
-                        <div className="text-xs text-gray-500">Wins</div>
+                        <div className="text-xs text-gray-500">Gewonnen</div>
                         <div className="text-green-400 font-semibold">{team.wins}</div>
                       </div>
                       <div className="bg-[#111] rounded-lg p-2">
-                        <div className="text-xs text-gray-500">Draws</div>
+                        <div className="text-xs text-gray-500">Unentschieden</div>
                         <div className="text-yellow-400 font-semibold">{team.draws}</div>
                       </div>
                       <div className="bg-[#111] rounded-lg p-2">
-                        <div className="text-xs text-gray-500">Losses</div>
+                        <div className="text-xs text-gray-500">Verloren</div>
                         <div className="text-red-400 font-semibold">{team.losses}</div>
                       </div>
                     </div>
