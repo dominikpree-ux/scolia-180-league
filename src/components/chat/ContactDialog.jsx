@@ -66,12 +66,12 @@ export default function ContactDialog({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["messages", currentUser.id] });
+      queryClient.invalidateQueries({ queryKey: ["requests", currentUser.id] });
       setMessage("");
       setOpen(false);
-      toast.success("Nachricht gesendet! Öffne dein Dashboard um zu chatten.");
-      setTimeout(() => navigate(createPageUrl("Dashboard")), 1000);
+      toast.success("Nachricht gesendet!");
+      navigate(createPageUrl("Dashboard"));
     },
     onError: () => {
       toast.error("Fehler beim Senden");
