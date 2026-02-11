@@ -109,6 +109,7 @@ export default function PlayerChat({ player, team = null }) {
         ...playerMessages.filter((msg) => msg.team_from_id === selectedId && msg.player_to_id === player.id),
         ...playerRequests.filter((req) => req.player_id === player.id && req.team_id === selectedId),
         ...playerRequests.filter((req) => req.team_id === team?.id && req.player_id === selectedId),
+        ...playerRequests.filter((req) => req.player_id === player.id && req.team_id === selectedId),
       ]
     : [];
 
