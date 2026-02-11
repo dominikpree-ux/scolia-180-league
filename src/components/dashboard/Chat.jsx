@@ -61,7 +61,7 @@ export default function Chat({ userId, userType, team = null }) {
     const map = new Map();
     messages.forEach((msg) => {
       let key, name, type, otherId;
-      
+
       if (userType === "player") {
         if (msg.team_id) {
           key = `team-${msg.team_id}`;
@@ -70,14 +70,22 @@ export default function Chat({ userId, userType, team = null }) {
           otherId = msg.team_id;
         }
       } else {
-        const id = msg.team_from_id === userId ? msg.team_to_id : msg.team_from_id;
-        const n = msg.team_from_id === userId ? msg.team_to_name : msg.team_from_name;
-        key = `team-${id}`;
-        name = n;
-        type = "team";
-        otherId = id;
+        // Team receiving PlayerRequest
+        if (msg.team_id) {
+          key = `player-${msg.player_id}`;
+          name = msg.player_name;
+          type = "player";
+          otherId = msg.player_id;
+        } else {
+          const id = msg.team_from_id === userId ? msg.team_to_id : msg.team_from_id;
+          const n = msg.team_from_id === userId ? msg.team_to_name : msg.team_from_name;
+          key = `team-${id}`;
+          name = n;
+          type = "team";
+          otherId = id;
+        }
       }
-      
+
       if (key && !map.has(key)) {
         map.set(key, { key, name, type, otherId });
       }
@@ -91,8 +99,13 @@ export default function Chat({ userId, userType, team = null }) {
         if (userType === "player") {
           return selectedConvId === `team-${m.team_id}`;
         } else {
-          const id = selectedConvId.replace("team-", "");
-          return m.team_from_id === id || m.team_to_id === id;
+          if (selectedConvId.startsWith("player-")) {
+            const playerId = selectedConvId.replace("player-", "");
+            return m.player_id === playerId;
+          } else {
+            const id = selectedConvId.replace("team-", "");
+            return m.team_from_id === id || m.team_to_id === id;
+          }
         }
       })
     : [];
