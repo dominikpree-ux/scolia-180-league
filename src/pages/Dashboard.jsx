@@ -18,7 +18,7 @@ import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
-import ConversationManager from "../components/chat/ConversationManager";
+import SimpleChat from "../components/dashboard/SimpleChat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
