@@ -10,6 +10,12 @@ export default function VoiceChat({ selectedLeague, user }) {
 
   return (
     <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] overflow-hidden" style={{ minHeight: "600px" }}>
+      <div className="bg-amber-900/30 border-b border-amber-700/50 p-3 flex items-start gap-2">
+        <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+        <p className="text-xs text-amber-200">
+          <strong>Demo-Version:</strong> Diese Voice-Chat-Einbettung ist nur für Demo-Zwecke vorgesehen und dient zu Testzwecken.
+        </p>
+      </div>
       {user ? (
         !isJoined ? (
           <div className="flex flex-col items-center justify-center h-full p-6 text-center" style={{ minHeight: "600px" }}>
