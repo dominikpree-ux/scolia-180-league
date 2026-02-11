@@ -8,6 +8,7 @@ import { Users, Search, Mail, TrendingUp, Target, Award } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ContactTeamDialog from "../components/freeagents/ContactTeamDialog";
 import ContactPlayerDialog from "../components/freeagents/ContactPlayerDialog";
+import ContactTeamToTeamDialog from "../components/freeagents/ContactTeamToTeamDialog";
 
 export default function FreeAgents() {
   const [leagueFilter, setLeagueFilter] = useState("all");
