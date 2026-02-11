@@ -51,17 +51,17 @@ import Admin from './pages/Admin';
 import Chat from './pages/Chat';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
+import FreeAgents from './pages/FreeAgents';
 import Home from './pages/Home';
 import Impressum from './pages/Impressum';
 import PlayerComparison from './pages/PlayerComparison';
+import PlayerRegister from './pages/PlayerRegister';
 import PlayerStandings from './pages/PlayerStandings';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
-import FreeAgents from './pages/FreeAgents';
-import PlayerRegister from './pages/PlayerRegister';
 import __Layout from './Layout.jsx';
 
 
@@ -70,17 +70,17 @@ export const PAGES = {
     "Chat": Chat,
     "Contact": Contact,
     "Dashboard": Dashboard,
+    "FreeAgents": FreeAgents,
     "Home": Home,
     "Impressum": Impressum,
     "PlayerComparison": PlayerComparison,
+    "PlayerRegister": PlayerRegister,
     "PlayerStandings": PlayerStandings,
     "Register": Register,
     "Rules": Rules,
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
-    "FreeAgents": FreeAgents,
-    "PlayerRegister": PlayerRegister,
 }
 
 export const pagesConfig = {

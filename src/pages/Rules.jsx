@@ -55,6 +55,8 @@ const defaultRules = `
 
 - Die Spieltage werden im Voraus festgelegt.
 
+- **Zeitrahmen**: Teams haben vom Startdatum des Spieltags bis zum nächsten Spieltag Zeit, alle 16 Spiele (4 Spieler pro Team x 4 Gegner = 16 Einzelspiele) zu absolvieren.
+
 ### 4. Ergebnisse & Foto-Beweis
 - **Jedes Spiel benötigt einen Foto-Beweis**: Nach dem Match muss ein Team das Ergebnis mit einem Foto (z.B. vom Scolia Board Display) einreichen.
 
