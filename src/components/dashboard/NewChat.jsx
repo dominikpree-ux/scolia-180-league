@@ -242,6 +242,7 @@ export default function NewChat({ userId, userType, team = null }) {
       }
     }
     setSelectedChatId(chatId);
+    setShowNewChat(false);
   };
 
   const availableTargets = userType === "player" ? allTeams : [...allPlayers, ...allTeams];
