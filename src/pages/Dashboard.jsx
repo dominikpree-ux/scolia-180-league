@@ -183,7 +183,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-            <ConversationManager userId={player.id} userType="player" team={null} />
+             <SimpleChat user={player} userType="player" team={null} />
           </div>
         </div>
       </div>
