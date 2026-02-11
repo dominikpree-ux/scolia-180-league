@@ -489,20 +489,19 @@ export default function Dashboard() {
             </div>
           </div>
           )}
-
           </div>
 
           {/* Chat - rechte Spalte */}
           <div className="lg:col-span-1">
-            <div className="sticky top-20 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6 h-[calc(100vh-120px)] flex flex-col">
-              <h3 className="text-sm font-semibold text-white mb-4">Chat</h3>
-              <div className="flex-1 overflow-hidden">
-                <ChatInterface />
-              </div>
-            </div>
+           <div className="sticky top-20 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6 h-[calc(100vh-120px)] flex flex-col">
+             <h3 className="text-sm font-semibold text-white mb-4">Chat</h3>
+             <div className="flex-1 overflow-hidden">
+               <ChatInterface />
+             </div>
+           </div>
           </div>
-        </div>
-      </div>
-    </div>
-    );
-  }
+          </div>
+          </div>
+          </div>
+          );
+          }
