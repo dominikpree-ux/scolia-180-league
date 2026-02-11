@@ -18,7 +18,7 @@ import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
-import SimpleChat from "../components/dashboard/SimpleChat";
+import Chat from "../components/dashboard/Chat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -183,7 +183,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-             <SimpleChat user={player} userType="player" team={null} />
+             <Chat userId={player.id} userType="player" team={null} />
           </div>
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function Dashboard() {
 
         {/* Chat */}
         <div className="mb-6">
-          <SimpleChat user={team} userType="team" team={team} />
+          <Chat userId={team.id} userType="team" team={team} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
