@@ -18,6 +18,7 @@ import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
+import PlayerChat from "../components/dashboard/PlayerChat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -182,7 +183,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-            <PlayerMessagesCard playerId={player.id} />
+            <PlayerChat player={player} />
           </div>
         </div>
       </div>
