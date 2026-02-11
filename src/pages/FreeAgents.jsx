@@ -6,9 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Search, Mail, TrendingUp, Target, Award } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import ContactTeamDialog from "../components/freeagents/ContactTeamDialog";
-import ContactPlayerDialog from "../components/freeagents/ContactPlayerDialog";
-import ContactTeamToTeamDialog from "../components/freeagents/ContactTeamToTeamDialog";
+import ContactDialog from "../components/chat/ContactDialog";
 
 export default function FreeAgents() {
   const [leagueFilter, setLeagueFilter] = useState("all");
@@ -16,7 +14,6 @@ export default function FreeAgents() {
   const [user, setUser] = useState(null);
   const [myTeam, setMyTeam] = useState(null);
   const [myPlayer, setMyPlayer] = useState(null);
-  const [contactingPlayer, setContactingPlayer] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -209,15 +206,14 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {myPlayer && player.id !== myPlayer?.id && (
-                      <Button
-                        size="sm"
-                        onClick={() => setContactingPlayer(player)}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white border-0"
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Kontaktieren
-                      </Button>
+                    {myPlayer && player.id !== myPlayer?.id && user && (
+                      <ContactDialog 
+                        targetId={player.id}
+                        targetName={player.nickname || player.name}
+                        targetType="player"
+                        currentUser={user}
+                        currentUserType="player"
+                      />
                     )}
                   </CardContent>
                 </Card>
@@ -284,11 +280,24 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {myTeam && myTeam.id !== team.id && (
-                      <ContactTeamToTeamDialog team={team} myTeam={myTeam} />
+                    {myTeam && myTeam.id !== team.id && user && (
+                      <ContactDialog 
+                        targetId={team.id}
+                        targetName={team.name}
+                        targetType="team"
+                        currentUser={user}
+                        currentUserType="team"
+                        currentTeam={myTeam}
+                      />
                     )}
-                    {myPlayer && myPlayer.team_id !== team.id && (
-                      <ContactTeamDialog team={team} player={myPlayer} />
+                    {myPlayer && myPlayer.team_id !== team.id && user && (
+                      <ContactDialog 
+                        targetId={team.id}
+                        targetName={team.name}
+                        targetType="team"
+                        currentUser={user}
+                        currentUserType="player"
+                      />
                     )}
                   </CardContent>
                 </Card>
@@ -297,23 +306,7 @@ export default function FreeAgents() {
           </div>
         )}
 
-        {/* Player Contact Dialog */}
-        {contactingPlayer && contactingPlayer.name && !contactingPlayer.team_id && (
-          <ContactPlayerDialog
-            player={contactingPlayer}
-            team={contactingPlayer.looking_for_players ? myTeam : null}
-            open={!!contactingPlayer}
-            onOpenChange={(open) => !open && setContactingPlayer(null)}
-          />
-        )}
-        {contactingPlayer && contactingPlayer.positions_needed !== undefined && (
-          <ContactPlayerDialog
-            player={freeAgents[0]}
-            team={contactingPlayer}
-            open={!!contactingPlayer}
-            onOpenChange={(open) => !open && setContactingPlayer(null)}
-          />
-        )}
+
       </div>
     </div>
   );
