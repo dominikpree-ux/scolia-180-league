@@ -77,20 +77,32 @@ export default function PlayerStandings() {
       const team = teamMap.get(player.team_id);
       if (team) {
         const stat = playerStats.find(s => s.player_id === player.id);
+        const legsWon = stat?.legs_won || 0;
+        const legsLost = stat?.legs_lost || 0;
+        const totalLegs = legsWon + legsLost;
+
+        // Quote = Win Percentage (Siege / Spiele * 100)
+        const matchesPlayed = stat?.matches_played || 0;
+        const matchesWon = stat?.matches_won || 0;
+        const quote = matchesPlayed > 0 ? ((matchesWon / matchesPlayed) * 100) : 0;
+
         playerMap.set(player.id, {
           id: player.id,
           player_name: player.name,
           team_name: team.name,
           league_tier: team.league_tier,
-          matches_played: stat?.matches_played || 0,
-          matches_won: stat?.matches_won || 0,
+          matches_played: matchesPlayed,
+          matches_won: matchesWon,
           matches_lost: stat?.matches_lost || 0,
-          leg_difference: stat?.leg_difference || 0,
+          legs_won: legsWon,
+          legs_lost: legsLost,
+          leg_difference: legsWon - legsLost,
           average: stat?.average || 0,
           high_finish: stat?.high_finish || 0,
           century_count: stat?.century_count || 0,
           short_game_count: stat?.short_game_count || 0,
           max_scores_count: stat?.max_scores_count || 0,
+          quote: quote,
           stat_id: stat?.id,
         });
       }
