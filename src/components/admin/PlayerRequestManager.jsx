@@ -18,6 +18,13 @@ export default function PlayerRequestManager() {
     queryFn: () => base44.entities.PlayerRequest.list("-created_date", 1000),
   });
 
+  const { data: teams = [], isLoading: teamsLoading } = useQuery({
+    queryKey: ["admin-teams-recruiting"],
+    queryFn: () => base44.entities.Team.list(),
+  });
+
+  const recruitingTeams = teams.filter(t => t.looking_for_players && t.status === "approved");
+
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.PlayerRequest.update(id, data),
     onSuccess: () => {
@@ -47,16 +54,54 @@ export default function PlayerRequestManager() {
     updateMutation.mutate({ id, data: editForm });
   };
 
-  if (isLoading) {
+  if (isLoading || teamsLoading) {
     return <div className="text-gray-400">Lade Spielersuchen...</div>;
   }
 
   return (
-    <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
-      <CardHeader>
-        <CardTitle className="text-white">Spielersuchen Verwaltung</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="space-y-6">
+      {/* Teams suchen Spieler */}
+      <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+        <CardHeader>
+          <CardTitle className="text-white">Teams suchen Spieler ({recruitingTeams.length})</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {recruitingTeams.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">Keine Teams suchen aktuell Spieler</p>
+          ) : (
+            recruitingTeams.map((team) => (
+              <div key={team.id} className="bg-[#0a0a0a] rounded-lg p-4 border border-[#2a2a2a]">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-white font-medium">{team.name}</span>
+                      <Badge className="bg-blue-600">Liga {team.league_tier}</Badge>
+                    </div>
+                    <div className="text-sm text-gray-400 mb-2">
+                      Benötigt: <span className="text-white font-medium">{team.positions_needed}</span> Spieler
+                    </div>
+                    {team.recruitment_message && (
+                      <div className="text-sm text-gray-300 bg-[#111111] rounded p-2 border border-[#2a2a2a]">
+                        {team.recruitment_message}
+                      </div>
+                    )}
+                    <div className="text-xs text-gray-600 mt-2">
+                      Captain: {team.captain_name} ({team.captain_email})
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Spieler suchen Teams */}
+      <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+        <CardHeader>
+          <CardTitle className="text-white">Spieler suchen Teams ({requests.length})</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
         {requests.length === 0 ? (
           <p className="text-gray-500 text-center py-4">Keine Spielersuchen vorhanden</p>
         ) : (
@@ -186,7 +231,8 @@ export default function PlayerRequestManager() {
             </div>
           ))
         )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
