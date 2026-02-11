@@ -272,7 +272,7 @@ export default function NewChat({ userId, userType, team = null }) {
               {availableTargets.map((target) => (
                 <button
                   key={target.id}
-                  onClick={() => startNewChat(target, target.team_id ? "player" : "team")}
+                  onClick={() => startNewChat(target, target.captain_name ? "team" : "player")}
                   className="w-full text-left p-3 rounded-lg hover:bg-white/5 border border-transparent transition-colors group"
                 >
                   <p className="text-sm font-medium text-white">{target.name || target.nickname}</p>
