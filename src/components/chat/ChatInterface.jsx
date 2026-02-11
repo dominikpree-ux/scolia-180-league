@@ -198,6 +198,31 @@ export default function ChatInterface() {
       <Card className="lg:col-span-2 bg-[#1a1a1a] border-[#2a2a2a] flex flex-col">
         {selectedConversation ? (
           <>
+            {/* Input - oben */}
+            <div className="border-b border-[#2a2a2a] p-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Nachricht eingeben..."
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMutation.mutate();
+                    }
+                  }}
+                  className="bg-[#2a2a2a] border-[#3a3a3a] text-white"
+                />
+                <Button
+                  onClick={() => sendMutation.mutate()}
+                  disabled={!messageText.trim() || sendMutation.isPending}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {conversationMessages.length === 0 ? (
@@ -226,31 +251,6 @@ export default function ChatInterface() {
                   );
                 })
               )}
-            </div>
-
-            {/* Input */}
-            <div className="border-t border-[#2a2a2a] p-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Nachricht eingeben..."
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendMutation.mutate();
-                    }
-                  }}
-                  className="bg-[#2a2a2a] border-[#3a3a3a] text-white"
-                />
-                <Button
-                  onClick={() => sendMutation.mutate()}
-                  disabled={!messageText.trim() || sendMutation.isPending}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
             </div>
           </>
         ) : (
