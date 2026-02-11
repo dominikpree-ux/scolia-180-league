@@ -18,8 +18,7 @@ import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
-import PlayerChat from "../components/dashboard/PlayerChat";
-import TeamChat from "../components/dashboard/TeamChat";
+import ConversationManager from "../components/chat/ConversationManager";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -184,7 +183,7 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-            <PlayerChat player={player} team={null} />
+            <ConversationManager userId={player.id} userType="player" team={null} />
           </div>
         </div>
       </div>
@@ -254,16 +253,9 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
-        {/* Player Chat */}
-        {players.find(p => p.email === user?.email) && (
-          <div className="mb-6">
-            <PlayerChat player={players.find(p => p.email === user?.email)} team={team} />
-          </div>
-        )}
-
-        {/* Team Chat */}
+        {/* Chat */}
         <div className="mb-6">
-          <TeamChat team={team} />
+          <ConversationManager userId={team.id} userType="team" team={team} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
