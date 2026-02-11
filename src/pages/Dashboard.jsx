@@ -19,6 +19,7 @@ import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
 import PlayerChat from "../components/dashboard/PlayerChat";
+import TeamChat from "../components/dashboard/TeamChat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
