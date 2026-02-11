@@ -204,7 +204,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
             <LayoutDashboard className="w-5 h-5 text-red-500" />
@@ -215,6 +215,8 @@ export default function Dashboard() {
           </div>
           </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           {/* Stats */}
           {[
