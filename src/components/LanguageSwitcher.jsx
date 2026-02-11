@@ -1,26 +1,55 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Globe } from "lucide-react";
+import React, { useState } from "react";
+import { Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+export default function LanguageSwitcher({ onLanguageChange }) {
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'de');
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'de' ? 'en' : 'de';
-    i18n.changeLanguage(newLang);
-    localStorage.setItem('language', newLang);
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    localStorage.setItem('language', lang);
+    if (onLanguageChange) onLanguageChange(lang);
+    window.location.reload();
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={toggleLanguage}
-      className="text-gray-400 hover:text-white hover:bg-white/5 gap-1.5"
-    >
-      <Globe className="w-4 h-4" />
-      {i18n.language.toUpperCase()}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-gray-400 hover:text-white hover:bg-white/5 gap-1.5"
+        >
+          <Globe className="w-4 h-4" />
+          {language.toUpperCase()}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="bg-[#111111] border-[#1a1a1a]">
+        <DropdownMenuItem
+          onClick={() => changeLanguage('de')}
+          className="text-gray-300 cursor-pointer hover:bg-[#1a1a1a]"
+        >
+          <span className="flex items-center gap-2">
+            Deutsch
+            {language === 'de' && <Check className="w-4 h-4 text-red-500" />}
+          </span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => changeLanguage('en')}
+          className="text-gray-300 cursor-pointer hover:bg-[#1a1a1a]"
+        >
+          <span className="flex items-center gap-2">
+            English
+            {language === 'en' && <Check className="w-4 h-4 text-red-500" />}
+          </span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
