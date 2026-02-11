@@ -17,7 +17,7 @@ import PlayerRecruitmentCard from "../components/dashboard/PlayerRecruitmentCard
 import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
-import Chat from "../components/dashboard/Chat";
+import NewChat from "../components/dashboard/NewChat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -182,8 +182,8 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-             <Chat userId={player.id} userType="player" team={null} />
-          </div>
+             <NewChat userId={player.id} userType="player" team={null} />
+            </div>
         </div>
       </div>
     );
@@ -253,9 +253,9 @@ export default function Dashboard() {
         </div>
 
         {/* Chat */}
-        <div className="mb-6">
-          <Chat userId={team.id} userType="team" team={team} />
-        </div>
+         <div className="mb-6">
+           <NewChat userId={team.id} userType="team" team={team} />
+         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Team Info */}
