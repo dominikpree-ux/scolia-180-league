@@ -8,6 +8,7 @@ import { Users, Search, Mail, TrendingUp, Target, Award } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { createPageUrl } from "../utils";
 
 export default function FreeAgents() {
   const [leagueFilter, setLeagueFilter] = useState("all");
