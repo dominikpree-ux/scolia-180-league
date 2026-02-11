@@ -76,37 +76,28 @@ export default function NewChat({ userId, userType, team = null }) {
     };
   }, [queryClient]);
 
-  // Build unique conversations
+  // Build unique conversations from messages
   const uniqueChats = (() => {
     const map = new Map();
     conversations.forEach((msg) => {
-      let key, name, otherId, otherTeam;
+      let key, name, otherId;
 
       if (userType === "player") {
-        if (msg.team_id) {
-          key = `team-${msg.team_id}`;
-          name = msg.team_name;
-          otherId = msg.team_id;
-          otherTeam = null;
-        }
+        const teamId = msg.team_from_id === userId ? msg.team_to_id : msg.team_from_id;
+        const teamName = msg.team_from_id === userId ? msg.team_to_name : msg.team_from_name;
+        key = `team-${teamId}`;
+        name = teamName;
+        otherId = teamId;
       } else {
-        if (msg.player_id) {
-          key = `player-${msg.player_id}`;
-          name = msg.player_name;
-          otherId = msg.player_id;
-          otherTeam = null;
-        } else {
-          const id = msg.team_from_id === userId ? msg.team_to_id : msg.team_from_id;
-          const n = msg.team_from_id === userId ? msg.team_to_name : msg.team_from_name;
-          key = `team-${id}`;
-          name = n;
-          otherId = id;
-          otherTeam = null;
-        }
+        const playerId = msg.player_from_id === userId ? msg.player_to_id : msg.player_from_id;
+        const playerName = msg.player_from_id === userId ? msg.player_to_name : msg.player_from_name;
+        key = `player-${playerId}`;
+        name = playerName;
+        otherId = playerId;
       }
 
       if (key && !map.has(key)) {
-        map.set(key, { key, name, otherId, otherTeam });
+        map.set(key, { key, name, otherId });
       }
     });
     return Array.from(map.values());
