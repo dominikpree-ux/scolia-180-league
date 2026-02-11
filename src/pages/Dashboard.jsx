@@ -253,6 +253,13 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
+        {/* Player Chat */}
+        {players.find(p => p.email === user?.email) && (
+          <div className="mb-6">
+            <PlayerChat player={players.find(p => p.email === user?.email)} />
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Team Info */}
           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
