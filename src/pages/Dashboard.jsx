@@ -356,10 +356,18 @@ export default function Dashboard() {
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
-          </div>
-        </div>
+            </div>
 
-        {/* Matches */}
+            {/* Chat - kompakt rechts */}
+            <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-4 h-fit">
+            <h3 className="text-xs font-semibold text-white mb-3">Chat</h3>
+            <div className="max-h-96 overflow-y-auto">
+             <ChatInterface />
+            </div>
+            </div>
+            </div>
+
+            {/* Matches */}
         {matches.length > 0 && (
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
