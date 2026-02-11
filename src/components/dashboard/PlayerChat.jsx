@@ -166,7 +166,7 @@ export default function PlayerChat({ player, team = null }) {
           await base44.entities.PlayerMessage.delete(msg.id);
         }
         const requestsToDelete = playerRequests.filter(
-          (req) => (req.player_id === player.id && req.team_id === convId) || (req.team_id === team?.id && req.player_id === convId)
+          (req) => req.player_id === player.id && req.team_id === convId
         );
         for (const req of requestsToDelete) {
           await base44.entities.PlayerRequest.delete(req.id);
