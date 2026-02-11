@@ -61,6 +61,7 @@ import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
+import Chat from './pages/Chat';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
+    "Chat": Chat,
 }
 
 export const pagesConfig = {
