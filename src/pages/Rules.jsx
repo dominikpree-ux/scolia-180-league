@@ -38,7 +38,7 @@ const defaultRules = `
 
 - Alle Spiele werden im Modus **First to 3 Legs** ausgetragen.
 
-- **Vor jedem Leg wird ausgebullt**, um zu bestimmen, wer beginnt.
+- **Vor jedem Spiel wird ausgebullt**, um zu bestimmen, wer beginnt.
 
 - Der Out-Modus richtet sich nach der jeweiligen Liga (A: Double Out, B: Master Out, C: Open Out).
 
