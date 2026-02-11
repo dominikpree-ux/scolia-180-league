@@ -235,13 +235,14 @@ export default function ConversationManager({ userId, userType = "player", team 
           });
         }
       }
-
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages", userId, userType] });
       queryClient.invalidateQueries({ queryKey: ["requests", userId, userType] });
       setMessageText("");
       toast.success("Nachricht gesendet!");
-      },
-      });
+    },
+  });
 
   // Delete conversation
   const deleteConversation = useMutation({
