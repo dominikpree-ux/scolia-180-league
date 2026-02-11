@@ -15,12 +15,13 @@ export default function PlayerChat({ player, team = null }) {
 
   // Fetch all messages for this player
   const { data: playerMessages = [] } = useQuery({
-    queryKey: ["player-messages", player.id],
-    queryFn: async () => {
-      const sent = await base44.entities.PlayerMessage.filter({ player_from_id: player.id });
-      const received = await base44.entities.PlayerMessage.filter({ player_to_id: player.id });
-      return [...sent, ...received];
-    },
+   queryKey: ["player-messages", player.id],
+   queryFn: async () => {
+     const sent = await base44.entities.PlayerMessage.filter({ player_from_id: player.id });
+     const received = await base44.entities.PlayerMessage.filter({ player_to_id: player.id });
+     const fromTeam = team ? await base44.entities.PlayerMessage.filter({ team_from_id: team.id }) : [];
+     return [...sent, ...received, ...fromTeam];
+   },
   });
 
   // Fetch all requests for this player
@@ -37,6 +38,11 @@ export default function PlayerChat({ player, team = null }) {
   const playerConversations = Array.from(
     new Map(
       playerMessages.map((msg) => {
+        // Team to player messages
+        if (msg.team_from_id) {
+          return [msg.team_from_id + '-team', { id: msg.team_from_id, name: msg.team_from_name, type: 'team' }];
+        }
+        // Player to player messages
         const otherId = msg.player_from_id === player.id ? msg.player_to_id : msg.player_from_id;
         const otherName = msg.player_from_id === player.id ? msg.player_to_name : msg.player_from_name;
         return [otherId, { id: otherId, name: otherName, type: 'player' }];
@@ -62,15 +68,18 @@ export default function PlayerChat({ player, team = null }) {
   const conversationMessages = selectedType === 'player' && selectedId
     ? playerMessages.filter(
         (msg) =>
-          (msg.player_from_id === player.id && msg.player_to_id === selectedId) ||
-          (msg.player_from_id === selectedId && msg.player_to_id === player.id)
+          (msg.player_from_id === player.id && msg.player_to_id === selectedId && !msg.team_from_id) ||
+          (msg.player_from_id === selectedId && msg.player_to_id === player.id && !msg.team_from_id)
       )
     : selectedType === 'team' && selectedId
-    ? playerRequests.filter(
-        (req) =>
-          (req.player_id === player.id && req.team_id === selectedId) ||
-          (req.team_id === team?.id && req.player_id === selectedId)
-      )
+    ? [
+        ...playerMessages.filter((msg) => msg.team_from_id === selectedId && msg.player_to_id === player.id),
+        ...playerRequests.filter(
+          (req) =>
+            (req.player_id === player.id && req.team_id === selectedId) ||
+            (req.team_id === team?.id && req.player_id === selectedId)
+        ),
+      ]
     : [];
 
   const selectedConversation = conversations.find((c) => c.id === selectedId && c.type === selectedType);
@@ -176,17 +185,17 @@ export default function PlayerChat({ player, team = null }) {
                   conversationMessages.map((msg) => {
                     const isIncoming = selectedType === 'player' 
                       ? msg.player_from_id === selectedId
-                      : msg.player_id !== player.id;
+                      : msg.team_from_id === selectedId || msg.player_id !== player.id;
 
                     return (
                       <div key={msg.id} className="space-y-2">
                         {isIncoming && (
                           <div className="bg-gray-800 rounded-lg p-3">
                             <p className="text-xs text-gray-400 mb-1">
-                              {selectedType === 'player' ? msg.player_from_name : msg.team_name}
+                              {msg.team_from_name || msg.player_from_name || msg.team_name}
                             </p>
                             <p className="text-sm text-white">
-                              {selectedType === 'player' ? msg.message : msg.message}
+                              {msg.message}
                             </p>
                             {(msg.response || msg.team_response) && (
                               <div className="mt-2 pt-2 border-t border-gray-700">
@@ -201,7 +210,7 @@ export default function PlayerChat({ player, team = null }) {
                           <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
                             <p className="text-xs text-blue-400 mb-1">Du</p>
                             <p className="text-sm text-white">
-                              {selectedType === 'player' ? msg.message : msg.message}
+                              {msg.message}
                             </p>
                           </div>
                         )}
