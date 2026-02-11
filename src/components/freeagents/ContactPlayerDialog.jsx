@@ -34,8 +34,8 @@ export default function ContactPlayerDialog({ player, open, onOpenChange, team =
       return base44.entities.PlayerMessage.create(messageData);
     },
     onSuccess: () => {
-       queryClient.invalidateQueries({ queryKey: ["player-messages", player.id] });
-       queryClient.invalidateQueries({ queryKey: ["player-requests", player.id] });
+       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
        setMessage("");
        onOpenChange(false);
        toast.success("Nachricht gesendet!");
