@@ -116,24 +116,9 @@ export default function PlayerStandings() {
 
   // Gruppiere nach Liga
   const statsByLeague = {
-    A: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "A").sort((a, b) => {
-      const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
-      const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
-      if (bWinRate !== aWinRate) return bWinRate - aWinRate;
-      return b.leg_difference - a.leg_difference;
-    }),
-    B: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "B").sort((a, b) => {
-      const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
-      const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
-      if (bWinRate !== aWinRate) return bWinRate - aWinRate;
-      return b.leg_difference - a.leg_difference;
-    }),
-    C: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "C").sort((a, b) => {
-      const aWinRate = a.matches_played > 0 ? a.matches_won / a.matches_played : 0;
-      const bWinRate = b.matches_played > 0 ? b.matches_won / b.matches_played : 0;
-      if (bWinRate !== aWinRate) return bWinRate - aWinRate;
-      return b.leg_difference - a.leg_difference;
-    }),
+    A: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "A").sort((a, b) => b.legs_won - a.legs_won),
+    B: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "B").sort((a, b) => b.legs_won - a.legs_won),
+    C: Array.from(playerDisplayMap.values()).filter(s => s.league_tier === "C").sort((a, b) => b.legs_won - a.legs_won),
   };
 
   const leagueBadges = {
