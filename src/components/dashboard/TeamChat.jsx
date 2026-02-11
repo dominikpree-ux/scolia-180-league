@@ -196,6 +196,12 @@ export default function TeamChat({ team }) {
                           <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
                             <p className="text-xs text-blue-400 mb-1">Du</p>
                             <p className="text-sm text-white">{msg.message}</p>
+                            {msg.response && (
+                              <div className="mt-2 pt-2 border-t border-blue-500/30">
+                                <p className="text-xs text-blue-300 mb-1">Antwort:</p>
+                                <p className="text-sm text-white">{msg.response}</p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
