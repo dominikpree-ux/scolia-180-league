@@ -92,7 +92,7 @@ export default function FreeAgents() {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
-        toast.success("Nachricht gesendet!");
+        window.location.href = createPageUrl("Dashboard");
       },
     });
 
