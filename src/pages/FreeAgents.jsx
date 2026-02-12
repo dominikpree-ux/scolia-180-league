@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Search, Mail, TrendingUp, Target, Award } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { createPageUrl } from "../utils";
+import ContactTeamDialog from "../components/freeagents/ContactTeamDialog";
+import ContactPlayerDialog from "../components/freeagents/ContactPlayerDialog";
+import ContactTeamToTeamDialog from "../components/freeagents/ContactTeamToTeamDialog";
 
 export default function FreeAgents() {
   const [leagueFilter, setLeagueFilter] = useState("all");
@@ -16,7 +16,7 @@ export default function FreeAgents() {
   const [user, setUser] = useState(null);
   const [myTeam, setMyTeam] = useState(null);
   const [myPlayer, setMyPlayer] = useState(null);
-  const queryClient = useQueryClient();
+  const [contactingPlayer, setContactingPlayer] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -76,77 +76,6 @@ export default function FreeAgents() {
     A: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     B: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     C: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  };
-
-  // Contact button for player-to-player
-  const PlayerContactButton = ({ player, currentUser, queryClient }) => {
-    const sendMutation = useMutation({
-      mutationFn: async () => {
-        await base44.entities.PlayerMessage.create({
-          player_from_id: currentUser.id,
-          player_from_name: currentUser.full_name,
-          player_to_id: player.id,
-          player_to_name: player.nickname || player.name,
-          message: `Hallo ${player.nickname || player.name}, ich würde gerne mit dir chatten!`,
-        });
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
-        window.location.href = createPageUrl("Dashboard");
-      },
-    });
-
-    return (
-      <Button
-        onClick={() => sendMutation.mutate()}
-        disabled={sendMutation.isPending}
-        className="w-full bg-red-600 hover:bg-red-500"
-      >
-        <Mail className="w-4 h-4 mr-2" />
-        {sendMutation.isPending ? "Sende..." : "Kontaktieren"}
-      </Button>
-    );
-  };
-
-  // Contact button for team contact
-  const TeamContactButton = ({ team, currentUser, queryClient, userType }) => {
-    const sendMutation = useMutation({
-      mutationFn: async () => {
-        if (userType === "team") {
-          await base44.entities.TeamMessage.create({
-            team_from_id: currentUser.id,
-            team_from_name: currentUser.full_name,
-            team_to_id: team.id,
-            team_to_name: team.name,
-            message: `Hallo ${team.name}, wir interessieren uns für eine Zusammenarbeit!`,
-            status: "pending",
-          });
-        } else {
-          await base44.entities.PlayerMessage.create({
-            player_from_id: currentUser.id,
-            player_from_name: currentUser.full_name,
-            player_to_id: team.id,
-            player_to_name: team.name,
-            message: `Hallo ${team.name}, ich bin interessiert!`,
-          });
-        }
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
-        window.location.href = createPageUrl("Dashboard");
-      },
-    });
-
-    return (
-      <Button
-        onClick={() => sendMutation.mutate()}
-        disabled={sendMutation.isPending}
-        className="w-full bg-red-600 hover:bg-red-500"
-      >
-        <Mail className="w-4 h-4 mr-2" />
-        {sendMutation.isPending ? "Sende..." : "Kontaktieren"}
-      </Button>
-    );
   };
 
   return (
@@ -280,8 +209,15 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {myPlayer && player.id !== myPlayer?.id && user && (
-                      <PlayerContactButton player={player} currentUser={user} queryClient={queryClient} />
+                    {myPlayer && player.id !== myPlayer?.id && (
+                      <Button
+                        size="sm"
+                        onClick={() => setContactingPlayer(player)}
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white border-0"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Kontaktieren
+                      </Button>
                     )}
                   </CardContent>
                 </Card>
@@ -348,11 +284,11 @@ export default function FreeAgents() {
                     )}
 
                     {/* Contact Button */}
-                    {myTeam && myTeam.id !== team.id && user && (
-                      <TeamContactButton team={team} currentUser={user} queryClient={queryClient} userType="team" />
+                    {myTeam && myTeam.id !== team.id && (
+                      <ContactTeamToTeamDialog team={team} myTeam={myTeam} />
                     )}
-                    {myPlayer && myPlayer.team_id !== team.id && user && (
-                      <TeamContactButton team={team} currentUser={user} queryClient={queryClient} userType="player" />
+                    {myPlayer && myPlayer.team_id !== team.id && (
+                      <ContactTeamDialog team={team} player={myPlayer} />
                     )}
                   </CardContent>
                 </Card>
@@ -361,7 +297,23 @@ export default function FreeAgents() {
           </div>
         )}
 
-
+        {/* Player Contact Dialog */}
+        {contactingPlayer && contactingPlayer.name && !contactingPlayer.team_id && (
+          <ContactPlayerDialog
+            player={contactingPlayer}
+            team={contactingPlayer.looking_for_players ? myTeam : null}
+            open={!!contactingPlayer}
+            onOpenChange={(open) => !open && setContactingPlayer(null)}
+          />
+        )}
+        {contactingPlayer && contactingPlayer.positions_needed !== undefined && (
+          <ContactPlayerDialog
+            player={freeAgents[0]}
+            team={contactingPlayer}
+            open={!!contactingPlayer}
+            onOpenChange={(open) => !open && setContactingPlayer(null)}
+          />
+        )}
       </div>
     </div>
   );

@@ -17,7 +17,9 @@ import PlayerRecruitmentCard from "../components/dashboard/PlayerRecruitmentCard
 import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
-import ChatInterface from "../components/chat/ChatInterface";
+import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
+import PlayerChat from "../components/dashboard/PlayerChat";
+import TeamChat from "../components/dashboard/TeamChat";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -182,7 +184,8 @@ export default function Dashboard() {
               userEmail={user?.email}
             />
             <MyPlayerRequestsCard player={player} />
-            </div>
+            <PlayerChat player={player} />
+          </div>
         </div>
       </div>
     );
@@ -251,9 +254,21 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-           {/* Team Info */}
-           <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+        {/* Player Chat */}
+        {players.find(p => p.email === user?.email) && (
+          <div className="mb-6">
+            <PlayerChat player={players.find(p => p.email === user?.email)} team={team} />
+          </div>
+        )}
+
+        {/* Team Chat */}
+        <div className="mb-6">
+          <TeamChat team={team} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Team Info */}
+          <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-white">Team-Daten</h3>
               <Button variant="ghost" size="sm" onClick={() => {
@@ -318,7 +333,7 @@ export default function Dashboard() {
           </div>
 
           {/* Players */}
-          <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+          <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
               <Users className="w-4 h-4 text-red-500" /> Spieler ({players.length})
             </h3>
@@ -356,18 +371,10 @@ export default function Dashboard() {
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
-            </div>
+          </div>
+        </div>
 
-            {/* Chat - kompakt rechts */}
-            <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-4 h-fit">
-            <h3 className="text-xs font-semibold text-white mb-3">Chat</h3>
-            <div className="max-h-96 overflow-y-auto">
-             <ChatInterface />
-            </div>
-            </div>
-            </div>
-
-            {/* Matches */}
+        {/* Matches */}
         {matches.length > 0 && (
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
