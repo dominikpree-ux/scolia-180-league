@@ -20,17 +20,27 @@ export default function ChatInterface({ forcedUserType }) {
       const me = await base44.auth.me();
       setUser(me);
 
-      const teams = await base44.entities.Team.filter({
-        captain_email: me?.email,
-      });
+      if (!forcedUserType) {
+        const teams = await base44.entities.Team.filter({
+          captain_email: me?.email,
+        });
 
-      if (teams.length > 0) {
-        setUserType("team");
-        setTeam(teams[0]);
-      } else {
-        setUserType("player");
+        if (teams.length > 0) {
+          setUserType("team");
+          setTeam(teams[0]); // wichtig: echtes Team setzen
+        } else {
+          setUserType("player");
+        }
+      } else if (forcedUserType === "team") {
+        const teams = await base44.entities.Team.filter({
+          captain_email: me?.email,
+        });
+        if (teams.length > 0) {
+          setTeam(teams[0]);
+        }
       }
     };
+
     loadUser();
   }, [forcedUserType]);
 
@@ -51,36 +61,31 @@ export default function ChatInterface({ forcedUserType }) {
   // Build conversations
   const conversations = (() => {
     const convMap = new Map();
+    const myId = userType === "team" ? team?.id : user?.id;
 
     messages.forEach((msg) => {
-      let key, name, otherId;
+      let key, name;
 
       if ("player_from_id" in msg) {
-        if (msg.player_from_id === user?.id) {
+        if (msg.player_from_id === myId) {
           key = `player-${msg.player_to_id}`;
           name = msg.player_to_name;
-          otherId = msg.player_to_id;
-        } else {
+        } else if (msg.player_to_id === myId) {
           key = `player-${msg.player_from_id}`;
           name = msg.player_from_name;
-          otherId = msg.player_from_id;
         }
       } else {
-        const myTeamId = team?.id;
-
-        if (msg.team_from_id === myTeamId) {
+        if (msg.team_from_id === myId) {
           key = `team-${msg.team_to_id}`;
           name = msg.team_to_name;
-          otherId = msg.team_to_id;
-        } else if (msg.team_to_id === myTeamId) {
+        } else if (msg.team_to_id === myId) {
           key = `team-${msg.team_from_id}`;
           name = msg.team_from_name;
-          otherId = msg.team_from_id;
         }
       }
 
       if (key && !convMap.has(key)) {
-        convMap.set(key, { key, name, otherId });
+        convMap.set(key, { key, name });
       }
     });
 
@@ -88,22 +93,28 @@ export default function ChatInterface({ forcedUserType }) {
   })();
 
   // Get messages for selected conversation
+  const myId = userType === "team" ? team?.id : user?.id;
+
   const conversationMessages = selectedConversation
     ? messages.filter((msg) => {
         if ("player_from_id" in msg) {
           if (selectedConversation.startsWith("player-")) {
             const playerId = selectedConversation.replace("player-", "");
             return (
-              msg.player_from_id === playerId ||
-              msg.player_to_id === playerId
+              (msg.player_from_id === myId &&
+                msg.player_to_id === playerId) ||
+              (msg.player_to_id === myId &&
+                msg.player_from_id === playerId)
             );
           }
         } else {
           if (selectedConversation.startsWith("team-")) {
             const teamId = selectedConversation.replace("team-", "");
             return (
-              msg.team_to_id === teamId ||
-              msg.team_from_id === teamId
+              (msg.team_from_id === myId &&
+                msg.team_to_id === teamId) ||
+              (msg.team_to_id === myId &&
+                msg.team_from_id === teamId)
             );
           }
         }
@@ -114,7 +125,7 @@ export default function ChatInterface({ forcedUserType }) {
   // Send message
   const sendMutation = useMutation({
     mutationFn: async () => {
-      if (!messageText.trim() || !selectedConversation || !user) return;
+      if (!messageText.trim() || !selectedConversation) return;
 
       const [type, id] = selectedConversation.split("-");
 
@@ -148,20 +159,6 @@ export default function ChatInterface({ forcedUserType }) {
       queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
     },
   });
-
-  // Subscribe to updates
-  useEffect(() => {
-    const unsub1 = base44.entities.PlayerMessage.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
-    });
-    const unsub2 = base44.entities.TeamMessage.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
-    });
-    return () => {
-      unsub1();
-      unsub2();
-    };
-  }, [queryClient]);
 
   if (!user) {
     return <div className="p-6 text-center text-gray-400">Laden...</div>;
@@ -205,8 +202,8 @@ export default function ChatInterface({ forcedUserType }) {
             {conversationMessages.map((msg, idx) => {
               const isSent =
                 "player_from_id" in msg
-                  ? msg.player_from_id === user.id
-                  : msg.team_from_id === team?.id;
+                  ? msg.player_from_id === myId
+                  : msg.team_from_id === myId;
 
               return (
                 <div
