@@ -342,9 +342,10 @@ export default function ConversationManager({ userId, userType = "player", team 
             )}
           </div>
 
-  {/* Chat Area */}
+{/* Chat Area */}
+<div className="w-2/3 flex flex-col">
   {selectedConvId ? (
-    <div className="w-2/3 flex flex-col">
+    <>
       <div className="flex-1 overflow-y-auto space-y-3 mb-4">
         {conversationMessages.length === 0 ? (
           <p className="text-gray-500 text-sm">Keine Nachrichten</p>
@@ -364,63 +365,45 @@ export default function ConversationManager({ userId, userType = "player", team 
 
             return (
               <div key={msg.id || idx} className="space-y-2">
-                {isIncoming && (
+                {isIncoming ? (
                   <div className="bg-gray-800 rounded-lg p-3">
                     <p className="text-xs text-gray-400 mb-1">
                       {senderName}
                     </p>
                     <p className="text-sm text-white">{msg.message}</p>
-                    {(msg.response || msg.team_response) && (
-                      <div className="mt-2 pt-2 border-t border-gray-700">
-                        <p className="text-xs text-gray-400 mb-1">Antwort:</p>
-                        <p className="text-sm text-white">
-                          {msg.response || msg.team_response}
-                        </p>
-                      </div>
-                    )}
                   </div>
-               )}
-  
-              {!isIncoming && (
-                <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
-                  <p className="text-xs text-blue-400 mb-1">Du</p>
-                  <p className="text-sm text-white">{msg.message}</p>
-                  {(msg.response || msg.team_response) && (
-                    <div className="mt-2 pt-2 border-t border-blue-500/30">
-                      <p className="text-xs text-blue-300 mb-1">Antwort:</p>
-                      <p className="text-sm text-white">
-                        {msg.response || msg.team_response}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })
-      )}
-    </div>
+                ) : (
+                  <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
+                    <p className="text-xs text-blue-400 mb-1">Du</p>
+                    <p className="text-sm text-white">{msg.message}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
 
-    <div className="flex gap-2">
-      <Input
-        value={messageText}
-        onChange={(e) => setMessageText(e.target.value)}
-        onKeyPress={(e) => e.key === "Enter" && sendMessage.mutate()}
-        placeholder="Nachricht schreiben..."
-        className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm"
-      />
-      <Button
-        onClick={() => sendMessage.mutate()}
-        disabled={!messageText.trim() || sendMessage.isPending}
-        className="bg-blue-600 hover:bg-blue-500 text-white border-0"
-        size="sm"
-      >
-        <Send className="w-4 h-4" />
-      </Button>
-    </div>
-    </div>
+      <div className="flex gap-2">
+        <Input
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && sendMessage.mutate()}
+          placeholder="Nachricht schreiben..."
+          className="bg-[#0a0a0a] border-[#2a2a2a] text-white text-sm"
+        />
+        <Button
+          onClick={() => sendMessage.mutate()}
+          disabled={!messageText.trim() || sendMessage.isPending}
+          className="bg-blue-600 hover:bg-blue-500 text-white border-0"
+          size="sm"
+        >
+          <Send className="w-4 h-4" />
+        </Button>
+      </div>
+    </>
   ) : (
-    <div className="w-2/3 flex items-center justify-center text-gray-500">
+    <div className="flex items-center justify-center text-gray-500 flex-1">
       <p className="text-sm">
         {conversations.length === 0
           ? "Keine Konversationen"
@@ -428,3 +411,5 @@ export default function ConversationManager({ userId, userType = "player", team 
       </p>
     </div>
   )}
+</div>
+
