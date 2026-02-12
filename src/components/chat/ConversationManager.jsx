@@ -116,18 +116,19 @@ export default function ConversationManager({ userId, userType = "player", team 
       }
     });
 
-       allRequests.forEach((req) => {
-        const key = `request-${req.player_id}-${req.team_id}`;
-        if (!convMap.has(key)) {
-          convMap.set(key, {
-          id: req.team_id,
-          name: req.team_name,
-          type: "team",
-          lastMessage: req.message,
-          hasUnread: req.status === "pending",
-        });
-       }
+allRequests.forEach((req) => {
+  const key = `request-${req.player_id}-${req.team_id}`;
+  if (!convMap.has(key)) {
+    convMap.set(key, {
+      id: userType === "player" ? req.team_id : req.player_id,
+      name: userType === "player" ? req.team_name : req.player_name,
+      type: userType === "player" ? "team" : "player",
+      lastMessage: req.message,
+      hasUnread: req.status === "pending",
     });
+  }
+});
+
 
     return Array.from(convMap.values());
   })();
