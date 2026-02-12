@@ -45,10 +45,15 @@ export default function ConversationManager({ userId, userType = "player", team 
     queryFn: async () => {
       if (userType === "player") {
         const sent = await base44.entities.PlayerRequest.filter({ player_id: userId });
-        const received = team ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
+        const received = team
+          ? await base44.entities.PlayerRequest.filter({ team_id: team.id })
+          : [];
         return [...sent, ...received];
+      } else {
+      // Team bekommt Anfragen von Spielern
+       const received = await base44.entities.PlayerRequest.filter({ team_id: userId });
+        return received;
       }
-      return [];
     },
   });
 
@@ -127,6 +132,13 @@ export default function ConversationManager({ userId, userType = "player", team 
     return Array.from(convMap.values());
   })();
 
+  // Auto-select first conversation if none selected
+  useEffect(() => {
+    if (!selectedConvId && conversations.length > 0) {
+      setSelectedConvId(`${conversations[0].type}-${conversations[0].id}`);
+    }
+  }, [conversations.length, selectedConvId]);
+
   // Get messages for selected conversation
   const conversationMessages = selectedConvId
     ? (() => {
@@ -140,8 +152,11 @@ export default function ConversationManager({ userId, userType = "player", team 
             })
           : allMessages.filter((m) => {
               const otherId = selectedConvId.replace("team-", "");
-              return m.team_from_id === otherId || m.team_to_id === otherId;
-            });
+              return (
+               (m.team_from_id === userId && m.team_to_id === otherId) ||
+	           (m.team_from_id === otherId && m.team_to_id === userId)
+			 );
+          });
         
         return [...msgs, ...allRequests].filter((item) => {
           if (userType === "player" && item.team_id) {
@@ -182,27 +197,29 @@ export default function ConversationManager({ userId, userType = "player", team 
             });
           }
         } else {
-          const playerId = selectedConvId.replace("player-", "");
-          const existingMsg = conversationMessages.find(
-            (m) => m.player_from_id === playerId && m.player_to_id === userId && m.status === "pending"
-          );
+        const playerId = selectedConvId.replace("player-", "");
+        const existingMsg = conversationMessages.find(
+          (m) => m.player_from_id === playerId && m.player_to_id === userId && m.status === "pending"
+        );
 
-          if (existingMsg) {
-            await base44.entities.PlayerMessage.update(existingMsg.id, {
-              response: messageText,
-              status: "answered",
-            });
-          } else {
-            const player = await base44.auth.me();
-            await base44.entities.PlayerMessage.create({
-              player_from_id: userId,
-              player_from_name: player.full_name,
-              player_to_id: playerId,
-              player_to_name: conversationMessages[0]?.player_to_name || "Unknown",
-              message: messageText,
-              status: "pending",
-            });
-          }
+        if (existingMsg) {
+          await base44.entities.PlayerMessage.update(existingMsg.id, {
+            response: messageText,
+            status: "answered",
+          });
+        } else {
+          const player = await base44.auth.me();
+          const otherPlayer = conversationMessages[0];
+          const otherName = otherPlayer?.player_from_id === userId ? otherPlayer?.player_to_name : otherPlayer?.player_from_name;
+          await base44.entities.PlayerMessage.create({
+            player_from_id: userId,
+            player_from_name: player.full_name,
+            player_to_id: playerId,
+            player_to_name: otherName || "Unknown",
+            message: messageText,
+            status: "pending",
+          });
+        }
         }
       } else {
         const teamId = selectedConvId.replace("team-", "");
@@ -230,9 +247,17 @@ export default function ConversationManager({ userId, userType = "player", team 
       queryClient.invalidateQueries({ queryKey: ["messages"] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       setMessageText("");
+
+      // Auto-select the conversation after sending
+      setTimeout(() => {
+        if (userType === "player" && selectedConvId.startsWith("team-")) {
+          setSelectedConvId(selectedConvId);
+        }
+      }, 100);
+
       toast.success("Nachricht gesendet!");
-    },
-  });
+      },
+      });
 
   // Delete conversation
   const deleteConversation = useMutation({
