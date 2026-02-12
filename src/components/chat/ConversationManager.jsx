@@ -122,7 +122,7 @@ export default function ConversationManager({ userId, userType = "player", team 
         convMap.set(key, {
           id: userType === "player" ? req.team_id : req.player_id,
           name: userType === "player" ? req.team_name : req.player_name,
-          type: userType === "player" ? "team" : "player",
+          type: "team",
           lastMessage: req.message,
           hasUnread: userType === "player" ? req.status === "pending" : req.status === "pending",
         });
