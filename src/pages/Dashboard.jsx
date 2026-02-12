@@ -204,7 +204,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-red-600/10 flex items-center justify-center">
             <LayoutDashboard className="w-5 h-5 text-red-500" />
@@ -215,8 +215,6 @@ export default function Dashboard() {
           </div>
           </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           {/* Stats */}
           {[
@@ -253,9 +251,9 @@ export default function Dashboard() {
           <PlayerRequestsCard team={team} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
            {/* Team Info */}
-           <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+           <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-white">Team-Daten</h3>
               <Button variant="ghost" size="sm" onClick={() => {
@@ -320,7 +318,7 @@ export default function Dashboard() {
           </div>
 
           {/* Players */}
-          <div className="rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
+          <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6">
             <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
               <Users className="w-4 h-4 text-red-500" /> Spieler ({players.length})
             </h3>
@@ -357,6 +355,15 @@ export default function Dashboard() {
               >
                 <Plus className="w-4 h-4" />
               </Button>
+            </div>
+            </div>
+
+            {/* Chat - kompakt rechts */}
+            <div className="lg:col-span-1 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-4 h-fit">
+            <h3 className="text-xs font-semibold text-white mb-3">Chat</h3>
+            <div className="max-h-96 overflow-y-auto">
+             <ChatInterface />
+            </div>
             </div>
             </div>
 
@@ -488,20 +495,8 @@ export default function Dashboard() {
               })}
             </div>
           </div>
-          )}
-          </div>
-
-          {/* Chat - rechte Spalte */}
-          <div className="lg:col-span-1">
-           <div className="sticky top-20 rounded-2xl bg-[#111111] border border-[#1a1a1a] p-6 h-[calc(100vh-120px)] flex flex-col">
-             <h3 className="text-sm font-semibold text-white mb-4">Chat</h3>
-             <div className="flex-1 overflow-hidden">
-               <ChatInterface />
-             </div>
-           </div>
-          </div>
-          </div>
-          </div>
-          </div>
-          );
-          }
+        )}
+      </div>
+    </div>
+  );
+}
