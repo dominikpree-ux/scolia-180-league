@@ -28,9 +28,9 @@ export default function ConversationManager({ userId, userType = "player", team 
     queryFn: async () => {
       if (userType === "player") {
         const sent = await base44.entities.PlayerMessage.filter({ player_from_id: userId });
-        const received = await base44.entities.PlayerMessage.filter({ player_to_id: userId });
-        const fromTeam = team ? await base44.entities.PlayerMessage.filter({ team_from_id: team.id }) : [];
-        return [...sent, ...received, ...fromTeam];
+        const received = await base44.entities.PlayerMessage.filter({ player_to_id: userId })
+        const teamReplies = await base44.entities.TeamMessage.filter({ player_to_id: userId });
+        return [...sent, ...received, ...teamReplies];
       } else {
         const sent = await base44.entities.TeamMessage.filter({ team_from_id: userId });
         const received = await base44.entities.TeamMessage.filter({ team_to_id: userId });
