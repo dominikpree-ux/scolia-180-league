@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export default function ChatInterface({ forcedUserType }) {
   const [user, setUser] = useState(null);
+  const [team, setTeam] = useState(null);
   const [userType, setUserType] = useState(forcedUserType || null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
@@ -19,15 +20,15 @@ export default function ChatInterface({ forcedUserType }) {
       const me = await base44.auth.me();
       setUser(me);
 
-      if (!forcedUserType) {
-        const teams = await base44.entities.Team.filter({
-          captain_email: me?.email,
-        });
-        if (teams.length > 0) {
-          setUserType("team");
-        } else {
-          setUserType("player");
-        }
+      const teams = await base44.entities.Team.filter({
+        captain_email: me?.email,
+      });
+
+      if (teams.length > 0) {
+        setUserType("team");
+        setTeam(teams[0]);
+      } else {
+        setUserType("player");
       }
     };
     loadUser();
@@ -65,11 +66,13 @@ export default function ChatInterface({ forcedUserType }) {
           otherId = msg.player_from_id;
         }
       } else {
-        if (msg.team_from_id === user?.id) {
+        const myTeamId = team?.id;
+
+        if (msg.team_from_id === myTeamId) {
           key = `team-${msg.team_to_id}`;
           name = msg.team_to_name;
           otherId = msg.team_to_id;
-        } else {
+        } else if (msg.team_to_id === myTeamId) {
           key = `team-${msg.team_from_id}`;
           name = msg.team_from_name;
           otherId = msg.team_from_id;
@@ -99,7 +102,8 @@ export default function ChatInterface({ forcedUserType }) {
           if (selectedConversation.startsWith("team-")) {
             const teamId = selectedConversation.replace("team-", "");
             return (
-              msg.team_to_id === teamId || msg.team_from_id === teamId
+              msg.team_to_id === teamId ||
+              msg.team_from_id === teamId
             );
           }
         }
@@ -114,10 +118,10 @@ export default function ChatInterface({ forcedUserType }) {
 
       const [type, id] = selectedConversation.split("-");
 
-      if (userType === "team") {
+      if (userType === "team" && team) {
         await base44.entities.TeamMessage.create({
-          team_from_id: user.id,
-          team_from_name: user.full_name || "Unknown",
+          team_from_id: team.id,
+          team_from_name: team.name,
           team_to_id: id,
           team_to_name:
             conversations.find((c) => c.key === selectedConversation)?.name ||
@@ -202,7 +206,7 @@ export default function ChatInterface({ forcedUserType }) {
               const isSent =
                 "player_from_id" in msg
                   ? msg.player_from_id === user.id
-                  : msg.team_from_id === user.id;
+                  : msg.team_from_id === team?.id;
 
               return (
                 <div
