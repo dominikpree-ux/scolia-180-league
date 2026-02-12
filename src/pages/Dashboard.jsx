@@ -9,7 +9,6 @@ import { toast } from "sonner";
 
 export default function ChatInterface({ forcedUserType }) {
   const [user, setUser] = useState(null);
-  const [team, setTeam] = useState(null);
   const [userType, setUserType] = useState(forcedUserType || null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
@@ -24,23 +23,13 @@ export default function ChatInterface({ forcedUserType }) {
         const teams = await base44.entities.Team.filter({
           captain_email: me?.email,
         });
-
         if (teams.length > 0) {
           setUserType("team");
-          setTeam(teams[0]); // wichtig: echtes Team setzen
         } else {
           setUserType("player");
         }
-      } else if (forcedUserType === "team") {
-        const teams = await base44.entities.Team.filter({
-          captain_email: me?.email,
-        });
-        if (teams.length > 0) {
-          setTeam(teams[0]);
-        }
       }
     };
-
     loadUser();
   }, [forcedUserType]);
 
@@ -61,31 +50,34 @@ export default function ChatInterface({ forcedUserType }) {
   // Build conversations
   const conversations = (() => {
     const convMap = new Map();
-    const myId = userType === "team" ? team?.id : user?.id;
 
     messages.forEach((msg) => {
-      let key, name;
+      let key, name, otherId;
 
       if ("player_from_id" in msg) {
-        if (msg.player_from_id === myId) {
+        if (msg.player_from_id === user?.id) {
           key = `player-${msg.player_to_id}`;
           name = msg.player_to_name;
-        } else if (msg.player_to_id === myId) {
+          otherId = msg.player_to_id;
+        } else {
           key = `player-${msg.player_from_id}`;
           name = msg.player_from_name;
+          otherId = msg.player_from_id;
         }
       } else {
-        if (msg.team_from_id === myId) {
+        if (msg.team_from_id === user?.id) {
           key = `team-${msg.team_to_id}`;
           name = msg.team_to_name;
-        } else if (msg.team_to_id === myId) {
+          otherId = msg.team_to_id;
+        } else {
           key = `team-${msg.team_from_id}`;
           name = msg.team_from_name;
+          otherId = msg.team_from_id;
         }
       }
 
       if (key && !convMap.has(key)) {
-        convMap.set(key, { key, name });
+        convMap.set(key, { key, name, otherId });
       }
     });
 
@@ -93,28 +85,21 @@ export default function ChatInterface({ forcedUserType }) {
   })();
 
   // Get messages for selected conversation
-  const myId = userType === "team" ? team?.id : user?.id;
-
   const conversationMessages = selectedConversation
     ? messages.filter((msg) => {
         if ("player_from_id" in msg) {
           if (selectedConversation.startsWith("player-")) {
             const playerId = selectedConversation.replace("player-", "");
             return (
-              (msg.player_from_id === myId &&
-                msg.player_to_id === playerId) ||
-              (msg.player_to_id === myId &&
-                msg.player_from_id === playerId)
+              msg.player_from_id === playerId ||
+              msg.player_to_id === playerId
             );
           }
         } else {
           if (selectedConversation.startsWith("team-")) {
             const teamId = selectedConversation.replace("team-", "");
             return (
-              (msg.team_from_id === myId &&
-                msg.team_to_id === teamId) ||
-              (msg.team_to_id === myId &&
-                msg.team_from_id === teamId)
+              msg.team_to_id === teamId || msg.team_from_id === teamId
             );
           }
         }
@@ -125,14 +110,14 @@ export default function ChatInterface({ forcedUserType }) {
   // Send message
   const sendMutation = useMutation({
     mutationFn: async () => {
-      if (!messageText.trim() || !selectedConversation) return;
+      if (!messageText.trim() || !selectedConversation || !user) return;
 
       const [type, id] = selectedConversation.split("-");
 
-      if (userType === "team" && team) {
+      if (userType === "team") {
         await base44.entities.TeamMessage.create({
-          team_from_id: team.id,
-          team_from_name: team.name,
+          team_from_id: user.id,
+          team_from_name: user.full_name || "Unknown",
           team_to_id: id,
           team_to_name:
             conversations.find((c) => c.key === selectedConversation)?.name ||
@@ -159,6 +144,20 @@ export default function ChatInterface({ forcedUserType }) {
       queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
     },
   });
+
+  // Subscribe to updates
+  useEffect(() => {
+    const unsub1 = base44.entities.PlayerMessage.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
+    });
+    const unsub2 = base44.entities.TeamMessage.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ["chat-messages"] });
+    });
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, [queryClient]);
 
   if (!user) {
     return <div className="p-6 text-center text-gray-400">Laden...</div>;
@@ -202,8 +201,8 @@ export default function ChatInterface({ forcedUserType }) {
             {conversationMessages.map((msg, idx) => {
               const isSent =
                 "player_from_id" in msg
-                  ? msg.player_from_id === myId
-                  : msg.team_from_id === myId;
+                  ? msg.player_from_id === user.id
+                  : msg.team_from_id === user.id;
 
               return (
                 <div
