@@ -39,7 +39,7 @@ export default function PlayerChat({ player, team = null }) {
     queryKey: ["player-requests", player.id],
     queryFn: async () => {
       const sent = await base44.entities.PlayerRequest.filter({ player_id: player.id });
-      const received = await base44.entities.PlayerRequest.filter({ team_id: team?.id || "" });
+      const received = team ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
       return [...sent, ...received];
     },
   });
@@ -76,18 +76,11 @@ export default function PlayerChat({ player, team = null }) {
 
   // Get messages for selected conversation
   const conversationMessages = selectedType === 'player' && selectedId
-    ? [
-        ...playerMessages.filter(
-          (msg) =>
-            (msg.player_from_id === player.id && msg.player_to_id === selectedId && !msg.team_from_id) ||
-            (msg.player_from_id === selectedId && msg.player_to_id === player.id && !msg.team_from_id)
-        ),
-        ...playerRequests.filter(
-          (req) =>
-            (req.player_id === player.id && req.player_id !== selectedId) ||
-            (req.player_id === selectedId)
-        )
-      ]
+    ? playerMessages.filter(
+        (msg) =>
+          (msg.player_from_id === player.id && msg.player_to_id === selectedId && !msg.team_from_id) ||
+          (msg.player_from_id === selectedId && msg.player_to_id === player.id && !msg.team_from_id)
+      )
     : selectedType === 'team' && selectedId
     ? [
         ...playerMessages.filter((msg) => msg.team_from_id === selectedId && msg.player_to_id === player.id),
