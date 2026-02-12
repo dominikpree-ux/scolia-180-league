@@ -147,8 +147,11 @@ export default function ConversationManager({ userId, userType = "player", team 
             })
           : allMessages.filter((m) => {
               const otherId = selectedConvId.replace("team-", "");
-              return m.team_from_id === otherId || m.team_to_id === otherId;
-            });
+              return (
+               (m.team_from_id === userId && m.team_to_id === otherId) ||
+	           (m.team_from_id === otherId && m.team_to_id === userId)
+			 );
+          });
         
         return [...msgs, ...allRequests].filter((item) => {
           if (userType === "player" && item.team_id) {
