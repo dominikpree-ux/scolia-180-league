@@ -48,9 +48,13 @@ export default function ConversationManager({ userId, userType = "player", team 
         const received = team ? await base44.entities.PlayerRequest.filter({ team_id: team.id }) : [];
         return [...sent, ...received];
       } else {
-  // Team soll Anfragen von Spielern sehen
+      // Team bekommt Anfragen von Spielern
         const received = await base44.entities.PlayerRequest.filter({ team_id: userId });
         return received;
+    }
+  },
+});
+
        }
     },
   });
