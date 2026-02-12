@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { createPageUrl } from "@/utils";
 
 export default function ContactPlayerDialog({ player, open, onOpenChange, team = null }) {
   const [message, setMessage] = useState("");
@@ -35,13 +34,12 @@ export default function ContactPlayerDialog({ player, open, onOpenChange, team =
       return base44.entities.PlayerMessage.create(messageData);
     },
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["player-messages"] });
-        queryClient.invalidateQueries({ queryKey: ["player-requests"] });
-        setMessage("");
-        onOpenChange(false);
-        toast.success("Nachricht gesendet!");
-        window.location.href = createPageUrl("Dashboard");
-      },
+       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
+       setMessage("");
+       onOpenChange(false);
+       toast.success("Nachricht gesendet!");
+     },
     onError: () => {
       toast.error("Fehler beim Senden der Nachricht");
     },
