@@ -358,9 +358,10 @@ export default function ConversationManager({ userId, userType = "player", team 
                       <div key={msg.id || idx} className="space-y-2">
                         {isIncoming && (
                           <div className="bg-gray-800 rounded-lg p-3">
-                            <p className="text-xs text-gray-400 mb-1">
-                              {msg.team_from_name || msg.player_from_name || msg.player_name || msg.team_name}
-                            </p>
+                               <p className="text-xs text-gray-400 mb-1">
+                                 {msg.team_from_name || msg.player_from_name || msg.player_name || msg.team_name || "Unbekannt"}
+                               </p>
+
 
                             <p className="text-sm text-white">{msg.message}</p>
                             {(msg.response || msg.team_response) && (
