@@ -6,6 +6,7 @@ import { Mail, Send } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import { createPageUrl } from "@/utils";
 
 export default function ContactTeamDialog({ team, player }) {
   const [open, setOpen] = useState(false);
@@ -17,10 +18,13 @@ export default function ContactTeamDialog({ team, player }) {
       return await base44.entities.PlayerRequest.create(data);
     },
     onSuccess: () => {
-      toast.success("Anfrage gesendet!");
-      setOpen(false);
-      setMessage("");
-    },
+       toast.success("Anfrage gesendet!");
+       setOpen(false);
+       setMessage("");
+       queryClient.invalidateQueries({ queryKey: ["player-requests"] });
+       queryClient.invalidateQueries({ queryKey: ["player-messages"] });
+       window.location.href = createPageUrl("Dashboard");
+     },
     onError: () => {
       toast.error("Fehler beim Senden");
     },

@@ -48,7 +48,6 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Admin from './pages/Admin';
-import Chat from './pages/Chat';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import FreeAgents from './pages/FreeAgents';
@@ -62,12 +61,12 @@ import Rules from './pages/Rules';
 import Schedule from './pages/Schedule';
 import Standings from './pages/Standings';
 import Teams from './pages/Teams';
+import Chat from './pages/Chat';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
-    "Chat": Chat,
     "Contact": Contact,
     "Dashboard": Dashboard,
     "FreeAgents": FreeAgents,
@@ -81,6 +80,7 @@ export const PAGES = {
     "Schedule": Schedule,
     "Standings": Standings,
     "Teams": Teams,
+    "Chat": Chat,
 }
 
 export const pagesConfig = {
