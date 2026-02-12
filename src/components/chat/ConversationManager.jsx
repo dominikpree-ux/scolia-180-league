@@ -346,7 +346,7 @@ export default function ConversationManager({ userId, userType = "player", team 
 <div className="w-2/3 flex flex-col">
   {selectedConvId ? (
     <>
-      <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+      <div className="flex-1 overflow-y-auto space-y-4 mb-4">
         {conversationMessages.length === 0 ? (
           <p className="text-gray-500 text-sm">Keine Nachrichten</p>
         ) : (
@@ -364,16 +364,16 @@ export default function ConversationManager({ userId, userType = "player", team 
               "Unbekannt";
 
             return (
-              <div key={msg.id || idx} className="space-y-2">
+              <div key={msg.id || idx} className="flex flex-col gap-1">
                 {isIncoming ? (
-                  <div className="bg-gray-800 rounded-lg p-3">
+                  <div className="bg-gray-800 rounded-lg p-3 max-w-md">
                     <p className="text-xs text-gray-400 mb-1">
                       {senderName}
                     </p>
                     <p className="text-sm text-white">{msg.message}</p>
                   </div>
                 ) : (
-                  <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-xs">
+                  <div className="bg-blue-600/20 rounded-lg p-3 ml-auto max-w-md">
                     <p className="text-xs text-blue-400 mb-1">Du</p>
                     <p className="text-sm text-white">{msg.message}</p>
                   </div>
@@ -384,7 +384,7 @@ export default function ConversationManager({ userId, userType = "player", team 
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-2 border-t border-[#1a1a1a]">
         <Input
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
@@ -412,4 +412,33 @@ export default function ConversationManager({ userId, userType = "player", team 
     </div>
   )}
 </div>
+
+        </div>
+      </CardContent>
+
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent className="bg-[#111111] border-[#1a1a1a]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Konversation löschen?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Die Konversation mit {deleteConfirm?.name} wird gelöscht.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-3 justify-end">
+            <AlertDialogCancel className="border-[#2a2a2a] text-gray-400">
+              Abbrechen
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConversation.mutate(deleteConfirm.id)}
+              disabled={deleteConversation.isPending}
+              className="bg-red-600 hover:bg-red-500"
+            >
+              Löschen
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Card>
+  );
+}
 
