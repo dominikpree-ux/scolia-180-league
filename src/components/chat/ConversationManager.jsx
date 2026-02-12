@@ -159,11 +159,19 @@ export default function ConversationManager({ userId, userType = "player", team 
           });
         
         return [...msgs, ...allRequests].filter((item) => {
-          if (userType === "player" && item.team_id) {
-            return item.team_id === selectedConvId.replace("team-", "");
+          const id = selectedConvId.replace("team-", "").replace("player-", "");
+
+          if (item.team_id) {
+            return item.team_id === userId || item.team_id === id;
           }
+
+          if (item.player_id) {
+            return item.player_id === id;
+          }
+
+
           return true;
-        });
+         });
       })()
     : [];
 
