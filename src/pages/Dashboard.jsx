@@ -255,8 +255,16 @@ export default function Dashboard() {
 
         {/* Chat */}
         <div className="mb-6">
-          <ConversationManager userId={team.id} userType="team" team={team} />
-        </div>
+         {team && (
+          <ConversationManager
+            userId={team.id}
+            userType="team"
+            team={team}
+            key={`team-chat-${team.id}`}
+          />
+        )}
+      </div>
+
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Team Info */}
