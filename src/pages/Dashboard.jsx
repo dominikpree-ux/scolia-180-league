@@ -18,7 +18,7 @@ import PlayerProfileCard from "../components/dashboard/PlayerProfileCard";
 import PlayerRequestsCard from "../components/dashboard/PlayerRequestsCard";
 import MyPlayerRequestsCard from "../components/dashboard/MyPlayerRequestsCard";
 import PlayerMessagesCard from "../components/dashboard/PlayerMessagesCard";
-import ChatInterface from "../components/chat/ChatInterface";
+import ConversationManager from "../components/chat/ConversationManager";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
