@@ -8,6 +8,7 @@ import ResultsManager from "../components/admin/ResultsManager";
 import SeasonManager from "../components/admin/SeasonManager";
 import PlayerRequestManager from "../components/admin/PlayerRequestManager";
 import { TeamImporter } from "../components/admin/TeamImporter";
+import { PlayerImporter } from "../components/admin/PlayerImporter";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -88,9 +89,15 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="import">
-            <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Teams importieren</h3>
-              <TeamImporter />
+            <div className="space-y-6">
+              <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Teams importieren</h3>
+                <TeamImporter />
+              </div>
+              <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Spieler importieren</h3>
+                <PlayerImporter />
+              </div>
             </div>
           </TabsContent>
 
