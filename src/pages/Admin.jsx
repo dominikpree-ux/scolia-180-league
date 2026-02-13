@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Calendar, Trophy, Clock, UserSearch } from "lucide-react";
+import { Shield, Users, Calendar, Trophy, Clock, UserSearch, Upload } from "lucide-react";
 import TeamManagement from "../components/admin/TeamManagement";
 import ScheduleGenerator from "../components/admin/ScheduleGenerator";
 import ResultsManager from "../components/admin/ResultsManager";
 import SeasonManager from "../components/admin/SeasonManager";
 import PlayerRequestManager from "../components/admin/PlayerRequestManager";
+import { TeamImporter } from "../components/admin/TeamImporter";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -62,6 +63,9 @@ export default function Admin() {
             <TabsTrigger value="teams" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
               <Users className="w-3.5 h-3.5 mr-1.5" /> Teams
             </TabsTrigger>
+            <TabsTrigger value="import" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
+              <Upload className="w-3.5 h-3.5 mr-1.5" /> Import
+            </TabsTrigger>
             <TabsTrigger value="schedule" className="data-[state=active]:bg-red-600 data-[state=active]:text-white text-gray-400 rounded-lg text-xs">
               <Calendar className="w-3.5 h-3.5 mr-1.5" /> Spielplan
             </TabsTrigger>
@@ -80,6 +84,13 @@ export default function Admin() {
             <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
               <h3 className="text-lg font-bold text-white mb-4">Team-Verwaltung</h3>
               <TeamManagement />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="import">
+            <div className="rounded-2xl bg-[#0a0a0a] border border-[#1a1a1a] p-6">
+              <h3 className="text-lg font-bold text-white mb-4">Teams importieren</h3>
+              <TeamImporter />
             </div>
           </TabsContent>
 
